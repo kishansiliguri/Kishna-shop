@@ -1,39 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krishna Food</title>
+
 <style>
 
 body{
 margin:0;
 font-family:Arial;
+background:#f5f5f5;
 }
+
+/* HEADER */
 
 .header{
 position:sticky;
 top:0;
+z-index:1000;
 background:#ff6b00;
-padding:15px;
 color:white;
+padding:15px;
+}
+
+/* TOP BAR */
+
+.top-bar{
 display:flex;
 align-items:center;
 justify-content:space-between;
 }
 
-.brand{
-font-weight:bold;
+/* LOGO + BRAND */
+
+.brand-area{
+display:flex;
+align-items:center;
+gap:10px;
 }
 
-.search input{
-padding:8px;
-border:none;
+.logo{
+width:35px;
+height:35px;
+background:white;
 border-radius:6px;
 }
 
-.menu{
-display:none;
-gap:15px;
+.brand{
+font-size:18px;
+font-weight:bold;
 }
 
-/* Desktop menu */
+/* SEARCH */
 
-@media(min-width:900px){
+.search{
+margin-top:10px;
+}
+
+.search input{
+width:100%;
+padding:10px;
+border:none;
+border-radius:8px;
+}
+
+/* WELCOME */
+
+.welcome{
+margin-top:8px;
+font-size:14px;
+}
+
+/* DESKTOP MENU */
+
+.menu{
+display:none;
+gap:20px;
+font-size:15px;
+}
+
+/* TABLET */
+
+@media(min-width:768px){
+
+.search{
+max-width:400px;
+}
+
+}
+
+/* DESKTOP */
+
+@media(min-width:1024px){
+
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.search{
+margin:0;
+flex:1;
+padding:0 20px;
+}
+
+.welcome{
+margin:0;
+}
 
 .menu{
 display:flex;
@@ -42,19 +116,41 @@ display:flex;
 }
 
 </style>
+</head>
+
+<body>
 
 <div class="header">
 
-<div class="brand">Krishna Food</div>
+<div class="brand-area">
+
+<div class="logo"></div>
+
+<div class="brand">
+Krishna Food
+</div>
+
+</div>
 
 <div class="search">
-<input placeholder="Search food">
+
+<input type="text" placeholder="Search food">
+
 </div>
 
 <div class="menu">
-<span>Home</span>
-<span>Cart</span>
-<span>Account</span>
+
+<div>Home</div>
+<div>Cart</div>
+<div>My Account</div>
+
+</div>
+
+<div class="welcome">
+Login
 </div>
 
 </div>
+
+</body>
+</html>
