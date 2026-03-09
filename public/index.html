@@ -1,330 +1,60 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Krishna Food</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
 
 body{
-font-family:Arial;
 margin:0;
-background:#f5f5f5;
+font-family:Arial;
 }
-
-/* HEADER */
 
 .header{
+position:sticky;
+top:0;
+background:#ff6b00;
+padding:15px;
+color:white;
 display:flex;
-justify-content:space-between;
 align-items:center;
-padding:15px;
-background:white;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
+justify-content:space-between;
 }
 
-.icons span{
-margin-left:15px;
-font-size:20px;
-cursor:pointer;
-}
-
-/* GREETING */
-
-.greeting{
-padding:20px;
-}
-
-.greeting h2{
-margin:0;
-color:#ff6b00;
-}
-
-/* BANNER SLIDER */
-
-.slider{
-width:100%;
-overflow:hidden;
-}
-
-.slides{
-display:flex;
-animation:slide 10s infinite;
-}
-
-.slides img{
-width:100%;
-height:220px;
-object-fit:cover;
-}
-
-@keyframes slide{
-0%{transform:translateX(0)}
-33%{transform:translateX(-100%)}
-66%{transform:translateX(-200%)}
-100%{transform:translateX(0)}
-}
-
-/* CATEGORY */
-
-.categories{
-display:flex;
-gap:15px;
-padding:15px;
-overflow-x:auto;
-}
-
-.cat{
-text-align:center;
-}
-
-.cat img{
-width:70px;
-height:70px;
-border-radius:15px;
-border:3px solid #ff6b00;
-}
-
-/* FOOD GRID */
-
-.food-section{
-padding:15px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:15px;
-}
-
-.card{
-background:white;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-cursor:pointer;
-}
-
-.card img{
-width:100%;
-height:140px;
-object-fit:cover;
-}
-
-.card-body{
-padding:10px;
-}
-
-.price{
-color:#ff6b00;
+.brand{
 font-weight:bold;
 }
 
-/* POPUP */
+.search input{
+padding:8px;
+border:none;
+border-radius:6px;
+}
 
-.popup{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
+.menu{
 display:none;
-justify-content:center;
-align-items:center;
+gap:15px;
 }
 
-.popup-content{
-background:white;
-padding:20px;
-border-radius:10px;
-width:90%;
-max-width:400px;
-}
+/* Desktop menu */
 
-/* FOOTER */
+@media(min-width:900px){
 
-.footer{
-position:fixed;
-bottom:0;
-width:100%;
-background:white;
+.menu{
 display:flex;
-justify-content:space-around;
-padding:10px;
-border-top:1px solid #ddd;
-}
-
-/* TABLET */
-
-@media(min-width:768px){
-
-.grid{
-grid-template-columns:repeat(3,1fr);
-}
-
-.slides img{
-height:300px;
-}
-
-}
-
-/* DESKTOP */
-
-@media(min-width:1024px){
-
-.grid{
-grid-template-columns:repeat(4,1fr);
-}
-
-.categories{
-justify-content:center;
-}
-
-.footer{
-display:none;
 }
 
 }
 
 </style>
-</head>
-
-<body>
 
 <div class="header">
 
-☰
+<div class="brand">Krishna Food</div>
 
-<div class="icons">
-<span>🔍</span>
-<span>📍</span>
-<span>🛒</span>
+<div class="search">
+<input placeholder="Search food">
+</div>
+
+<div class="menu">
+<span>Home</span>
+<span>Cart</span>
+<span>Account</span>
 </div>
 
 </div>
-
-<div class="greeting">
-
-<h2>Hello</h2>
-<h1>Find your food</h1>
-
-</div>
-
-<div class="slider">
-
-<div class="slides">
-
-<img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836">
-<img src="https://images.unsplash.com/photo-1550547660-d9450f859349">
-<img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092">
-
-</div>
-
-</div>
-
-<div class="categories">
-
-<div class="cat">
-<img src="https://images.unsplash.com/photo-1550547660-d9450f859349">
-<p>Burger</p>
-</div>
-
-<div class="cat">
-<img src="https://images.unsplash.com/photo-1604908176997-4317a6c6d99e">
-<p>Paneer</p>
-</div>
-
-<div class="cat">
-<img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092">
-<p>Rice</p>
-</div>
-
-<div class="cat">
-<img src="https://images.unsplash.com/photo-1585238342028-4c91b9c2c6c0">
-<p>Snacks</p>
-</div>
-
-</div>
-
-<div class="food-section">
-
-<h2>Popular Food</h2>
-
-<div class="grid">
-
-<div class="card" onclick="openPopup('Paneer Butter Masala','₹160')">
-
-<img src="https://images.unsplash.com/photo-1604908176997-4317a6c6d99e">
-
-<div class="card-body">
-
-<h4>Paneer Butter Masala</h4>
-<p class="price">₹160</p>
-
-</div>
-
-</div>
-
-<div class="card" onclick="openPopup('Veg Burger','₹120')">
-
-<img src="https://images.unsplash.com/photo-1550547660-d9450f859349">
-
-<div class="card-body">
-
-<h4>Veg Burger</h4>
-<p class="price">₹120</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="popup" id="popup">
-
-<div class="popup-content">
-
-<h3 id="foodName"></h3>
-
-<p id="foodPrice"></p>
-
-<button onclick="closePopup()">Close</button>
-
-</div>
-
-</div>
-
-<div class="footer">
-
-<span>🏠 Home</span>
-<span>📦 Orders</span>
-<span>🛒 Cart</span>
-<span>👤 Account</span>
-
-</div>
-
-<script>
-
-function openPopup(name,price){
-
-document.getElementById("popup").style.display="flex"
-
-document.getElementById("foodName").innerText=name
-
-document.getElementById("foodPrice").innerText=price
-
-}
-
-function closePopup(){
-
-document.getElementById("popup").style.display="none"
-
-}
-
-</script>
-
-</body>
-</html>
