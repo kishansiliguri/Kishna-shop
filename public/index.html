@@ -15,12 +15,18 @@ background:#f5f5f5;
 /* HEADER */
 
 .header{
-position:sticky;
+position:fixed;
 top:0;
+left:0;
+width:100%;
 z-index:1000;
 background:#ff6b00;
 color:white;
-padding:15px;
+padding:10px;
+
+display:flex;
+align-items:center;
+gap:10px;
 }
 
 /* TOP BAR */
@@ -54,14 +60,14 @@ font-weight:bold;
 /* SEARCH */
 
 .search{
-margin-top:10px;
+flex:1;
 }
 
 .search input{
 width:100%;
-padding:10px;
+padding:8px;
 border:none;
-border-radius:8px;
+border-radius:6px;
 }
 
 /* WELCOME */
