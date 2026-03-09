@@ -9,50 +9,68 @@
 body{
 font-family:Arial;
 margin:0;
-background:#f6f6f6;
+background:#f5f5f5;
 }
+
+/* HEADER */
 
 .header{
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:15px;
+background:white;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
 .icons span{
-margin-left:10px;
+margin-left:15px;
 font-size:20px;
+cursor:pointer;
 }
+
+/* GREETING */
 
 .greeting{
-padding:0 15px;
+padding:20px;
 }
 
-.greeting h3{
-color:#ff6b00;
+.greeting h2{
 margin:0;
+color:#ff6b00;
 }
 
-.greeting h1{
-margin:5px 0;
-}
+/* BANNER SLIDER */
 
-.banner{
-padding:15px;
-}
-
-.banner img{
+.slider{
 width:100%;
-border-radius:15px;
+overflow:hidden;
 }
 
-.section{
-padding:15px;
+.slides{
+display:flex;
+animation:slide 10s infinite;
 }
+
+.slides img{
+width:100%;
+height:220px;
+object-fit:cover;
+}
+
+@keyframes slide{
+0%{transform:translateX(0)}
+33%{transform:translateX(-100%)}
+66%{transform:translateX(-200%)}
+100%{transform:translateX(0)}
+}
+
+/* CATEGORY */
 
 .categories{
 display:flex;
-gap:10px;
+gap:15px;
+padding:15px;
 overflow-x:auto;
 }
 
@@ -67,25 +85,64 @@ border-radius:15px;
 border:3px solid #ff6b00;
 }
 
-.food{
-display:flex;
-gap:10px;
-margin-top:10px;
-background:white;
-padding:10px;
-border-radius:12px;
+/* FOOD GRID */
+
+.food-section{
+padding:15px;
 }
 
-.food img{
-width:90px;
-height:90px;
-border-radius:10px;
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+}
+
+.card{
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+cursor:pointer;
+}
+
+.card img{
+width:100%;
+height:140px;
+object-fit:cover;
+}
+
+.card-body{
+padding:10px;
 }
 
 .price{
 color:#ff6b00;
 font-weight:bold;
 }
+
+/* POPUP */
+
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.popup-content{
+background:white;
+padding:20px;
+border-radius:10px;
+width:90%;
+max-width:400px;
+}
+
+/* FOOTER */
 
 .footer{
 position:fixed;
@@ -98,11 +155,36 @@ padding:10px;
 border-top:1px solid #ddd;
 }
 
-/* Desktop hide footer */
+/* TABLET */
+
 @media(min-width:768px){
+
+.grid{
+grid-template-columns:repeat(3,1fr);
+}
+
+.slides img{
+height:300px;
+}
+
+}
+
+/* DESKTOP */
+
+@media(min-width:1024px){
+
+.grid{
+grid-template-columns:repeat(4,1fr);
+}
+
+.categories{
+justify-content:center;
+}
+
 .footer{
 display:none;
 }
+
 }
 
 </style>
@@ -111,25 +193,35 @@ display:none;
 <body>
 
 <div class="header">
+
 ☰
+
 <div class="icons">
 <span>🔍</span>
-<span>🗺</span>
+<span>📍</span>
 <span>🛒</span>
 </div>
+
 </div>
 
 <div class="greeting">
-<h3>Hello Customer</h3>
+
+<h2>Hello</h2>
 <h1>Find your food</h1>
+
 </div>
 
-<div class="banner">
+<div class="slider">
+
+<div class="slides">
+
 <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836">
+<img src="https://images.unsplash.com/photo-1550547660-d9450f859349">
+<img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092">
+
 </div>
 
-<div class="section">
-<h3>Categories</h3>
+</div>
 
 <div class="categories">
 
@@ -154,38 +246,85 @@ display:none;
 </div>
 
 </div>
-</div>
 
-<div class="section">
+<div class="food-section">
 
-<h3>Popular Food Nearby</h3>
+<h2>Popular Food</h2>
 
-<div class="food">
-<img src="https://images.unsplash.com/photo-1550547660-d9450f859349">
-<div>
-<h4>Classic Burger</h4>
-<p>Krishna Food</p>
-<p class="price">₹120</p>
-</div>
-</div>
+<div class="grid">
 
-<div class="food">
+<div class="card" onclick="openPopup('Paneer Butter Masala','₹160')">
+
 <img src="https://images.unsplash.com/photo-1604908176997-4317a6c6d99e">
-<div>
+
+<div class="card-body">
+
 <h4>Paneer Butter Masala</h4>
-<p>Krishna Food</p>
 <p class="price">₹160</p>
+
 </div>
+
+</div>
+
+<div class="card" onclick="openPopup('Veg Burger','₹120')">
+
+<img src="https://images.unsplash.com/photo-1550547660-d9450f859349">
+
+<div class="card-body">
+
+<h4>Veg Burger</h4>
+<p class="price">₹120</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="popup" id="popup">
+
+<div class="popup-content">
+
+<h3 id="foodName"></h3>
+
+<p id="foodPrice"></p>
+
+<button onclick="closePopup()">Close</button>
+
 </div>
 
 </div>
 
 <div class="footer">
+
 <span>🏠 Home</span>
 <span>📦 Orders</span>
 <span>🛒 Cart</span>
 <span>👤 Account</span>
+
 </div>
+
+<script>
+
+function openPopup(name,price){
+
+document.getElementById("popup").style.display="flex"
+
+document.getElementById("foodName").innerText=name
+
+document.getElementById("foodPrice").innerText=price
+
+}
+
+function closePopup(){
+
+document.getElementById("popup").style.display="none"
+
+}
+
+</script>
 
 </body>
 </html>
