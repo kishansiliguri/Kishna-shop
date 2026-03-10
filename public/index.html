@@ -124,24 +124,21 @@ margin:0;
 display:flex;
 color:white;
 }
-/* SLIDER */
+/* SIMPLE MOBILE SLIDER */
+
 .slider{
-width:100%;
-overflow-x:auto;
-scroll-snap-type:x mandatory;
-margin-top:80px;
+  margin-top:80px;
+  display:flex;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
 }
 
-.slider-track{
-display:flex;
-}
-
-.slider-track img{
-width:100%;
-flex:0 0 100%;
-height:180px;
-object-fit:cover;
-scroll-snap-align:start;
+.slider img{
+  width:100%;
+  flex:0 0 100%;
+  height:180px;
+  object-fit:cover;
+  scroll-snap-align:start;
 }
 </style>
 </head>
@@ -181,7 +178,6 @@ Krishna Food
 
 <div class="slider">
 
-<div class="slide-track">
 
 <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836">
 
