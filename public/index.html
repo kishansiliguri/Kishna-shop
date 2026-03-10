@@ -130,9 +130,11 @@ color:white;
 position:relative;
 width:100%;
 margin-top:80px;
-height:220px;
+height:200px;
 overflow:hidden;
 }
+
+/* IMAGE */
 
 .banner img{
 width:100%;
@@ -145,8 +147,9 @@ display:block;
 
 .order-btn{
 position:absolute;
-bottom:20px;
-left:20px;
+bottom:15px;
+left:50%;
+transform:translateX(-50%);
 
 background:#ff6b00;
 color:white;
@@ -160,15 +163,16 @@ font-weight:bold;
 animation:pulse 1.5s infinite;
 }
 
-/* BUTTON ANIMATION */
+/* ANIMATION */
 
 @keyframes pulse{
 
-0%{transform:scale(1);}
-50%{transform:scale(1.1);}
-100%{transform:scale(1);}
+0%{transform:translateX(-50%) scale(1);}
+50%{transform:translateX(-50%) scale(1.1);}
+100%{transform:translateX(-50%) scale(1);}
 
 }
+
 /* MOBILE */
 
 @media(max-width:600px){
