@@ -153,21 +153,22 @@ object-fit:cover;
 }
 /* MOBILE FIX */
 @media (max-width:600px){
-
 .slider{
-margin-top:100px;
-}
-
-.slides img{
-height:200px;
+margin-top:80px;
 width:100%;
-object-fit:cover;
+overflow:hidden;
 }
 
 .slides{
 display:flex;
-width:300%;
+animation:slide 9s infinite;
 }
+
+.slides img{
+width:100%;
+flex:0 0 100%;
+height:180px;
+object-fit:cover;
 }
 
 </style>
