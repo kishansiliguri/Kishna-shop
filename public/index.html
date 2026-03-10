@@ -130,11 +130,14 @@ color:white;
 position:relative;
 width:100%;
 margin-top:80px;
+height:220px;
+overflow:hidden;
 }
 
 .banner img{
 width:100%;
-height:auto;
+height:100%;
+object-fit:cover;
 display:block;
 }
 
@@ -148,8 +151,8 @@ left:20px;
 background:#ff6b00;
 color:white;
 
-padding:12px 22px;
-border-radius:30px;
+padding:10px 20px;
+border-radius:25px;
 
 text-decoration:none;
 font-weight:bold;
@@ -161,24 +164,10 @@ animation:pulse 1.5s infinite;
 
 @keyframes pulse{
 
-0%{
-transform:scale(1);
-}
+0%{transform:scale(1);}
+50%{transform:scale(1.1);}
+100%{transform:scale(1);}
 
-50%{
-transform:scale(1.1);
-}
-
-100%{
-transform:scale(1);
-}
-
-}
-
-/* HOVER */
-
-.order-btn:hover{
-background:#ff4500;
 }
 </style>
 </head>
