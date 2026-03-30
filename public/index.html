@@ -1,1 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodSpot — Discover Local Eateries</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #FF5A1F;
+  --primary-dark: #D94500;
+  --primary-light: #FFF0EB;
+  --secondary: #1A1A2E;
+  --accent: #FFB800;
+  --surface: #FFFFFF;
+  --bg: #F8F6F3;
+  --card: #FFFFFF;
+  --text: #1A1A2E;
+  --text2: #6B7280;
+  --text3: #9CA3AF;
+  --border: #E5E7EB;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+img{display:block;max-width:100%;}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+
+/* PAGE SYSTEM */
+.page{display:none;}
+.page.active{display:block;}
+
+/* NAV */
+.navbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 1.5rem;
+  height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:18px;color:var(--text);}
+.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);}
+.nav-logo span{color:var(--primary);}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.nav-btn{
+  padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;
+  border:none;transition:all 0.2s;
+}
+.nav-btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.nav-btn-ghost:hover{background:var(--bg);}
+.nav-btn-primary{background:var(--primary);color:#fff;}
+.nav-btn-primary:hover{background:var(--primary-dark);}
+.nav-btn-admin{background:var(--secondary);color:#fff;}
+.nav-btn-admin:hover{opacity:0.9;}
+.hamburger{display:none;flex-direction:column;gap:4px;background:none;border:none;padding:4px;}
+.hamburger span{width:20px;height:2px;background:var(--text);border-radius:2px;transition:all 0.2s;}
+
+/* ===================== HOME PAGE ===================== */
+
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,#1A1A2E 0%,#2D1B69 50%,#1A1A2E 100%);
+  padding:3rem 1.5rem 4rem;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 50%,rgba(255,90,31,0.25) 0%,transparent 60%),
+    radial-gradient(ellipse at 20% 80%,rgba(255,184,0,0.12) 0%,transparent 50%);
+}
+.hero-dots{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,0.06) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.hero-content{position:relative;z-index:2;max-width:700px;margin:0 auto;text-align:center;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.85);font-size:12px;font-weight:500;
+  padding:5px 14px;border-radius:20px;margin-bottom:1.5rem;
+}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.hero h1{
+  font-family:'Fraunces',serif;
+  font-size:clamp(32px,6vw,56px);color:#fff;line-height:1.1;margin-bottom:1rem;
+}
+.hero h1 em{color:var(--primary);font-style:italic;}
+.hero-sub{color:rgba(255,255,255,0.65);font-size:15px;line-height:1.7;margin-bottom:2rem;}
+.search-box{
+  background:#fff;border-radius:14px;padding:6px 6px 6px 18px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+  max-width:540px;margin:0 auto 1rem;
+}
+.search-box input{
+  flex:1;border:none;outline:none;font-size:14px;font-family:inherit;
+  color:var(--text);background:transparent;
+}
+.search-box input::placeholder{color:var(--text3);}
+.search-btn{
+  background:var(--primary);color:#fff;border:none;border-radius:10px;
+  padding:10px 20px;font-size:13px;font-weight:600;
+  white-space:nowrap;transition:background 0.2s;
+}
+.search-btn:hover{background:var(--primary-dark);}
+.hero-stats{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;}
+.hero-stat{text-align:center;}
+.hero-stat-num{font-size:20px;font-weight:800;color:#fff;}
+.hero-stat-lbl{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+
+/* AD BANNER TOP */
+.ad-banner{
+  background:linear-gradient(90deg,#FFB800,#FF8C00);
+  padding:14px 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+}
+.ad-banner-text{font-size:13px;font-weight:600;color:#1A1A2E;}
+.ad-badge{background:#1A1A2E;color:#FFB800;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;}
+.ad-btn{background:#1A1A2E;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;}
+
+/* CATEGORIES */
+.section{padding:2rem 1.5rem;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.section-title{font-size:18px;font-weight:700;color:var(--text);}
+.section-title span{color:var(--primary);}
+.see-all{font-size:13px;color:var(--primary);font-weight:600;background:none;border:none;}
+.cats-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+.cats-row::-webkit-scrollbar{height:3px;}
+.cats-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.cat-chip{
+  display:flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:30px;
+  background:var(--card);border:1.5px solid var(--border);
+  font-size:13px;font-weight:600;color:var(--text2);
+  white-space:nowrap;cursor:pointer;transition:all 0.2s;flex-shrink:0;
+}
+.cat-chip:hover,.cat-chip.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.cat-chip-icon{font-size:16px;}
+
+/* SHOP CARDS */
+.shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;}
+.shop-card{
+  background:var(--card);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);
+  transition:transform 0.25s,box-shadow 0.25s;cursor:pointer;
+  border:1px solid transparent;
+}
+.shop-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary-light);}
+.shop-card-img{position:relative;height:180px;overflow:hidden;}
+.shop-card-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
+.shop-card:hover .shop-card-img img{transform:scale(1.05);}
+.shop-card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,#f3e8d8,#e8d5c0);}
+.featured-badge{
+  position:absolute;top:10px;left:10px;
+  background:var(--accent);color:#1A1A2E;
+  font-size:10px;font-weight:800;padding:4px 10px;border-radius:6px;
+  letter-spacing:0.5px;text-transform:uppercase;
+  display:flex;align-items:center;gap:4px;
+}
+.featured-badge::before{content:'★';}
+.open-badge{
+  position:absolute;top:10px;right:10px;
+  font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;
+}
+.open-badge.open{background:rgba(34,197,94,0.9);color:#fff;}
+.open-badge.closed{background:rgba(239,68,68,0.9);color:#fff;}
+.shop-card-body{padding:1rem 1.1rem 1.1rem;}
+.shop-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.shop-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;}
+.shop-rating{display:flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--text);}
+.shop-rating .star{color:var(--accent);}
+.shop-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.shop-cat-tag{
+  font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
+  background:var(--primary-light);color:var(--primary);
+}
+.shop-area{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:3px;}
+.shop-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px;}
+.shop-actions{display:flex;gap:7px;}
+.action-btn{
+  flex:1;padding:9px 4px;border-radius:8px;font-size:12px;font-weight:600;
+  border:none;display:flex;align-items:center;justify-content:center;gap:5px;
+  transition:all 0.2s;
+}
+.btn-call{background:#EEF2FF;color:#4F46E5;}
+.btn-call:hover{background:#4F46E5;color:#fff;}
+.btn-wa{background:#F0FDF4;color:#16A34A;}
+.btn-wa:hover{background:#16A34A;color:#fff;}
+.btn-web{background:var(--bg);color:var(--text2);}
+.btn-web:hover{background:var(--text2);color:#fff;}
+
+/* FEATURED SECTION */
+.featured-section{background:linear-gradient(135deg,#1A1A2E,#2D1B69);padding:2.5rem 1.5rem;}
+.featured-section .section-title{color:#fff;}
+.featured-section .see-all{color:var(--accent);}
+
+/* AD SLOT */
+.ad-slot{
+  background:#fff;border:2px dashed var(--border);border-radius:var(--radius);
+  padding:2rem;text-align:center;color:var(--text3);margin:1.5rem;
+}
+.ad-slot-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.ad-slot-size{font-size:12px;color:var(--text3);}
+.ad-slot-adsense{min-height:90px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-top:10px;}
+
+/* ===================== SHOP DETAIL PAGE ===================== */
+.detail-hero{position:relative;}
+.detail-hero-imgs{display:grid;grid-template-columns:2fr 1fr;height:280px;gap:3px;}
+.detail-hero-imgs img{width:100%;height:100%;object-fit:cover;}
+.detail-hero-imgs .img-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:40px;}
+.detail-back{
+  position:absolute;top:12px;left:12px;z-index:5;
+  background:rgba(255,255,255,0.95);border:none;border-radius:8px;
+  padding:8px 14px;font-size:13px;font-weight:600;color:var(--text);
+  display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+.detail-body{padding:1.5rem;}
+.detail-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:1rem;}
+.detail-name{font-family:'Fraunces',serif;font-size:26px;color:var(--text);line-height:1.2;}
+.detail-rating-big{text-align:center;}
+.detail-rating-num{font-size:28px;font-weight:800;color:var(--text);}
+.detail-rating-stars{color:var(--accent);font-size:14px;}
+.detail-rating-count{font-size:11px;color:var(--text3);}
+.detail-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;}
+.detail-tag{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;background:var(--primary-light);color:var(--primary);}
+.detail-tag-area{background:#F0F9FF;color:#0369A1;}
+.detail-tag-open{background:#F0FDF4;color:#16A34A;}
+.detail-tag-closed{background:#FEF2F2;color:#DC2626;}
+.detail-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.detail-section-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.5px;}
+.menu-list{margin-bottom:1.5rem;}
+.menu-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.menu-item:last-child{border-bottom:none;}
+.menu-item-name{font-size:14px;color:var(--text);}
+.menu-item-price{font-size:14px;font-weight:700;color:var(--primary);}
+.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.5rem;}
+.detail-action-btn{
+  flex:1;min-width:120px;padding:13px 16px;border-radius:10px;font-size:14px;font-weight:700;
+  border:none;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;
+}
+.d-btn-call{background:#EEF2FF;color:#4F46E5;}
+.d-btn-call:hover{background:#4F46E5;color:#fff;}
+.d-btn-wa{background:#F0FDF4;color:#16A34A;}
+.d-btn-wa:hover{background:#16A34A;color:#fff;}
+.d-btn-web{background:var(--bg);color:var(--text);}
+.d-btn-web:hover{background:var(--text);color:#fff;}
+.info-card{background:var(--bg);border-radius:var(--radius-sm);padding:1rem;}
+.info-row{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);}
+.info-row:last-child{border-bottom:none;}
+.info-icon{font-size:16px;width:24px;flex-shrink:0;}
+.info-label{font-size:11px;color:var(--text3);margin-bottom:2px;}
+.info-val{font-size:13px;font-weight:500;color:var(--text);}
+
+/* ===================== ADD SHOP FORM ===================== */
+.form-page-hero{
+  background:linear-gradient(135deg,#1A1A2E,#2D1B69);
+  padding:2.5rem 1.5rem;text-align:center;
+}
+.form-page-hero h1{font-family:'Fraunces',serif;color:#fff;font-size:28px;margin-bottom:0.5rem;}
+.form-page-hero p{color:rgba(255,255,255,0.6);font-size:14px;}
+.form-wrap{max-width:600px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+.form-card{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.25rem;}
+.form-card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
+.form-card-title span{font-size:18px;}
+.form-group{margin-bottom:1rem;}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.form-label .req{color:var(--primary);}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:11px 14px;border-radius:8px;
+  border:1.5px solid var(--border);background:#fff;
+  font-size:14px;font-family:inherit;color:var(--text);
+  outline:none;transition:border-color 0.2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);}
+.form-textarea{min-height:90px;resize:vertical;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.form-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+.upload-area{
+  border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;
+  cursor:pointer;transition:border-color 0.2s;
+}
+.upload-area:hover{border-color:var(--primary);}
+.upload-icon{font-size:32px;margin-bottom:8px;}
+.upload-text{font-size:13px;font-weight:600;color:var(--text2);}
+.upload-hint{font-size:11px;color:var(--text3);margin-top:3px;}
+.upload-input{display:none;}
+.submit-btn{
+  width:100%;padding:15px;background:var(--primary);color:#fff;
+  border:none;border-radius:10px;font-size:15px;font-weight:700;
+  font-family:inherit;transition:background 0.2s,transform 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.submit-btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
+.terms-note{font-size:11px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.5;}
+.success-toast{
+  display:none;position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
+  background:#1A1A2E;color:#fff;padding:14px 24px;border-radius:12px;
+  font-size:14px;font-weight:600;z-index:999;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);white-space:nowrap;
+}
+.success-toast.show{display:block;animation:slideUp 0.3s ease;}
+@keyframes slideUp{from{opacity:0;transform:translate(-50%,20px);}to{opacity:1;transform:translate(-50%,0);}}
+
+/* ===================== ADMIN PAGE ===================== */
+.admin-hero{background:var(--secondary);padding:2rem 1.5rem;}
+.admin-hero h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;}
+.admin-hero p{font-size:13px;color:rgba(255,255,255,0.5);}
+.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:1.5rem;}
+.admin-stat-card{background:#fff;border-radius:var(--radius-sm);padding:1rem;text-align:center;box-shadow:var(--shadow);}
+.admin-stat-num{font-size:24px;font-weight:800;color:var(--text);}
+.admin-stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;}
+.admin-stat-card.highlight .admin-stat-num{color:var(--primary);}
+.admin-section{padding:0 1.5rem 2rem;}
+.admin-section-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.5px;}
+.pending-list{display:flex;flex-direction:column;gap:10px;}
+.pending-card{background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+.pending-img{width:54px;height:54px;border-radius:8px;object-fit:cover;background:#f3e8d8;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.pending-info{flex:1;}
+.pending-name{font-size:14px;font-weight:700;color:var(--text);}
+.pending-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.pending-actions{display:flex;gap:6px;}
+.approve-btn{background:#F0FDF4;color:#16A34A;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;}
+.approve-btn:hover{background:#16A34A;color:#fff;}
+.reject-btn{background:#FEF2F2;color:#DC2626;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;}
+.reject-btn:hover{background:#DC2626;color:#fff;}
+.status-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.status-pending{background:#FEF9C3;color:#854D0E;}
+.status-approved{background:#F0FDF4;color:#16A34A;}
+.status-rejected{background:#FEF2F2;color:#DC2626;}
+.featured-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:1.5rem;}
+.featured-slot{background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);text-align:center;}
+.featured-slot-num{font-size:11px;font-weight:700;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.featured-slot.occupied{border:2px solid var(--accent);}
+.featured-slot.empty{border:2px dashed var(--border);}
+.featured-slot-name{font-size:13px;font-weight:700;color:var(--text);}
+.featured-slot-price{font-size:11px;color:var(--text2);margin-top:2px;}
+.featured-slot-icon{font-size:28px;margin-bottom:8px;}
+
+/* BOTTOM NAV (MOBILE) */
+.bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);
+  display:flex;padding:8px 0 env(safe-area-inset-bottom);
+}
+.bottom-nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;padding:6px 4px;
+  font-size:10px;font-weight:600;color:var(--text3);transition:color 0.2s;
+}
+.bottom-nav-item.active{color:var(--primary);}
+.bottom-nav-item .bn-icon{font-size:20px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:var(--radius);max-width:420px;width:100%;padding:1.5rem;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:1rem;}
+.modal-close{float:right;background:none;border:none;font-size:20px;color:var(--text2);}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--text3);}
+.empty-icon{font-size:48px;margin-bottom:1rem;}
+.empty-title{font-size:16px;font-weight:700;color:var(--text2);margin-bottom:6px;}
+.empty-sub{font-size:13px;}
+
+/* SCROLL HINT */
+.scroll-shadow{position:relative;}
+.scroll-shadow::after{content:'';position:absolute;right:0;top:0;bottom:0;width:40px;background:linear-gradient(to right,transparent,var(--bg));pointer-events:none;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-actions .nav-btn-ghost,.nav-actions .nav-btn-admin{display:none;}
+  .hamburger{display:flex;}
+  .shops-grid{grid-template-columns:1fr;}
+  .detail-hero-imgs{grid-template-columns:1fr;height:220px;}
+  .detail-hero-imgs>*:last-child{display:none;}
+  .admin-stats{grid-template-columns:repeat(2,1fr);}
+  .form-row{grid-template-columns:1fr;}
+  .bottom-nav{display:flex;}
+  body{padding-bottom:70px;}
+  .hero{padding:2.5rem 1rem 3rem;}
+  .section{padding:1.5rem 1rem;}
+}
+@media(min-width:769px){
+  .bottom-nav{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    Food<span>Spot</span>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-ghost" onclick="showPage('home')">Home</button>
+    <button class="nav-btn nav-btn-ghost" onclick="showPage('add')">+ List Your Shop</button>
+    <button class="nav-btn nav-btn-admin" onclick="showPage('admin')">Admin</button>
+    <button class="hamburger" onclick="showPage('home')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== HOME PAGE ===================== -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-dots"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><span class="hero-badge-dot"></span> 500+ Shops Listed Across India</div>
+      <h1>Discover <em>Amazing</em> Local Food Near You</h1>
+      <p class="hero-sub">Find the best local eateries, dhabas, and restaurants in your city. Call them directly — no middleman.</p>
+      <div class="search-box">
+        <span style="font-size:16px;">🔍</span>
+        <input type="text" id="search-input" placeholder="Search shops, biryani, momos, chai..." oninput="filterShops()">
+        <button class="search-btn" onclick="filterShops()">Search</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num">500+</div><div class="hero-stat-lbl">Shops</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">50+</div><div class="hero-stat-lbl">Cities</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">Free</div><div class="hero-stat-lbl">To Use</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AD BANNER -->
+  <div class="ad-banner">
+    <div>
+      <span class="ad-badge">AD</span>
+      <span class="ad-banner-text" style="margin-left:8px;">🎉 Promote your shop — Get Featured Badge + Top Listing</span>
+    </div>
+    <button class="ad-btn" onclick="showPage('add')">List Now →</button>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Browse by <span>Category</span></div>
+    </div>
+    <div class="cats-row" id="cats-row">
+      <div class="cat-chip active" onclick="filterCat('All',this)"><span class="cat-chip-icon">🍽️</span>All</div>
+      <div class="cat-chip" onclick="filterCat('Biryani',this)"><span class="cat-chip-icon">🍛</span>Biryani</div>
+      <div class="cat-chip" onclick="filterCat('Fast Food',this)"><span class="cat-chip-icon">🍔</span>Fast Food</div>
+      <div class="cat-chip" onclick="filterCat('Chinese',this)"><span class="cat-chip-icon">🥡</span>Chinese</div>
+      <div class="cat-chip" onclick="filterCat('Street Food',this)"><span class="cat-chip-icon">🌮</span>Street Food</div>
+      <div class="cat-chip" onclick="filterCat('Veg',this)"><span class="cat-chip-icon">🥗</span>Veg</div>
+      <div class="cat-chip" onclick="filterCat('Sweets',this)"><span class="cat-chip-icon">🍬</span>Sweets</div>
+      <div class="cat-chip" onclick="filterCat('Cafe',this)"><span class="cat-chip-icon">☕</span>Cafe</div>
+    </div>
+  </div>
+
+  <!-- FEATURED SHOPS -->
+  <div class="featured-section">
+    <div class="section-header">
+      <div class="section-title">⭐ Featured <span style="color:var(--accent)">Shops</span></div>
+      <button class="see-all" onclick="filterCat('All',null)">See All</button>
+    </div>
+    <div class="shops-grid" id="featured-grid"></div>
+  </div>
+
+  <!-- ADSENSE SLOT -->
+  <div class="ad-slot">
+    <div class="ad-slot-label">Advertisement</div>
+    <div class="ad-slot-size">Banner Ad — 728×90 (Leaderboard)</div>
+    <div class="ad-slot-adsense">
+      <!-- Place Google AdSense code here -->
+      <span style="font-size:12px;color:var(--text3);">Google AdSense · 728×90</span>
+    </div>
+  </div>
+
+  <!-- ALL SHOPS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title" id="listing-title">All <span>Shops</span></div>
+      <span id="shop-count" style="font-size:13px;color:var(--text3);"></span>
+    </div>
+    <div class="shops-grid" id="shops-grid"></div>
+    <div id="empty-state" class="empty-state" style="display:none;">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">No shops found</div>
+      <div class="empty-sub">Try a different search or category</div>
+    </div>
+  </div>
+
+  <!-- BOTTOM AD SLOT -->
+  <div class="ad-slot">
+    <div class="ad-slot-label">Advertisement</div>
+    <div class="ad-slot-size">Rectangle Ad — 300×250</div>
+    <div class="ad-slot-adsense" style="min-height:250px;max-width:300px;margin:10px auto 0;">
+      <!-- Place Google AdSense code here -->
+      <span style="font-size:12px;color:var(--text3);">Google AdSense · 300×250</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== SHOP DETAIL PAGE ===================== -->
+<div id="page-detail" class="page">
+  <div class="detail-hero">
+    <button class="detail-back" onclick="showPage('home')">← Back</button>
+    <div class="detail-hero-imgs" id="detail-imgs"></div>
+  </div>
+  <div class="detail-body">
+    <div class="detail-top">
+      <div>
+        <div class="detail-name" id="detail-name"></div>
+      </div>
+      <div class="detail-rating-big" id="detail-rating-box"></div>
+    </div>
+    <div class="detail-tags" id="detail-tags"></div>
+    <p class="detail-desc" id="detail-desc"></p>
+    <div class="detail-section-title">Menu Highlights</div>
+    <div class="menu-list" id="detail-menu"></div>
+    <div class="detail-section-title">Contact</div>
+    <div class="detail-actions" id="detail-actions"></div>
+    <div class="detail-section-title">Info</div>
+    <div class="info-card" id="detail-info"></div>
+  </div>
+</div>
+
+<!-- ===================== ADD SHOP PAGE ===================== -->
+<div id="page-add" class="page">
+  <div class="form-page-hero">
+    <h1>List Your Shop</h1>
+    <p>Reach thousands of hungry customers — completely free!</p>
+  </div>
+  <div class="form-wrap">
+    <div class="form-card">
+      <div class="form-card-title"><span>🏪</span> Basic Information</div>
+      <div class="form-group">
+        <label class="form-label">Shop Name <span class="req">*</span></label>
+        <input class="form-input" id="f-name" type="text" placeholder="e.g. Sharma Ji Ki Chai">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category <span class="req">*</span></label>
+          <select class="form-select" id="f-cat">
+            <option value="">Select category</option>
+            <option>Biryani</option><option>Fast Food</option><option>Chinese</option>
+            <option>Street Food</option><option>Veg</option><option>Sweets</option><option>Cafe</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">City / Area <span class="req">*</span></label>
+          <input class="form-input" id="f-area" type="text" placeholder="e.g. Siliguri, WB">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc" placeholder="What makes your shop special? Signature dishes, timings, etc."></textarea>
+      </div>
+    </div>
+    <div class="form-card">
+      <div class="form-card-title"><span>📞</span> Contact Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Phone Number <span class="req">*</span></label>
+          <input class="form-input" id="f-phone" type="tel" placeholder="+91 XXXXX XXXXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp Number</label>
+          <input class="form-input" id="f-wa" type="tel" placeholder="+91 XXXXX XXXXX">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Website / Instagram Link</label>
+        <input class="form-input" id="f-web" type="url" placeholder="https://instagram.com/yourshop">
+        <div class="form-hint">Instagram, Facebook, or your own website URL</div>
+      </div>
+    </div>
+    <div class="form-card">
+      <div class="form-card-title"><span>📸</span> Shop Photo</div>
+      <div class="upload-area" onclick="document.getElementById('f-img').click()">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Click to upload photo</div>
+        <div class="upload-hint">JPG or PNG, max 5MB</div>
+        <input type="file" id="f-img" class="upload-input" accept="image/*" onchange="previewImg(this)">
+      </div>
+      <div id="img-preview" style="margin-top:10px;"></div>
+    </div>
+    <div class="form-card">
+      <div class="form-card-title"><span>⭐</span> Promotion (Optional)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:var(--bg);border-radius:10px;padding:1rem;text-align:center;border:2px solid var(--border);">
+          <div style="font-size:20px;margin-bottom:4px;">🆓</div>
+          <div style="font-size:13px;font-weight:700;">Free Listing</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;">Basic listing</div>
+        </div>
+        <div style="background:var(--primary-light);border-radius:10px;padding:1rem;text-align:center;border:2px solid var(--primary);">
+          <div style="font-size:20px;margin-bottom:4px;">⭐</div>
+          <div style="font-size:13px;font-weight:700;color:var(--primary);">Featured — ₹499/mo</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;">Top of listings + badge</div>
+        </div>
+      </div>
+    </div>
+    <button class="submit-btn" onclick="submitShop()">
+      <span style="font-size:16px;">✅</span> Submit for Approval
+    </button>
+    <p class="terms-note">Your shop will appear after admin approval (within 24 hours). By submitting, you agree to our listing terms.</p>
+  </div>
+</div>
+
+<!-- ===================== ADMIN PAGE ===================== -->
+<div id="page-admin" class="page">
+  <div class="admin-hero">
+    <h1>Admin Dashboard</h1>
+    <p>FoodSpot Control Panel — Manage listings & promotions</p>
+  </div>
+  <div class="admin-stats">
+    <div class="admin-stat-card highlight"><div class="admin-stat-num">3</div><div class="admin-stat-lbl">Pending</div></div>
+    <div class="admin-stat-card"><div class="admin-stat-num">12</div><div class="admin-stat-lbl">Approved</div></div>
+    <div class="admin-stat-card"><div class="admin-stat-num">3</div><div class="admin-stat-lbl">Featured</div></div>
+    <div class="admin-stat-card"><div class="admin-stat-num">2</div><div class="admin-stat-lbl">Ad Slots</div></div>
+  </div>
+
+  <div class="admin-section">
+    <div class="admin-section-title">Pending Approvals</div>
+    <div class="pending-list">
+      <div class="pending-card" id="p1">
+        <div class="pending-img">🍜</div>
+        <div class="pending-info">
+          <div class="pending-name">Dragon Wok</div>
+          <div class="pending-meta">Chinese · Guwahati · Submitted 2h ago</div>
+          <div style="margin-top:5px;"><span class="status-badge status-pending">Pending</span></div>
+        </div>
+        <div class="pending-actions">
+          <button class="approve-btn" onclick="approveShop('p1')">✓</button>
+          <button class="reject-btn" onclick="rejectShop('p1')">✕</button>
+        </div>
+      </div>
+      <div class="pending-card" id="p2">
+        <div class="pending-img">🥗</div>
+        <div class="pending-info">
+          <div class="pending-name">Green Bites</div>
+          <div class="pending-meta">Veg · Siliguri · Submitted 5h ago</div>
+          <div style="margin-top:5px;"><span class="status-badge status-pending">Pending</span></div>
+        </div>
+        <div class="pending-actions">
+          <button class="approve-btn" onclick="approveShop('p2')">✓</button>
+          <button class="reject-btn" onclick="rejectShop('p2')">✕</button>
+        </div>
+      </div>
+      <div class="pending-card" id="p3">
+        <div class="pending-img">🍔</div>
+        <div class="pending-info">
+          <div class="pending-name">Burger Point</div>
+          <div class="pending-meta">Fast Food · Kolkata · Submitted 8h ago</div>
+          <div style="margin-top:5px;"><span class="status-badge status-pending">Pending</span></div>
+        </div>
+        <div class="pending-actions">
+          <button class="approve-btn" onclick="approveShop('p3')">✓</button>
+          <button class="reject-btn" onclick="rejectShop('p3')">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-section">
+    <div class="admin-section-title">Featured Slots (Paid)</div>
+    <div class="featured-slots">
+      <div class="featured-slot occupied">
+        <div class="featured-slot-num">Slot 1</div>
+        <div class="featured-slot-icon">🍛</div>
+        <div class="featured-slot-name">Baba Biryani</div>
+        <div class="featured-slot-price">₹499/mo · Expires 15 Apr</div>
+      </div>
+      <div class="featured-slot occupied">
+        <div class="featured-slot-num">Slot 2</div>
+        <div class="featured-slot-icon">🍜</div>
+        <div class="featured-slot-name">Noodle House</div>
+        <div class="featured-slot-price">₹499/mo · Expires 20 Apr</div>
+      </div>
+      <div class="featured-slot occupied">
+        <div class="featured-slot-num">Slot 3</div>
+        <div class="featured-slot-icon">☕</div>
+        <div class="featured-slot-name">Brewed Bliss Cafe</div>
+        <div class="featured-slot-price">₹499/mo · Expires 28 Apr</div>
+      </div>
+      <div class="featured-slot empty">
+        <div class="featured-slot-num">Slot 4</div>
+        <div class="featured-slot-icon" style="opacity:0.3;">+</div>
+        <div class="featured-slot-name" style="color:var(--text3);">Available</div>
+        <div class="featured-slot-price" style="color:var(--primary);">₹499/mo</div>
+      </div>
+      <div class="featured-slot empty">
+        <div class="featured-slot-num">Slot 5</div>
+        <div class="featured-slot-icon" style="opacity:0.3;">+</div>
+        <div class="featured-slot-name" style="color:var(--text3);">Available</div>
+        <div class="featured-slot-price" style="color:var(--primary);">₹499/mo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-section">
+    <div class="admin-section-title">Banner Ad Slots</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div><div style="font-weight:700;font-size:14px;">Homepage Top Banner (728×90)</div><div style="font-size:12px;color:var(--text3);">High visibility · ₹999/mo</div></div>
+        <span class="status-badge status-approved">Occupied</span>
+      </div>
+      <div style="background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div><div style="font-weight:700;font-size:14px;">Homepage Bottom (300×250)</div><div style="font-size:12px;color:var(--text3);">Standard · ₹599/mo</div></div>
+        <span class="status-badge status-pending">Available</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bottom-nav-item active" id="bn-home" onclick="showPage('home');setBN('bn-home')">
+    <span class="bn-icon">🏠</span>Home
+  </button>
+  <button class="bottom-nav-item" id="bn-search" onclick="showPage('home');document.getElementById('search-input').focus();setBN('bn-search')">
+    <span class="bn-icon">🔍</span>Search
+  </button>
+  <button class="bottom-nav-item" id="bn-add" onclick="showPage('add');setBN('bn-add')">
+    <span class="bn-icon">➕</span>Add Shop
+  </button>
+  <button class="bottom-nav-item" id="bn-admin" onclick="showPage('admin');setBN('bn-admin')">
+    <span class="bn-icon">⚙️</span>Admin
+  </button>
+</div>
+
+<div class="success-toast" id="toast"></div>
+
+<script>
+const shops = [
+  {
+    id:1,featured:true,name:'Baba Biryani House',cat:'Biryani',area:'Siliguri, WB',
+    desc:'Famous for authentic Kolkata-style biryani with tender mutton and aromatic rice. Family-run for 20+ years.',
+    phone:'9800012345',wa:'9800012345',web:'https://instagram.com',
+    rating:4.7,reviews:234,isOpen:true,
+    img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=75',
+    menu:[{n:'Mutton Biryani',p:'₹220'},{n:'Chicken Biryani',p:'₹180'},{n:'Veg Biryani',p:'₹130'},{n:'Egg Biryani',p:'₹150'}],
+    hours:'11am–11pm',since:'2004'
+  },
+  {
+    id:2,featured:true,name:'Noodle House',cat:'Chinese',area:'Kolkata, WB',
+    desc:'Best Chinese street food — momos, chow mein, hakka noodles. Loved by students and foodies alike.',
+    phone:'9800023456',wa:'9800023456',web:'',
+    rating:4.4,reviews:189,isOpen:true,
+    img:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&q=75',
+    menu:[{n:'Veg Momos (6 pcs)',p:'₹80'},{n:'Chicken Momos (6 pcs)',p:'₹110'},{n:'Hakka Noodles',p:'₹120'},{n:'Fried Rice',p:'₹110'}],
+    hours:'12pm–10pm',since:'2015'
+  },
+  {
+    id:3,featured:true,name:'Brewed Bliss Cafe',cat:'Cafe',area:'Guwahati, AS',
+    desc:'Cozy cafe with specialty coffees, sandwiches, and fresh pastries. Perfect for work and chill sessions.',
+    phone:'9800034567',wa:'9800034567',web:'https://instagram.com',
+    rating:4.8,reviews:312,isOpen:true,
+    img:'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&q=75',
+    menu:[{n:'Cold Coffee',p:'₹120'},{n:'Cappuccino',p:'₹90'},{n:'Club Sandwich',p:'₹150'},{n:'Brownie',p:'₹80'}],
+    hours:'8am–10pm',since:'2019'
+  },
+  {
+    id:4,featured:false,name:'Sharma Chaat Corner',cat:'Street Food',area:'Varanasi, UP',
+    desc:'Authentic Banarasi chaat — golgappe, papdi chaat, and aloo tikki straight from the heart of Kashi.',
+    phone:'9800045678',wa:'',web:'',
+    rating:4.5,reviews:156,isOpen:false,
+    img:'https://images.unsplash.com/photo-1606788075761-e2f57a611e8b?w=500&q=75',
+    menu:[{n:'Golgappa (6 pcs)',p:'₹30'},{n:'Papdi Chaat',p:'₹60'},{n:'Aloo Tikki',p:'₹40'},{n:'Dahi Bhalla',p:'₹55'}],
+    hours:'4pm–11pm',since:'2010'
+  },
+  {
+    id:5,featured:false,name:'Punjabi Dhaba',cat:'Veg',area:'Amritsar, PB',
+    desc:'Ghee-laden parathas, rich dal makhani, and creamy paneer — pure Punjabi comfort food.',
+    phone:'9800056789',wa:'9800056789',web:'https://instagram.com',
+    rating:4.6,reviews:278,isOpen:true,
+    img:'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&q=75',
+    menu:[{n:'Dal Makhani',p:'₹140'},{n:'Paneer Butter Masala',p:'₹180'},{n:'Butter Naan',p:'₹40'},{n:'Aloo Paratha',p:'₹70'}],
+    hours:'7am–10pm',since:'2008'
+  },
+  {
+    id:6,featured:false,name:'Burger Bros',cat:'Fast Food',area:'Bangalore, KA',
+    desc:'Juicy smashed burgers, loaded fries, and milkshakes. Crafted fresh every single order.',
+    phone:'9800067890',wa:'9800067890',web:'https://burgerbros.in',
+    rating:4.3,reviews:445,isOpen:true,
+    img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=75',
+    menu:[{n:'Classic Smash Burger',p:'₹199'},{n:'Chicken Crunch Burger',p:'₹229'},{n:'Loaded Fries',p:'₹129'},{n:'Chocolate Shake',p:'₹149'}],
+    hours:'11am–12am',since:'2021'
+  },
+  {
+    id:7,featured:false,name:'Mithai Palace',cat:'Sweets',area:'Jaipur, RJ',
+    desc:'Traditional Rajasthani sweets — ghewar, mawa kachori, and over 50 varieties of mithai made fresh daily.',
+    phone:'9800078901',wa:'',web:'',
+    rating:4.9,reviews:523,isOpen:true,
+    img:'https://images.unsplash.com/photo-1601303516534-bf4859b73503?w=500&q=75',
+    menu:[{n:'Ghewar',p:'₹350/kg'},{n:'Gulab Jamun',p:'₹200/kg'},{n:'Mawa Kachori',p:'₹30/pc'},{n:'Imarti',p:'₹180/kg'}],
+    hours:'8am–9pm',since:'1985'
+  },
+  {
+    id:8,featured:false,name:'South Spice',cat:'Veg',area:'Chennai, TN',
+    desc:'Authentic South Indian breakfast and meals — crispy dosas, fluffy idlis, and aromatic sambar.',
+    phone:'9800089012',wa:'9800089012',web:'https://southspice.in',
+    rating:4.5,reviews:389,isOpen:false,
+    img:'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&q=75',
+    menu:[{n:'Masala Dosa',p:'₹80'},{n:'Idli (2 pcs)',p:'₹50'},{n:'Vada (2 pcs)',p:'₹60'},{n:'Meals',p:'₹120'}],
+    hours:'7am–3pm',since:'2012'
+  },
+];
+
+let currentCat = 'All';
+let currentSearch = '';
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  window.scrollTo(0,0);
+  if(page==='home') renderAll();
+}
+
+function renderShopCard(shop) {
+  const imgContent = shop.img
+    ? `<img src="${shop.img}" alt="${shop.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="shop-card-img-placeholder" style="display:none">🍽️</div>`
+    : `<div class="shop-card-img-placeholder">🍽️</div>`;
+  return `<div class="shop-card" onclick="openDetail(${shop.id})">
+    <div class="shop-card-img">
+      ${imgContent}
+      ${shop.featured?'<div class="featured-badge">Featured</div>':''}
+      <div class="open-badge ${shop.isOpen?'open':'closed'}">${shop.isOpen?'Open Now':'Closed'}</div>
+    </div>
+    <div class="shop-card-body">
+      <div class="shop-card-top">
+        <div class="shop-name">${shop.name}</div>
+        <div class="shop-rating"><span class="star">★</span>${shop.rating}</div>
+      </div>
+      <div class="shop-meta">
+        <span class="shop-cat-tag">${shop.cat}</span>
+        <span class="shop-area">📍 ${shop.area}</span>
+      </div>
+      <p class="shop-desc">${shop.desc.slice(0,80)}...</p>
+      <div class="shop-actions" onclick="event.stopPropagation()">
+        <button class="action-btn btn-call" onclick="callShop('${shop.phone}')">📞 Call</button>
+        ${shop.wa?`<button class="action-btn btn-wa" onclick="waShop('${shop.wa}','${shop.name}')">💬 WhatsApp</button>`:''}
+        ${shop.web?`<button class="action-btn btn-web" onclick="webShop('${shop.web}')">🌐 Visit</button>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderAll() {
+  const featured = shops.filter(s=>s.featured);
+  document.getElementById('featured-grid').innerHTML = featured.map(renderShopCard).join('');
+  filterShops();
+}
+
+function filterShops() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  let filtered = shops.filter(s => {
+    const matchCat = currentCat==='All' || s.cat===currentCat;
+    const matchQ = !q || s.name.toLowerCase().includes(q) || s.cat.toLowerCase().includes(q) || s.area.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+  const grid = document.getElementById('shops-grid');
+  const empty = document.getElementById('empty-state');
+  const count = document.getElementById('shop-count');
+  if(filtered.length===0){
+    grid.innerHTML='';empty.style.display='block';count.textContent='';
+  } else {
+    grid.innerHTML=filtered.map(renderShopCard).join('');
+    empty.style.display='none';
+    count.textContent=filtered.length+' shops';
+  }
+}
+
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('listing-title').innerHTML = cat==='All' ? 'All <span>Shops</span>' : `${cat} <span>Shops</span>`;
+  filterShops();
+}
+
+function openDetail(id) {
+  const s = shops.find(x=>x.id===id);
+  if(!s) return;
+  document.getElementById('detail-name').textContent = s.name;
+  document.getElementById('detail-imgs').innerHTML = s.img
+    ? `<img src="${s.img}" alt="${s.name}"><div class="img-placeholder" style="background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:40px;">🍽️</div>`
+    : `<div class="img-placeholder" style="background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:52px;grid-column:1/-1">🍽️</div>`;
+  document.getElementById('detail-rating-box').innerHTML = `<div class="detail-rating-num">${s.rating}</div><div class="detail-rating-stars">${'★'.repeat(Math.floor(s.rating))}${'☆'.repeat(5-Math.floor(s.rating))}</div><div class="detail-rating-count">${s.reviews} reviews</div>`;
+  document.getElementById('detail-tags').innerHTML = `<span class="detail-tag">${s.cat}</span><span class="detail-tag detail-tag-area">📍 ${s.area}</span><span class="detail-tag ${s.isOpen?'detail-tag-open':'detail-tag-closed'}">${s.isOpen?'Open Now':'Closed'}</span>${s.featured?'<span class="detail-tag" style="background:#FEF9C3;color:#854D0E;">⭐ Featured</span>':''}`;
+  document.getElementById('detail-desc').textContent = s.desc;
+  document.getElementById('detail-menu').innerHTML = s.menu.map(m=>`<div class="menu-item"><span class="menu-item-name">${m.n}</span><span class="menu-item-price">${m.p}</span></div>`).join('');
+  document.getElementById('detail-actions').innerHTML = `
+    <button class="detail-action-btn d-btn-call" onclick="callShop('${s.phone}')">📞 Call Now</button>
+    ${s.wa?`<button class="detail-action-btn d-btn-wa" onclick="waShop('${s.wa}','${s.name}')">💬 WhatsApp</button>`:''}
+    ${s.web?`<button class="detail-action-btn d-btn-web" onclick="webShop('${s.web}')">🌐 Website</button>`:''}
+  `;
+  document.getElementById('detail-info').innerHTML = `
+    <div class="info-row"><div class="info-icon">📍</div><div><div class="info-label">Location</div><div class="info-val">${s.area}</div></div></div>
+    <div class="info-row"><div class="info-icon">⏰</div><div><div class="info-label">Hours</div><div class="info-val">${s.hours}</div></div></div>
+    <div class="info-row"><div class="info-icon">📅</div><div><div class="info-label">Since</div><div class="info-val">${s.since}</div></div></div>
+    <div class="info-row"><div class="info-icon">📞</div><div><div class="info-label">Phone</div><div class="info-val">+91 ${s.phone}</div></div></div>
+  `;
+  showPage('detail');
+}
+
+function callShop(phone){ window.location.href='tel:+91'+phone; }
+function waShop(wa,name){ window.open(`https://wa.me/91${wa}?text=${encodeURIComponent('Hi, I found your shop on FoodSpot! I want to know more about '+name)}`, '_blank'); }
+function webShop(url){ window.open(url,'_blank'); }
+
+function setBN(id) {
+  document.querySelectorAll('.bottom-nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function submitShop() {
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const cat = document.getElementById('f-cat').value;
+  const area = document.getElementById('f-area').value.trim();
+  if(!name){alert('Shop name is required!');return;}
+  if(!phone){alert('Phone number is required!');return;}
+  if(!cat){alert('Please select a category!');return;}
+  if(!area){alert('Please enter your area!');return;}
+  showToast('✅ Shop submitted! Approval within 24 hours.');
+  document.getElementById('f-name').value='';
+  document.getElementById('f-phone').value='';
+  document.getElementById('f-cat').value='';
+  document.getElementById('f-area').value='';
+  document.getElementById('f-desc').value='';
+  document.getElementById('f-wa').value='';
+  document.getElementById('f-web').value='';
+  document.getElementById('img-preview').innerHTML='';
+}
+
+function previewImg(input) {
+  if(input.files && input.files[0]) {
+    const r = new FileReader();
+    r.onload = e => {
+      document.getElementById('img-preview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;margin-top:8px;">`;
+    };
+    r.readAsDataURL(input.files[0]);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function approveShop(id) {
+  const card = document.getElementById(id);
+  card.querySelector('.status-badge').className='status-badge status-approved';
+  card.querySelector('.status-badge').textContent='Approved';
+  card.querySelector('.pending-actions').innerHTML='<span style="font-size:12px;color:#16A34A;font-weight:700;">✓ Approved</span>';
+  showToast('✅ Shop approved successfully!');
+}
+
+function rejectShop(id) {
+  const card = document.getElementById(id);
+  card.querySelector('.status-badge').className='status-badge status-rejected';
+  card.querySelector('.status-badge').textContent='Rejected';
+  card.querySelector('.pending-actions').innerHTML='<span style="font-size:12px;color:#DC2626;font-weight:700;">✕ Rejected</span>';
+  showToast('❌ Shop rejected.');
+}
+
+renderAll();
+</script>
+</body>
+</html>
 
