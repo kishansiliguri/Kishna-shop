@@ -2,27 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>FoodSpot — Discover Local Eateries</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --primary: #FF5A1F;
-  --primary-dark: #D94500;
-  --primary-light: #FFF0EB;
-  --secondary: #1A1A2E;
-  --accent: #FFB800;
-  --surface: #FFFFFF;
-  --bg: #F8F6F3;
-  --card: #FFFFFF;
-  --text: #1A1A2E;
-  --text2: #6B7280;
-  --text3: #9CA3AF;
-  --border: #E5E7EB;
-  --radius: 16px;
-  --radius-sm: 10px;
-  --shadow: 0 4px 24px rgba(0,0,0,0.08);
-  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+:root{
+  --primary:#FF5A1F;--primary-dark:#D94500;--primary-light:#FFF0EB;
+  --secondary:#1A1A2E;--accent:#FFB800;
+  --bg:#F8F6F3;--card:#FFFFFF;--text:#1A1A2E;--text2:#6B7280;--text3:#9CA3AF;
+  --border:#E5E7EB;--radius:16px;--radius-sm:10px;
+  --shadow:0 2px 16px rgba(0,0,0,0.08);--shadow-lg:0 8px 40px rgba(0,0,0,0.14);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -30,365 +19,271 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 img{display:block;max-width:100%;}
 a{text-decoration:none;color:inherit;}
 button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
 
-/* PAGE SYSTEM */
-.page{display:none;}
-.page.active{display:block;}
+/* ---- PAGE SYSTEM ---- */
+.page{display:none!important;}
+.page.active{display:block!important;}
 
-/* NAV */
+/* ---- NAV ---- */
 .navbar{
-  position:sticky;top:0;z-index:200;
-  background:rgba(255,255,255,0.95);
-  backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:300;
+  background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);
-  padding:0 1.5rem;
-  height:60px;
-  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.25rem;height:58px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
 }
-.nav-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:18px;color:var(--text);}
-.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);}
+.nav-logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:18px;color:var(--text);white-space:nowrap;}
+.logo-dot{width:9px;height:9px;border-radius:50%;background:var(--primary);}
 .nav-logo span{color:var(--primary);}
-.nav-actions{display:flex;align-items:center;gap:10px;}
-.nav-btn{
-  padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;
-  border:none;transition:all 0.2s;
-}
-.nav-btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
-.nav-btn-ghost:hover{background:var(--bg);}
-.nav-btn-primary{background:var(--primary);color:#fff;}
-.nav-btn-primary:hover{background:var(--primary-dark);}
-.nav-btn-admin{background:var(--secondary);color:#fff;}
-.nav-btn-admin:hover{opacity:0.9;}
-.hamburger{display:none;flex-direction:column;gap:4px;background:none;border:none;padding:4px;}
-.hamburger span{width:20px;height:2px;background:var(--text);border-radius:2px;transition:all 0.2s;}
-
-/* ===================== HOME PAGE ===================== */
-
-/* HERO */
-.hero{
-  background:linear-gradient(135deg,#1A1A2E 0%,#2D1B69 50%,#1A1A2E 100%);
-  padding:3rem 1.5rem 4rem;
-  position:relative;overflow:hidden;
-}
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 80% 50%,rgba(255,90,31,0.25) 0%,transparent 60%),
-    radial-gradient(ellipse at 20% 80%,rgba(255,184,0,0.12) 0%,transparent 50%);
-}
-.hero-dots{
-  position:absolute;inset:0;
-  background-image:radial-gradient(rgba(255,255,255,0.06) 1px,transparent 1px);
-  background-size:28px 28px;
-}
-.hero-content{position:relative;z-index:2;max-width:700px;margin:0 auto;text-align:center;}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
-  color:rgba(255,255,255,0.85);font-size:12px;font-weight:500;
-  padding:5px 14px;border-radius:20px;margin-bottom:1.5rem;
-}
-.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
-.hero h1{
-  font-family:'Fraunces',serif;
-  font-size:clamp(32px,6vw,56px);color:#fff;line-height:1.1;margin-bottom:1rem;
-}
-.hero h1 em{color:var(--primary);font-style:italic;}
-.hero-sub{color:rgba(255,255,255,0.65);font-size:15px;line-height:1.7;margin-bottom:2rem;}
-.search-box{
-  background:#fff;border-radius:14px;padding:6px 6px 6px 18px;
-  display:flex;align-items:center;gap:10px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.2);
-  max-width:540px;margin:0 auto 1rem;
-}
-.search-box input{
-  flex:1;border:none;outline:none;font-size:14px;font-family:inherit;
-  color:var(--text);background:transparent;
-}
-.search-box input::placeholder{color:var(--text3);}
-.search-btn{
-  background:var(--primary);color:#fff;border:none;border-radius:10px;
-  padding:10px 20px;font-size:13px;font-weight:600;
-  white-space:nowrap;transition:background 0.2s;
-}
-.search-btn:hover{background:var(--primary-dark);}
-.hero-stats{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;}
-.hero-stat{text-align:center;}
-.hero-stat-num{font-size:20px;font-weight:800;color:#fff;}
-.hero-stat-lbl{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
-
-/* AD BANNER TOP */
-.ad-banner{
-  background:linear-gradient(90deg,#FFB800,#FF8C00);
-  padding:14px 1.5rem;
-  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
-}
-.ad-banner-text{font-size:13px;font-weight:600;color:#1A1A2E;}
-.ad-badge{background:#1A1A2E;color:#FFB800;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;}
-.ad-btn{background:#1A1A2E;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;}
-
-/* CATEGORIES */
-.section{padding:2rem 1.5rem;}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
-.section-title{font-size:18px;font-weight:700;color:var(--text);}
-.section-title span{color:var(--primary);}
-.see-all{font-size:13px;color:var(--primary);font-weight:600;background:none;border:none;}
-.cats-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
-.cats-row::-webkit-scrollbar{height:3px;}
-.cats-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
-.cat-chip{
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-user-pill{
   display:flex;align-items:center;gap:7px;
-  padding:10px 18px;border-radius:30px;
-  background:var(--card);border:1.5px solid var(--border);
-  font-size:13px;font-weight:600;color:var(--text2);
-  white-space:nowrap;cursor:pointer;transition:all 0.2s;flex-shrink:0;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:30px;padding:5px 12px 5px 5px;font-size:13px;font-weight:600;
 }
+.nav-avatar{width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.nav-btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;transition:all 0.2s;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--bg);}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-danger{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;}
+.btn-danger:hover{background:#DC2626;color:#fff;}
+
+/* ---- LOGIN PAGE ---- */
+#page-login{min-height:100vh;display:flex!important;align-items:center;justify-content:center;background:linear-gradient(135deg,#1A1A2E 0%,#2D1B69 60%,#1A1A2E 100%);position:relative;overflow:hidden;}
+.login-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.05) 1px,transparent 1px);background-size:28px 28px;}
+.login-glow{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(255,90,31,0.2) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);}
+.login-card{position:relative;z-index:2;background:#fff;border-radius:24px;padding:2.5rem 2rem;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,0.35);}
+.login-logo{text-align:center;margin-bottom:2rem;}
+.login-logo-icon{width:56px;height:56px;background:var(--primary);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px;}
+.login-logo-name{font-weight:800;font-size:22px;color:var(--text);}
+.login-logo-name span{color:var(--primary);}
+.login-logo-sub{font-size:13px;color:var(--text2);margin-top:3px;}
+.role-tabs{display:flex;background:var(--bg);border-radius:10px;padding:4px;gap:3px;margin-bottom:1.5rem;}
+.role-tab{flex:1;padding:8px 4px;border:none;border-radius:7px;font-size:12px;font-weight:700;background:transparent;color:var(--text2);transition:all 0.2s;text-align:center;}
+.role-tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 6px rgba(0,0,0,0.1);}
+.login-form-group{margin-bottom:1rem;}
+.login-label{font-size:12px;font-weight:700;color:var(--text2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.login-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color 0.2s;background:#fff;}
+.login-input:focus{border-color:var(--primary);}
+.login-submit{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;margin-top:0.5rem;transition:background 0.2s,transform 0.15s;}
+.login-submit:hover{background:var(--primary-dark);transform:translateY(-1px);}
+.login-hint{text-align:center;font-size:12px;color:var(--text3);margin-top:1rem;line-height:1.6;}
+.login-hint b{color:var(--text2);}
+.login-error{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:1rem;display:none;}
+
+/* ---- SLIDER ---- */
+.slider-wrap{position:relative;width:100%;height:480px;overflow:hidden;background:var(--secondary);}
+.slider-track{display:flex;height:100%;transition:transform 0.7s cubic-bezier(0.4,0,0.2,1);}
+.slide{min-width:100%;height:100%;position:relative;flex-shrink:0;}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 8s ease;}
+.slide-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(10,10,20,0.85) 0%,rgba(10,10,20,0.4) 60%,transparent 100%);}
+.slide-content{position:absolute;inset:0;display:flex;align-items:center;padding:0 4rem;}
+.slide-inner{max-width:520px;}
+.slide-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.9);font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;margin-bottom:1rem;letter-spacing:1px;text-transform:uppercase;}
+.slide-title{font-family:'Fraunces',serif;font-size:clamp(28px,4.5vw,52px);color:#fff;line-height:1.1;margin-bottom:0.75rem;}
+.slide-title em{color:var(--accent);font-style:italic;}
+.slide-desc{color:rgba(255,255,255,0.7);font-size:15px;line-height:1.6;margin-bottom:1.5rem;}
+.slide-btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;border-radius:10px;padding:12px 26px;font-size:14px;font-weight:700;transition:background 0.2s,transform 0.15s;}
+.slide-btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
+.slider-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:#fff;width:44px;height:44px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.slider-arrow:hover{background:rgba(255,255,255,0.25);}
+.slider-arrow.prev{left:1.25rem;}
+.slider-arrow.next{right:1.25rem;}
+.slider-dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10;}
+.slider-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.4);border:none;cursor:pointer;transition:all 0.3s;}
+.slider-dot.active{background:#fff;width:22px;border-radius:4px;}
+.slide-num{position:absolute;bottom:20px;right:1.5rem;color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;z-index:10;}
+
+/* ---- MARQUEE ---- */
+.marquee-bar{background:var(--primary);padding:11px 0;overflow:hidden;white-space:nowrap;}
+.marquee-inner{display:inline-flex;gap:3rem;animation:marquee 20s linear infinite;}
+.marquee-item{font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;}
+.marquee-sep{color:rgba(255,255,255,0.4);}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ---- SECTIONS ---- */
+.section{padding:2rem 1.25rem;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.section-title{font-size:19px;font-weight:800;color:var(--text);}
+.section-title em{color:var(--primary);font-style:normal;}
+.see-all-btn{font-size:13px;color:var(--primary);font-weight:700;background:none;border:none;display:flex;align-items:center;gap:4px;}
+
+/* ---- CATEGORY CHIPS ---- */
+.cats-scroll{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
+.cats-scroll::-webkit-scrollbar{height:0;}
+.cat-chip{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:30px;background:var(--card);border:1.5px solid var(--border);font-size:13px;font-weight:600;color:var(--text2);white-space:nowrap;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
 .cat-chip:hover,.cat-chip.active{background:var(--primary);border-color:var(--primary);color:#fff;}
-.cat-chip-icon{font-size:16px;}
+.cat-chip-icon{font-size:15px;}
 
-/* SHOP CARDS */
-.shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;}
-.shop-card{
-  background:var(--card);border-radius:var(--radius);
-  overflow:hidden;box-shadow:var(--shadow);
-  transition:transform 0.25s,box-shadow 0.25s;cursor:pointer;
-  border:1px solid transparent;
-}
-.shop-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary-light);}
-.shop-card-img{position:relative;height:180px;overflow:hidden;}
-.shop-card-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
-.shop-card:hover .shop-card-img img{transform:scale(1.05);}
-.shop-card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,#f3e8d8,#e8d5c0);}
-.featured-badge{
-  position:absolute;top:10px;left:10px;
-  background:var(--accent);color:#1A1A2E;
-  font-size:10px;font-weight:800;padding:4px 10px;border-radius:6px;
-  letter-spacing:0.5px;text-transform:uppercase;
-  display:flex;align-items:center;gap:4px;
-}
-.featured-badge::before{content:'★';}
-.open-badge{
-  position:absolute;top:10px;right:10px;
-  font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;
-}
-.open-badge.open{background:rgba(34,197,94,0.9);color:#fff;}
-.open-badge.closed{background:rgba(239,68,68,0.9);color:#fff;}
-.shop-card-body{padding:1rem 1.1rem 1.1rem;}
-.shop-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;}
-.shop-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;}
-.shop-rating{display:flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--text);}
-.shop-rating .star{color:var(--accent);}
-.shop-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
-.shop-cat-tag{
-  font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
-  background:var(--primary-light);color:var(--primary);
-}
-.shop-area{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:3px;}
-.shop-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px;}
-.shop-actions{display:flex;gap:7px;}
-.action-btn{
-  flex:1;padding:9px 4px;border-radius:8px;font-size:12px;font-weight:600;
-  border:none;display:flex;align-items:center;justify-content:center;gap:5px;
-  transition:all 0.2s;
-}
-.btn-call{background:#EEF2FF;color:#4F46E5;}
-.btn-call:hover{background:#4F46E5;color:#fff;}
-.btn-wa{background:#F0FDF4;color:#16A34A;}
-.btn-wa:hover{background:#16A34A;color:#fff;}
-.btn-web{background:var(--bg);color:var(--text2);}
-.btn-web:hover{background:var(--text2);color:#fff;}
+/* ---- SHOP CARDS ---- */
+.shops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1.25rem;}
+.shop-card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform 0.25s,box-shadow 0.25s;cursor:pointer;border:1.5px solid transparent;}
+.shop-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:rgba(255,90,31,0.2);}
+.card-img-wrap{position:relative;height:190px;overflow:hidden;background:linear-gradient(135deg,#f3e8d8,#e8d5c0);}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s;}
+.shop-card:hover .card-img-wrap img{transform:scale(1.07);}
+.card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;}
+.feat-badge{position:absolute;top:10px;left:10px;background:var(--accent);color:#1A1A2E;font-size:10px;font-weight:800;padding:4px 10px;border-radius:6px;letter-spacing:0.5px;display:flex;align-items:center;gap:3px;}
+.open-pill{position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.open-pill.open{background:rgba(22,163,74,0.9);color:#fff;}
+.open-pill.closed{background:rgba(220,38,38,0.85);color:#fff;}
+.card-body{padding:1rem 1.1rem 1.1rem;}
+.card-row1{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px;}
+.card-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;}
+.card-rating{display:flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:var(--text);background:var(--bg);padding:3px 8px;border-radius:20px;}
+.card-rating .star{color:var(--accent);}
+.card-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px;}
+.card-cat{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--primary-light);color:var(--primary);}
+.card-area{font-size:12px;color:var(--text2);}
+.card-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-actions{display:flex;gap:7px;}
+.act-btn{flex:1;padding:9px 4px;border-radius:8px;font-size:12px;font-weight:600;border:none;display:flex;align-items:center;justify-content:center;gap:4px;transition:all 0.2s;white-space:nowrap;}
+.act-call{background:#EEF2FF;color:#4F46E5;}.act-call:hover{background:#4F46E5;color:#fff;}
+.act-wa{background:#F0FDF4;color:#16A34A;}.act-wa:hover{background:#16A34A;color:#fff;}
+.act-web{background:var(--bg);color:var(--text2);}.act-web:hover{background:var(--secondary);color:#fff;}
 
-/* FEATURED SECTION */
-.featured-section{background:linear-gradient(135deg,#1A1A2E,#2D1B69);padding:2.5rem 1.5rem;}
+/* ---- FEATURED STRIP ---- */
+.featured-section{background:linear-gradient(135deg,#12122A,#1E1B4B);padding:2rem 1.25rem;}
 .featured-section .section-title{color:#fff;}
-.featured-section .see-all{color:var(--accent);}
 
-/* AD SLOT */
-.ad-slot{
-  background:#fff;border:2px dashed var(--border);border-radius:var(--radius);
-  padding:2rem;text-align:center;color:var(--text3);margin:1.5rem;
-}
-.ad-slot-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
-.ad-slot-size{font-size:12px;color:var(--text3);}
-.ad-slot-adsense{min-height:90px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-top:10px;}
+/* ---- AD SLOTS ---- */
+.ad-slot{margin:0 1.25rem 1.5rem;background:#fff;border:2px dashed var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;}
+.ad-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.ad-inner{background:var(--bg);border-radius:8px;min-height:80px;display:flex;align-items:center;justify-content:center;margin-top:8px;font-size:12px;color:var(--text3);}
 
-/* ===================== SHOP DETAIL PAGE ===================== */
-.detail-hero{position:relative;}
-.detail-hero-imgs{display:grid;grid-template-columns:2fr 1fr;height:280px;gap:3px;}
-.detail-hero-imgs img{width:100%;height:100%;object-fit:cover;}
-.detail-hero-imgs .img-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:40px;}
-.detail-back{
-  position:absolute;top:12px;left:12px;z-index:5;
-  background:rgba(255,255,255,0.95);border:none;border-radius:8px;
-  padding:8px 14px;font-size:13px;font-weight:600;color:var(--text);
-  display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,0.15);
-}
-.detail-body{padding:1.5rem;}
-.detail-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:1rem;}
-.detail-name{font-family:'Fraunces',serif;font-size:26px;color:var(--text);line-height:1.2;}
-.detail-rating-big{text-align:center;}
-.detail-rating-num{font-size:28px;font-weight:800;color:var(--text);}
-.detail-rating-stars{color:var(--accent);font-size:14px;}
-.detail-rating-count{font-size:11px;color:var(--text3);}
-.detail-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;}
-.detail-tag{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;background:var(--primary-light);color:var(--primary);}
-.detail-tag-area{background:#F0F9FF;color:#0369A1;}
-.detail-tag-open{background:#F0FDF4;color:#16A34A;}
-.detail-tag-closed{background:#FEF2F2;color:#DC2626;}
-.detail-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
-.detail-section-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.5px;}
-.menu-list{margin-bottom:1.5rem;}
-.menu-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
-.menu-item:last-child{border-bottom:none;}
-.menu-item-name{font-size:14px;color:var(--text);}
-.menu-item-price{font-size:14px;font-weight:700;color:var(--primary);}
-.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.5rem;}
-.detail-action-btn{
-  flex:1;min-width:120px;padding:13px 16px;border-radius:10px;font-size:14px;font-weight:700;
-  border:none;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;
-}
-.d-btn-call{background:#EEF2FF;color:#4F46E5;}
-.d-btn-call:hover{background:#4F46E5;color:#fff;}
-.d-btn-wa{background:#F0FDF4;color:#16A34A;}
-.d-btn-wa:hover{background:#16A34A;color:#fff;}
-.d-btn-web{background:var(--bg);color:var(--text);}
-.d-btn-web:hover{background:var(--text);color:#fff;}
-.info-card{background:var(--bg);border-radius:var(--radius-sm);padding:1rem;}
-.info-row{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);}
-.info-row:last-child{border-bottom:none;}
-.info-icon{font-size:16px;width:24px;flex-shrink:0;}
-.info-label{font-size:11px;color:var(--text3);margin-bottom:2px;}
-.info-val{font-size:13px;font-weight:500;color:var(--text);}
+/* ---- SHOP DETAIL ---- */
+#page-detail{background:var(--bg);}
+.detail-header{background:#fff;padding:12px 1.25rem;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:100;}
+.back-btn{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:5px;}
+.detail-title-bar{font-size:15px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.detail-imgs{display:grid;grid-template-columns:1fr;height:240px;overflow:hidden;}
+.detail-imgs img{width:100%;height:100%;object-fit:cover;}
+.detail-imgs-placeholder{height:240px;background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:64px;}
+.detail-body{padding:1.25rem;}
+.detail-name{font-family:'Fraunces',serif;font-size:24px;color:var(--text);line-height:1.2;margin-bottom:10px;}
+.detail-pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
+.detail-pill{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;}
+.pill-cat{background:var(--primary-light);color:var(--primary);}
+.pill-area{background:#F0F9FF;color:#0369A1;}
+.pill-open{background:#F0FDF4;color:#16A34A;}
+.pill-closed{background:#FEF2F2;color:#DC2626;}
+.pill-feat{background:#FEF9C3;color:#854D0E;}
+.detail-rating-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:12px;background:var(--bg);border-radius:10px;}
+.detail-big-num{font-size:32px;font-weight:800;color:var(--text);}
+.detail-stars{color:var(--accent);font-size:18px;line-height:1;}
+.detail-reviews{font-size:12px;color:var(--text3);margin-top:2px;}
+.detail-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.detail-sec-title{font-size:12px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.menu-list{margin-bottom:1.25rem;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.menu-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);}
+.menu-row:last-child{border-bottom:none;}
+.menu-row-name{font-size:14px;color:var(--text);}
+.menu-row-price{font-size:14px;font-weight:700;color:var(--primary);}
+.detail-actions{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.d-act-btn{flex:1;min-width:110px;padding:13px;border-radius:10px;font-size:14px;font-weight:700;border:none;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.2s;}
+.d-call{background:#EEF2FF;color:#4F46E5;}.d-call:hover{background:#4F46E5;color:#fff;}
+.d-wa{background:#F0FDF4;color:#16A34A;}.d-wa:hover{background:#16A34A;color:#fff;}
+.d-web{background:var(--bg);color:var(--text);}.d-web:hover{background:var(--secondary);color:#fff;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.info-box{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;}
+.info-box-label{font-size:11px;color:var(--text3);margin-bottom:3px;}
+.info-box-val{font-size:13px;font-weight:600;color:var(--text);}
 
-/* ===================== ADD SHOP FORM ===================== */
-.form-page-hero{
-  background:linear-gradient(135deg,#1A1A2E,#2D1B69);
-  padding:2.5rem 1.5rem;text-align:center;
-}
-.form-page-hero h1{font-family:'Fraunces',serif;color:#fff;font-size:28px;margin-bottom:0.5rem;}
-.form-page-hero p{color:rgba(255,255,255,0.6);font-size:14px;}
-.form-wrap{max-width:600px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+/* ---- ADD SHOP FORM ---- */
+.form-hero{background:linear-gradient(135deg,#1A1A2E,#2D1B69);padding:2.5rem 1.25rem;text-align:center;}
+.form-hero h1{font-family:'Fraunces',serif;color:#fff;font-size:26px;margin-bottom:6px;}
+.form-hero p{color:rgba(255,255,255,0.6);font-size:14px;}
+.form-wrap{max-width:580px;margin:0 auto;padding:1.5rem 1.25rem 5rem;}
 .form-card{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.25rem;}
-.form-card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
-.form-card-title span{font-size:18px;}
+.form-card-title{font-size:14px;font-weight:800;color:var(--text);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
 .form-group{margin-bottom:1rem;}
-.form-label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.form-label{font-size:11px;font-weight:700;color:var(--text2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
 .form-label .req{color:var(--primary);}
-.form-input,.form-select,.form-textarea{
-  width:100%;padding:11px 14px;border-radius:8px;
-  border:1.5px solid var(--border);background:#fff;
-  font-size:14px;font-family:inherit;color:var(--text);
-  outline:none;transition:border-color 0.2s;
-}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color 0.2s;}
 .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);}
-.form-textarea{min-height:90px;resize:vertical;}
+.form-textarea{min-height:80px;resize:vertical;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.form-hint{font-size:11px;color:var(--text3);margin-top:4px;}
-.upload-area{
-  border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;
-  cursor:pointer;transition:border-color 0.2s;
-}
-.upload-area:hover{border-color:var(--primary);}
-.upload-icon{font-size:32px;margin-bottom:8px;}
-.upload-text{font-size:13px;font-weight:600;color:var(--text2);}
-.upload-hint{font-size:11px;color:var(--text3);margin-top:3px;}
-.upload-input{display:none;}
-.submit-btn{
-  width:100%;padding:15px;background:var(--primary);color:#fff;
-  border:none;border-radius:10px;font-size:15px;font-weight:700;
-  font-family:inherit;transition:background 0.2s,transform 0.15s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:border-color 0.2s;}
+.upload-zone:hover{border-color:var(--primary);background:var(--primary-light);}
+.upload-zone input{display:none;}
+.submit-btn{width:100%;padding:15px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:800;transition:background 0.2s,transform 0.15s;}
 .submit-btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
-.terms-note{font-size:11px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.5;}
-.success-toast{
-  display:none;position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
-  background:#1A1A2E;color:#fff;padding:14px 24px;border-radius:12px;
-  font-size:14px;font-weight:600;z-index:999;
-  box-shadow:0 8px 32px rgba(0,0,0,0.2);white-space:nowrap;
-}
-.success-toast.show{display:block;animation:slideUp 0.3s ease;}
-@keyframes slideUp{from{opacity:0;transform:translate(-50%,20px);}to{opacity:1;transform:translate(-50%,0);}}
 
-/* ===================== ADMIN PAGE ===================== */
-.admin-hero{background:var(--secondary);padding:2rem 1.5rem;}
-.admin-hero h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;}
-.admin-hero p{font-size:13px;color:rgba(255,255,255,0.5);}
-.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:1.5rem;}
-.admin-stat-card{background:#fff;border-radius:var(--radius-sm);padding:1rem;text-align:center;box-shadow:var(--shadow);}
-.admin-stat-num{font-size:24px;font-weight:800;color:var(--text);}
-.admin-stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;}
-.admin-stat-card.highlight .admin-stat-num{color:var(--primary);}
-.admin-section{padding:0 1.5rem 2rem;}
-.admin-section-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.5px;}
-.pending-list{display:flex;flex-direction:column;gap:10px;}
-.pending-card{background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
-.pending-img{width:54px;height:54px;border-radius:8px;object-fit:cover;background:#f3e8d8;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.pending-info{flex:1;}
-.pending-name{font-size:14px;font-weight:700;color:var(--text);}
+/* ---- ADMIN PANEL ---- */
+.admin-header{background:var(--secondary);padding:1.5rem 1.25rem;}
+.admin-header h1{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;}
+.admin-header p{font-size:13px;color:rgba(255,255,255,0.5);}
+.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:1.25rem;}
+.stat-box{background:#fff;border-radius:12px;padding:1rem;text-align:center;box-shadow:var(--shadow);}
+.stat-box-num{font-size:24px;font-weight:800;color:var(--text);}
+.stat-box.hl .stat-box-num{color:var(--primary);}
+.stat-box-lbl{font-size:11px;color:var(--text3);margin-top:2px;}
+.admin-section{padding:0 1.25rem 1.5rem;}
+.admin-sec-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text);margin-bottom:10px;}
+.pending-card{background:#fff;border-radius:12px;padding:1rem 1.1rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.pending-avi{width:52px;height:52px;border-radius:10px;object-fit:cover;background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;}
+.pending-avi img{width:100%;height:100%;object-fit:cover;}
+.pending-info{flex:1;min-width:0;}
+.pending-name{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .pending-meta{font-size:12px;color:var(--text2);margin-top:2px;}
-.pending-actions{display:flex;gap:6px;}
-.approve-btn{background:#F0FDF4;color:#16A34A;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;}
-.approve-btn:hover{background:#16A34A;color:#fff;}
-.reject-btn{background:#FEF2F2;color:#DC2626;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;}
-.reject-btn:hover{background:#DC2626;color:#fff;}
-.status-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-.status-pending{background:#FEF9C3;color:#854D0E;}
-.status-approved{background:#F0FDF4;color:#16A34A;}
-.status-rejected{background:#FEF2F2;color:#DC2626;}
-.featured-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:1.5rem;}
-.featured-slot{background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);text-align:center;}
-.featured-slot-num{font-size:11px;font-weight:700;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
-.featured-slot.occupied{border:2px solid var(--accent);}
-.featured-slot.empty{border:2px dashed var(--border);}
-.featured-slot-name{font-size:13px;font-weight:700;color:var(--text);}
-.featured-slot-price{font-size:11px;color:var(--text2);margin-top:2px;}
-.featured-slot-icon{font-size:28px;margin-bottom:8px;}
+.pending-btns{display:flex;gap:6px;flex-shrink:0;}
+.p-approve{background:#F0FDF4;color:#16A34A;border:none;border-radius:7px;padding:7px 13px;font-size:12px;font-weight:700;}
+.p-approve:hover{background:#16A34A;color:#fff;}
+.p-reject{background:#FEF2F2;color:#DC2626;border:none;border-radius:7px;padding:7px 13px;font-size:12px;font-weight:700;}
+.p-reject:hover{background:#DC2626;color:#fff;}
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-pending{background:#FEF9C3;color:#854D0E;}
+.badge-approved{background:#F0FDF4;color:#16A34A;}
+.badge-rejected{background:#FEF2F2;color:#DC2626;}
+.feat-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.feat-slot{background:#fff;border-radius:12px;padding:1rem;text-align:center;box-shadow:var(--shadow);}
+.feat-slot.occ{border:2px solid var(--accent);}
+.feat-slot.empty{border:2px dashed var(--border);}
+.feat-slot-num{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.feat-slot-name{font-size:13px;font-weight:700;color:var(--text);}
+.feat-slot-price{font-size:11px;color:var(--text2);margin-top:2px;}
 
-/* BOTTOM NAV (MOBILE) */
-.bottom-nav{
-  display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
-  background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);
-  border-top:1px solid var(--border);
-  display:flex;padding:8px 0 env(safe-area-inset-bottom);
-}
-.bottom-nav-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  background:none;border:none;padding:6px 4px;
-  font-size:10px;font-weight:600;color:var(--text3);transition:color 0.2s;
-}
-.bottom-nav-item.active{color:var(--primary);}
-.bottom-nav-item .bn-icon{font-size:20px;}
+/* ---- SHOP OWNER DASHBOARD ---- */
+.owner-header{background:linear-gradient(135deg,#1A1A2E,#0F4C81);padding:1.5rem 1.25rem;}
+.owner-header h1{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;}
+.owner-header p{font-size:13px;color:rgba(255,255,255,0.55);}
+.owner-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:1.25rem;}
 
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:center;justify-content:center;padding:1rem;}
-.modal-overlay.open{display:flex;}
-.modal{background:#fff;border-radius:var(--radius);max-width:420px;width:100%;padding:1.5rem;max-height:90vh;overflow-y:auto;}
-.modal-title{font-size:18px;font-weight:700;margin-bottom:1rem;}
-.modal-close{float:right;background:none;border:none;font-size:20px;color:var(--text2);}
+/* ---- BOTTOM NAV ---- */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(255,255,255,0.97);backdrop-filter:blur(16px);border-top:1px solid var(--border);padding:6px 0 max(6px,env(safe-area-inset-bottom));}
+.bn-inner{display:flex;}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:6px 4px;font-size:10px;font-weight:700;color:var(--text3);transition:color 0.2s;}
+.bn-item.active{color:var(--primary);}
+.bn-icon{font-size:20px;line-height:1;}
 
-/* EMPTY STATE */
+/* ---- EMPTY / TOAST / MISC ---- */
 .empty-state{text-align:center;padding:4rem 2rem;color:var(--text3);}
 .empty-icon{font-size:48px;margin-bottom:1rem;}
 .empty-title{font-size:16px;font-weight:700;color:var(--text2);margin-bottom:6px;}
 .empty-sub{font-size:13px;}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:12px 22px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.25);white-space:nowrap;display:none;}
+.toast.show{display:block;animation:toastIn 0.3s ease;}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,16px);}to{opacity:1;transform:translate(-50%,0);}}
+.divider{height:1px;background:var(--border);margin:1.25rem 0;}
 
-/* SCROLL HINT */
-.scroll-shadow{position:relative;}
-.scroll-shadow::after{content:'';position:absolute;right:0;top:0;bottom:0;width:40px;background:linear-gradient(to right,transparent,var(--bg));pointer-events:none;}
-
-/* RESPONSIVE */
 @media(max-width:768px){
-  .nav-actions .nav-btn-ghost,.nav-actions .nav-btn-admin{display:none;}
-  .hamburger{display:flex;}
+  .slider-wrap{height:340px;}
+  .slide-content{padding:0 1.25rem;}
+  .slider-arrow.prev{left:0.5rem;}
+  .slider-arrow.next{right:0.5rem;}
   .shops-grid{grid-template-columns:1fr;}
-  .detail-hero-imgs{grid-template-columns:1fr;height:220px;}
-  .detail-hero-imgs>*:last-child{display:none;}
   .admin-stats{grid-template-columns:repeat(2,1fr);}
+  .owner-stats{grid-template-columns:repeat(3,1fr);}
   .form-row{grid-template-columns:1fr;}
-  .bottom-nav{display:flex;}
+  .bottom-nav{display:block;}
   body{padding-bottom:70px;}
-  .hero{padding:2.5rem 1rem 3rem;}
-  .section{padding:1.5rem 1rem;}
+  .nav-user-pill .nav-pill-name{display:none;}
+  .info-grid{grid-template-columns:1fr 1fr;}
+  .detail-actions{flex-wrap:wrap;}
+  .d-act-btn{min-width:calc(50% - 5px);}
 }
 @media(min-width:769px){
   .bottom-nav{display:none;}
@@ -397,60 +292,156 @@ button{font-family:inherit;cursor:pointer;}
 </head>
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="nav-logo">
-    <div class="nav-logo-dot"></div>
-    Food<span>Spot</span>
-  </div>
-  <div class="nav-actions">
-    <button class="nav-btn nav-btn-ghost" onclick="showPage('home')">Home</button>
-    <button class="nav-btn nav-btn-ghost" onclick="showPage('add')">+ List Your Shop</button>
-    <button class="nav-btn nav-btn-admin" onclick="showPage('admin')">Admin</button>
-    <button class="hamburger" onclick="showPage('home')">
-      <span></span><span></span><span></span>
-    </button>
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="main-nav" style="display:none!important;">
+  <div class="nav-logo"><div class="logo-dot"></div>Food<span>Spot</span></div>
+  <div class="nav-right">
+    <div class="nav-user-pill" id="nav-user-pill">
+      <div class="nav-avatar" id="nav-avatar">U</div>
+      <span class="nav-pill-name" id="nav-pill-name">User</span>
+    </div>
+    <button class="nav-btn btn-danger" onclick="logout()">Sign Out</button>
   </div>
 </nav>
 
-<!-- ===================== HOME PAGE ===================== -->
-<div id="page-home" class="page active">
+<!-- ===== LOGIN PAGE ===== -->
+<div id="page-login" class="page active">
+  <div class="login-dots"></div>
+  <div class="login-glow"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🍽️</div>
+      <div class="login-logo-name">Food<span>Spot</span></div>
+      <div class="login-logo-sub">Discover the best local food near you</div>
+    </div>
+    <div class="role-tabs">
+      <button class="role-tab active" onclick="setRole('customer',this)">👤 Customer</button>
+      <button class="role-tab" onclick="setRole('owner',this)">🏪 Shop Owner</button>
+      <button class="role-tab" onclick="setRole('admin',this)">⚙️ Admin</button>
+    </div>
+    <div id="login-error" class="login-error"></div>
+    <div class="login-form-group">
+      <label class="login-label">Username / Email</label>
+      <input class="login-input" id="l-user" type="text" placeholder="Enter your username" autocomplete="username">
+    </div>
+    <div class="login-form-group">
+      <label class="login-label">Password</label>
+      <input class="login-input" id="l-pass" type="password" placeholder="Enter your password" autocomplete="current-password">
+    </div>
+    <button class="login-submit" onclick="doLogin()">Sign In →</button>
+    <div class="login-hint" id="login-hint">
+      <b>Demo credentials:</b><br>
+      Customer: <b>customer / 1234</b> · Browse freely
+    </div>
+  </div>
+</div>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-dots"></div>
-    <div class="hero-content">
-      <div class="hero-badge"><span class="hero-badge-dot"></span> 500+ Shops Listed Across India</div>
-      <h1>Discover <em>Amazing</em> Local Food Near You</h1>
-      <p class="hero-sub">Find the best local eateries, dhabas, and restaurants in your city. Call them directly — no middleman.</p>
-      <div class="search-box">
-        <span style="font-size:16px;">🔍</span>
-        <input type="text" id="search-input" placeholder="Search shops, biryani, momos, chai..." oninput="filterShops()">
-        <button class="search-btn" onclick="filterShops()">Search</button>
+<!-- ===== HOME PAGE ===== -->
+<div id="page-home" class="page">
+
+  <!-- SLIDER -->
+  <div class="slider-wrap">
+    <div class="slider-track" id="slider-track">
+      <div class="slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=1400&q=80')"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-inner">
+            <div class="slide-tag">🔥 Trending Now</div>
+            <h2 class="slide-title">Discover <em>Amazing</em><br>Local Food</h2>
+            <p class="slide-desc">Find the best hidden gems, dhabas, and local restaurants near you. No middleman — just direct connections.</p>
+            <button class="slide-btn" onclick="scrollToMenu()">Explore Shops ↓</button>
+          </div>
+        </div>
       </div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hero-stat-num">500+</div><div class="hero-stat-lbl">Shops</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">50+</div><div class="hero-stat-lbl">Cities</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">Free</div><div class="hero-stat-lbl">To Use</div></div>
+      <div class="slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=1400&q=80')"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-inner">
+            <div class="slide-tag">🍛 Chef's Special</div>
+            <h2 class="slide-title">Legendary <em>Biryani</em><br>Near You</h2>
+            <p class="slide-desc">Slow-cooked dum biryani, saffron rice, tender meat — find the best biryani spots in your city.</p>
+            <button class="slide-btn" onclick="filterAndScroll('Biryani')">Find Biryani →</button>
+          </div>
+        </div>
       </div>
+      <div class="slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1400&q=80')"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-inner">
+            <div class="slide-tag">🍔 Fast Food</div>
+            <h2 class="slide-title">Juicy Burgers &<br><em>Loaded Fries</em></h2>
+            <p class="slide-desc">Craving something quick and delicious? Discover top fast food joints and street food stalls nearby.</p>
+            <button class="slide-btn" onclick="filterAndScroll('Fast Food')">See Fast Food →</button>
+          </div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1400&q=80')"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-inner">
+            <div class="slide-tag">☕ Cafes & More</div>
+            <h2 class="slide-title">Your Perfect<br><em>Cafe Corner</em></h2>
+            <p class="slide-desc">Specialty coffees, fresh pastries, cozy vibes. Find the cafe that feels like home.</p>
+            <button class="slide-btn" onclick="filterAndScroll('Cafe')">Explore Cafes →</button>
+          </div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1606788075761-e2f57a611e8b?w=1400&q=80')"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-inner">
+            <div class="slide-tag">🌮 Street Food</div>
+            <h2 class="slide-title">Authentic<br><em>Street Bites</em></h2>
+            <p class="slide-desc">Golgappe, chaat, momos, and more — the streets are full of flavour. Discover them all here.</p>
+            <button class="slide-btn" onclick="filterAndScroll('Street Food')">Street Food →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="slider-arrow prev" onclick="moveSlide(-1)">‹</button>
+    <button class="slider-arrow next" onclick="moveSlide(1)">›</button>
+    <div class="slider-dots" id="slider-dots"></div>
+    <div class="slide-num" id="slide-num">1 / 5</div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-bar">
+    <div class="marquee-inner" id="marquee-inner">
+      <span class="marquee-item">🍛 Best Biryani in Town</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🍔 Juicy Burgers</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">☕ Cozy Cafes</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🌮 Street Food Paradise</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🥗 Fresh Veg Options</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🍜 Chinese Delights</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🍬 Local Sweets & Mithai</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🍛 Best Biryani in Town</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🍔 Juicy Burgers</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">☕ Cozy Cafes</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🌮 Street Food Paradise</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🥗 Fresh Veg Options</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🍜 Chinese Delights</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">🍬 Local Sweets & Mithai</span><span class="marquee-sep">•</span>
     </div>
   </div>
 
-  <!-- AD BANNER -->
-  <div class="ad-banner">
-    <div>
-      <span class="ad-badge">AD</span>
-      <span class="ad-banner-text" style="margin-left:8px;">🎉 Promote your shop — Get Featured Badge + Top Listing</span>
+  <!-- SEARCH -->
+  <div class="section" style="padding-bottom:0;">
+    <div style="background:#fff;border-radius:14px;padding:6px 6px 6px 16px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);border:1.5px solid var(--border);">
+      <span style="font-size:18px;">🔍</span>
+      <input type="text" id="search-input" placeholder="Search shops, biryani, momos, chai..." style="flex:1;border:none;outline:none;font-size:14px;font-family:inherit;color:var(--text);background:transparent;" oninput="filterShops()">
+      <button style="background:var(--primary);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;" onclick="filterShops()">Search</button>
     </div>
-    <button class="ad-btn" onclick="showPage('add')">List Now →</button>
   </div>
 
   <!-- CATEGORIES -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">Browse by <span>Category</span></div>
-    </div>
-    <div class="cats-row" id="cats-row">
+  <div class="section" style="padding-bottom:0;">
+    <div class="section-header"><div class="section-title">Browse by <em>Category</em></div></div>
+    <div class="cats-scroll" id="cats-row">
       <div class="cat-chip active" onclick="filterCat('All',this)"><span class="cat-chip-icon">🍽️</span>All</div>
       <div class="cat-chip" onclick="filterCat('Biryani',this)"><span class="cat-chip-icon">🍛</span>Biryani</div>
       <div class="cat-chip" onclick="filterCat('Fast Food',this)"><span class="cat-chip-icon">🍔</span>Fast Food</div>
@@ -462,30 +453,23 @@ button{font-family:inherit;cursor:pointer;}
     </div>
   </div>
 
-  <!-- FEATURED SHOPS -->
-  <div class="featured-section">
-    <div class="section-header">
-      <div class="section-title">⭐ Featured <span style="color:var(--accent)">Shops</span></div>
-      <button class="see-all" onclick="filterCat('All',null)">See All</button>
-    </div>
+  <!-- FEATURED -->
+  <div class="featured-section" style="margin-top:1.5rem;">
+    <div class="section-header"><div class="section-title">⭐ Featured <span style="color:var(--accent)">Shops</span></div></div>
     <div class="shops-grid" id="featured-grid"></div>
   </div>
 
-  <!-- ADSENSE SLOT -->
+  <!-- AD SLOT -->
   <div class="ad-slot">
-    <div class="ad-slot-label">Advertisement</div>
-    <div class="ad-slot-size">Banner Ad — 728×90 (Leaderboard)</div>
-    <div class="ad-slot-adsense">
-      <!-- Place Google AdSense code here -->
-      <span style="font-size:12px;color:var(--text3);">Google AdSense · 728×90</span>
-    </div>
+    <div class="ad-label">Advertisement · 728×90</div>
+    <div class="ad-inner"><!-- Google AdSense code here --> Google AdSense Leaderboard</div>
   </div>
 
   <!-- ALL SHOPS -->
-  <div class="section">
+  <div class="section" id="shops-section">
     <div class="section-header">
-      <div class="section-title" id="listing-title">All <span>Shops</span></div>
-      <span id="shop-count" style="font-size:13px;color:var(--text3);"></span>
+      <div class="section-title" id="listing-title">All <em>Shops</em></div>
+      <span id="shop-count" style="font-size:13px;color:var(--text3);font-weight:600;"></span>
     </div>
     <div class="shops-grid" id="shops-grid"></div>
     <div id="empty-state" class="empty-state" style="display:none;">
@@ -495,428 +479,463 @@ button{font-family:inherit;cursor:pointer;}
     </div>
   </div>
 
-  <!-- BOTTOM AD SLOT -->
   <div class="ad-slot">
-    <div class="ad-slot-label">Advertisement</div>
-    <div class="ad-slot-size">Rectangle Ad — 300×250</div>
-    <div class="ad-slot-adsense" style="min-height:250px;max-width:300px;margin:10px auto 0;">
-      <!-- Place Google AdSense code here -->
-      <span style="font-size:12px;color:var(--text3);">Google AdSense · 300×250</span>
-    </div>
+    <div class="ad-label">Advertisement · 300×250</div>
+    <div class="ad-inner" style="min-height:200px;max-width:300px;margin:8px auto 0;">Google AdSense Rectangle</div>
   </div>
 
 </div>
 
-<!-- ===================== SHOP DETAIL PAGE ===================== -->
+<!-- ===== SHOP DETAIL PAGE ===== -->
 <div id="page-detail" class="page">
-  <div class="detail-hero">
-    <button class="detail-back" onclick="showPage('home')">← Back</button>
-    <div class="detail-hero-imgs" id="detail-imgs"></div>
+  <div class="detail-header">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="detail-title-bar" id="detail-title-bar">Shop Details</div>
   </div>
+  <div id="detail-imgs-wrap"></div>
   <div class="detail-body">
-    <div class="detail-top">
-      <div>
-        <div class="detail-name" id="detail-name"></div>
-      </div>
-      <div class="detail-rating-big" id="detail-rating-box"></div>
-    </div>
-    <div class="detail-tags" id="detail-tags"></div>
-    <p class="detail-desc" id="detail-desc"></p>
-    <div class="detail-section-title">Menu Highlights</div>
-    <div class="menu-list" id="detail-menu"></div>
-    <div class="detail-section-title">Contact</div>
-    <div class="detail-actions" id="detail-actions"></div>
-    <div class="detail-section-title">Info</div>
-    <div class="info-card" id="detail-info"></div>
+    <div class="detail-name" id="d-name"></div>
+    <div class="detail-pills" id="d-pills"></div>
+    <div class="detail-rating-row" id="d-rating"></div>
+    <p class="detail-desc" id="d-desc"></p>
+    <div class="detail-sec-title">Menu Highlights</div>
+    <div class="menu-list" id="d-menu"></div>
+    <div class="detail-sec-title">Contact</div>
+    <div class="detail-actions" id="d-actions"></div>
+    <div class="detail-sec-title">Info</div>
+    <div class="info-grid" id="d-info"></div>
   </div>
 </div>
 
-<!-- ===================== ADD SHOP PAGE ===================== -->
+<!-- ===== ADD SHOP PAGE ===== -->
 <div id="page-add" class="page">
-  <div class="form-page-hero">
+  <div class="form-hero">
     <h1>List Your Shop</h1>
     <p>Reach thousands of hungry customers — completely free!</p>
   </div>
   <div class="form-wrap">
     <div class="form-card">
-      <div class="form-card-title"><span>🏪</span> Basic Information</div>
-      <div class="form-group">
-        <label class="form-label">Shop Name <span class="req">*</span></label>
-        <input class="form-input" id="f-name" type="text" placeholder="e.g. Sharma Ji Ki Chai">
-      </div>
+      <div class="form-card-title">🏪 Basic Information</div>
+      <div class="form-group"><label class="form-label">Shop Name <span class="req">*</span></label><input class="form-input" id="f-name" type="text" placeholder="e.g. Sharma Ji Ki Chai"></div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Category <span class="req">*</span></label>
-          <select class="form-select" id="f-cat">
-            <option value="">Select category</option>
-            <option>Biryani</option><option>Fast Food</option><option>Chinese</option>
-            <option>Street Food</option><option>Veg</option><option>Sweets</option><option>Cafe</option><option>Other</option>
-          </select>
+        <div class="form-group"><label class="form-label">Category <span class="req">*</span></label>
+          <select class="form-select" id="f-cat"><option value="">Select</option><option>Biryani</option><option>Fast Food</option><option>Chinese</option><option>Street Food</option><option>Veg</option><option>Sweets</option><option>Cafe</option><option>Other</option></select>
         </div>
-        <div class="form-group">
-          <label class="form-label">City / Area <span class="req">*</span></label>
-          <input class="form-input" id="f-area" type="text" placeholder="e.g. Siliguri, WB">
-        </div>
+        <div class="form-group"><label class="form-label">City / Area <span class="req">*</span></label><input class="form-input" id="f-area" type="text" placeholder="e.g. Siliguri, WB"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Description</label>
-        <textarea class="form-textarea" id="f-desc" placeholder="What makes your shop special? Signature dishes, timings, etc."></textarea>
-      </div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="f-desc" placeholder="What makes your shop special? Signature dishes, timings, etc."></textarea></div>
+      <div class="form-group"><label class="form-label">Opening Hours</label><input class="form-input" id="f-hours" type="text" placeholder="e.g. 10am – 10pm"></div>
     </div>
     <div class="form-card">
-      <div class="form-card-title"><span>📞</span> Contact Details</div>
+      <div class="form-card-title">📞 Contact Details</div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Phone Number <span class="req">*</span></label>
-          <input class="form-input" id="f-phone" type="tel" placeholder="+91 XXXXX XXXXX">
-        </div>
-        <div class="form-group">
-          <label class="form-label">WhatsApp Number</label>
-          <input class="form-input" id="f-wa" type="tel" placeholder="+91 XXXXX XXXXX">
-        </div>
+        <div class="form-group"><label class="form-label">Phone <span class="req">*</span></label><input class="form-input" id="f-phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
+        <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" id="f-wa" type="tel" placeholder="+91 XXXXX XXXXX"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Website / Instagram Link</label>
-        <input class="form-input" id="f-web" type="url" placeholder="https://instagram.com/yourshop">
-        <div class="form-hint">Instagram, Facebook, or your own website URL</div>
-      </div>
+      <div class="form-group"><label class="form-label">Website / Instagram</label><input class="form-input" id="f-web" type="url" placeholder="https://instagram.com/yourshop"></div>
     </div>
     <div class="form-card">
-      <div class="form-card-title"><span>📸</span> Shop Photo</div>
-      <div class="upload-area" onclick="document.getElementById('f-img').click()">
-        <div class="upload-icon">📷</div>
-        <div class="upload-text">Click to upload photo</div>
-        <div class="upload-hint">JPG or PNG, max 5MB</div>
-        <input type="file" id="f-img" class="upload-input" accept="image/*" onchange="previewImg(this)">
+      <div class="form-card-title">📸 Shop Photo</div>
+      <div class="upload-zone" onclick="document.getElementById('f-img').click()">
+        <div style="font-size:32px;margin-bottom:8px;">📷</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text2);">Click to upload photo</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px;">JPG or PNG, max 5MB</div>
+        <input type="file" id="f-img" accept="image/*" onchange="previewImg(this)">
       </div>
-      <div id="img-preview" style="margin-top:10px;"></div>
+      <div id="img-preview"></div>
     </div>
-    <div class="form-card">
-      <div class="form-card-title"><span>⭐</span> Promotion (Optional)</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div style="background:var(--bg);border-radius:10px;padding:1rem;text-align:center;border:2px solid var(--border);">
-          <div style="font-size:20px;margin-bottom:4px;">🆓</div>
-          <div style="font-size:13px;font-weight:700;">Free Listing</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px;">Basic listing</div>
-        </div>
-        <div style="background:var(--primary-light);border-radius:10px;padding:1rem;text-align:center;border:2px solid var(--primary);">
-          <div style="font-size:20px;margin-bottom:4px;">⭐</div>
-          <div style="font-size:13px;font-weight:700;color:var(--primary);">Featured — ₹499/mo</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px;">Top of listings + badge</div>
-        </div>
-      </div>
-    </div>
-    <button class="submit-btn" onclick="submitShop()">
-      <span style="font-size:16px;">✅</span> Submit for Approval
-    </button>
-    <p class="terms-note">Your shop will appear after admin approval (within 24 hours). By submitting, you agree to our listing terms.</p>
+    <button class="submit-btn" onclick="submitShop()">✅ Submit for Approval</button>
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.6;">Your shop will appear after admin approval within 24 hours.</p>
   </div>
 </div>
 
-<!-- ===================== ADMIN PAGE ===================== -->
+<!-- ===== ADMIN DASHBOARD ===== -->
 <div id="page-admin" class="page">
-  <div class="admin-hero">
-    <h1>Admin Dashboard</h1>
-    <p>FoodSpot Control Panel — Manage listings & promotions</p>
+  <div class="admin-header">
+    <h1>⚙️ Admin Dashboard</h1>
+    <p>FoodSpot Control Panel — Manage all listings</p>
   </div>
   <div class="admin-stats">
-    <div class="admin-stat-card highlight"><div class="admin-stat-num">3</div><div class="admin-stat-lbl">Pending</div></div>
-    <div class="admin-stat-card"><div class="admin-stat-num">12</div><div class="admin-stat-lbl">Approved</div></div>
-    <div class="admin-stat-card"><div class="admin-stat-num">3</div><div class="admin-stat-lbl">Featured</div></div>
-    <div class="admin-stat-card"><div class="admin-stat-num">2</div><div class="admin-stat-lbl">Ad Slots</div></div>
+    <div class="stat-box hl"><div class="stat-box-num" id="stat-pending">0</div><div class="stat-box-lbl">Pending</div></div>
+    <div class="stat-box"><div class="stat-box-num" id="stat-approved">8</div><div class="stat-box-lbl">Approved</div></div>
+    <div class="stat-box"><div class="stat-box-num">3</div><div class="stat-box-lbl">Featured</div></div>
+    <div class="stat-box"><div class="stat-box-num">2</div><div class="stat-box-lbl">Ad Slots</div></div>
   </div>
 
   <div class="admin-section">
-    <div class="admin-section-title">Pending Approvals</div>
-    <div class="pending-list">
-      <div class="pending-card" id="p1">
-        <div class="pending-img">🍜</div>
-        <div class="pending-info">
-          <div class="pending-name">Dragon Wok</div>
-          <div class="pending-meta">Chinese · Guwahati · Submitted 2h ago</div>
-          <div style="margin-top:5px;"><span class="status-badge status-pending">Pending</span></div>
-        </div>
-        <div class="pending-actions">
-          <button class="approve-btn" onclick="approveShop('p1')">✓</button>
-          <button class="reject-btn" onclick="rejectShop('p1')">✕</button>
-        </div>
-      </div>
-      <div class="pending-card" id="p2">
-        <div class="pending-img">🥗</div>
-        <div class="pending-info">
-          <div class="pending-name">Green Bites</div>
-          <div class="pending-meta">Veg · Siliguri · Submitted 5h ago</div>
-          <div style="margin-top:5px;"><span class="status-badge status-pending">Pending</span></div>
-        </div>
-        <div class="pending-actions">
-          <button class="approve-btn" onclick="approveShop('p2')">✓</button>
-          <button class="reject-btn" onclick="rejectShop('p2')">✕</button>
-        </div>
-      </div>
-      <div class="pending-card" id="p3">
-        <div class="pending-img">🍔</div>
-        <div class="pending-info">
-          <div class="pending-name">Burger Point</div>
-          <div class="pending-meta">Fast Food · Kolkata · Submitted 8h ago</div>
-          <div style="margin-top:5px;"><span class="status-badge status-pending">Pending</span></div>
-        </div>
-        <div class="pending-actions">
-          <button class="approve-btn" onclick="approveShop('p3')">✓</button>
-          <button class="reject-btn" onclick="rejectShop('p3')">✕</button>
-        </div>
-      </div>
+    <div class="admin-sec-title">Pending Approvals</div>
+    <div id="pending-list">
+      <div class="empty-state" id="no-pending" style="padding:2rem;"><div class="empty-icon">✅</div><div class="empty-title">No pending submissions</div><div class="empty-sub">New shop submissions will appear here</div></div>
     </div>
   </div>
 
   <div class="admin-section">
-    <div class="admin-section-title">Featured Slots (Paid)</div>
-    <div class="featured-slots">
-      <div class="featured-slot occupied">
-        <div class="featured-slot-num">Slot 1</div>
-        <div class="featured-slot-icon">🍛</div>
-        <div class="featured-slot-name">Baba Biryani</div>
-        <div class="featured-slot-price">₹499/mo · Expires 15 Apr</div>
-      </div>
-      <div class="featured-slot occupied">
-        <div class="featured-slot-num">Slot 2</div>
-        <div class="featured-slot-icon">🍜</div>
-        <div class="featured-slot-name">Noodle House</div>
-        <div class="featured-slot-price">₹499/mo · Expires 20 Apr</div>
-      </div>
-      <div class="featured-slot occupied">
-        <div class="featured-slot-num">Slot 3</div>
-        <div class="featured-slot-icon">☕</div>
-        <div class="featured-slot-name">Brewed Bliss Cafe</div>
-        <div class="featured-slot-price">₹499/mo · Expires 28 Apr</div>
-      </div>
-      <div class="featured-slot empty">
-        <div class="featured-slot-num">Slot 4</div>
-        <div class="featured-slot-icon" style="opacity:0.3;">+</div>
-        <div class="featured-slot-name" style="color:var(--text3);">Available</div>
-        <div class="featured-slot-price" style="color:var(--primary);">₹499/mo</div>
-      </div>
-      <div class="featured-slot empty">
-        <div class="featured-slot-num">Slot 5</div>
-        <div class="featured-slot-icon" style="opacity:0.3;">+</div>
-        <div class="featured-slot-name" style="color:var(--text3);">Available</div>
-        <div class="featured-slot-price" style="color:var(--primary);">₹499/mo</div>
-      </div>
+    <div class="admin-sec-title">Featured Slots (Paid)</div>
+    <div class="feat-slots">
+      <div class="feat-slot occ"><div class="feat-slot-num">Slot 1</div><div style="font-size:24px;margin-bottom:6px;">🍛</div><div class="feat-slot-name">Baba Biryani</div><div class="feat-slot-price">₹499/mo · Exp 15 Apr</div></div>
+      <div class="feat-slot occ"><div class="feat-slot-num">Slot 2</div><div style="font-size:24px;margin-bottom:6px;">🍜</div><div class="feat-slot-name">Noodle House</div><div class="feat-slot-price">₹499/mo · Exp 20 Apr</div></div>
+      <div class="feat-slot occ"><div class="feat-slot-num">Slot 3</div><div style="font-size:24px;margin-bottom:6px;">☕</div><div class="feat-slot-name">Brewed Bliss</div><div class="feat-slot-price">₹499/mo · Exp 28 Apr</div></div>
+      <div class="feat-slot empty"><div class="feat-slot-num">Slot 4</div><div style="font-size:24px;margin-bottom:6px;opacity:0.3;">+</div><div class="feat-slot-name" style="color:var(--text3);">Available</div><div class="feat-slot-price" style="color:var(--primary);">₹499/mo</div></div>
+      <div class="feat-slot empty"><div class="feat-slot-num">Slot 5</div><div style="font-size:24px;margin-bottom:6px;opacity:0.3;">+</div><div class="feat-slot-name" style="color:var(--text3);">Available</div><div class="feat-slot-price" style="color:var(--primary);">₹499/mo</div></div>
     </div>
   </div>
 
   <div class="admin-section">
-    <div class="admin-section-title">Banner Ad Slots</div>
+    <div class="admin-sec-title">Ad Banner Slots</div>
     <div style="display:flex;flex-direction:column;gap:10px;">
-      <div style="background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <div><div style="font-weight:700;font-size:14px;">Homepage Top Banner (728×90)</div><div style="font-size:12px;color:var(--text3);">High visibility · ₹999/mo</div></div>
-        <span class="status-badge status-approved">Occupied</span>
+      <div style="background:#fff;border-radius:12px;padding:1rem;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div><div style="font-weight:700;font-size:14px;">Homepage Top (728×90)</div><div style="font-size:12px;color:var(--text3);">High visibility · ₹999/mo</div></div>
+        <span class="badge badge-approved">Occupied</span>
       </div>
-      <div style="background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div style="background:#fff;border-radius:12px;padding:1rem;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <div><div style="font-weight:700;font-size:14px;">Homepage Bottom (300×250)</div><div style="font-size:12px;color:var(--text3);">Standard · ₹599/mo</div></div>
-        <span class="status-badge status-pending">Available</span>
+        <span class="badge badge-pending">Available</span>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ===== SHOP OWNER DASHBOARD ===== -->
+<div id="page-owner" class="page">
+  <div class="owner-header">
+    <h1>🏪 My Shop Dashboard</h1>
+    <p>Manage your listing and track visibility</p>
+  </div>
+  <div class="owner-stats">
+    <div class="stat-box"><div class="stat-box-num" id="owner-stat-shops">0</div><div class="stat-box-lbl">My Listings</div></div>
+    <div class="stat-box hl"><div class="stat-box-num" id="owner-stat-pending">0</div><div class="stat-box-lbl">Pending</div></div>
+    <div class="stat-box"><div class="stat-box-num" id="owner-stat-approved">0</div><div class="stat-box-lbl">Live</div></div>
+  </div>
+  <div class="section">
+    <div class="admin-sec-title">My Submissions</div>
+    <div id="owner-listings"></div>
+  </div>
+  <div class="section" style="padding-top:0;">
+    <button class="submit-btn" onclick="showPage('add')" style="max-width:300px;margin:0 auto;display:block;">+ Add New Shop</button>
   </div>
 </div>
 
 <!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <button class="bottom-nav-item active" id="bn-home" onclick="showPage('home');setBN('bn-home')">
-    <span class="bn-icon">🏠</span>Home
-  </button>
-  <button class="bottom-nav-item" id="bn-search" onclick="showPage('home');document.getElementById('search-input').focus();setBN('bn-search')">
-    <span class="bn-icon">🔍</span>Search
-  </button>
-  <button class="bottom-nav-item" id="bn-add" onclick="showPage('add');setBN('bn-add')">
-    <span class="bn-icon">➕</span>Add Shop
-  </button>
-  <button class="bottom-nav-item" id="bn-admin" onclick="showPage('admin');setBN('bn-admin')">
-    <span class="bn-icon">⚙️</span>Admin
-  </button>
+<div class="bottom-nav" id="bottom-nav">
+  <div class="bn-inner" id="bn-inner"></div>
 </div>
 
-<div class="success-toast" id="toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
+// ============================================================
+// DATA
+// ============================================================
+const credentials = {
+  admin:    {user:'admin',    pass:'admin123', role:'admin'},
+  owner:    {user:'owner',    pass:'owner123', role:'owner'},
+  customer: {user:'customer', pass:'1234',     role:'customer'},
+};
+const hints = {
+  customer:'Customer: <b>customer / 1234</b> · Browse freely',
+  owner:'Shop Owner: <b>owner / owner123</b> · Manage your shops',
+  admin:'Admin: <b>admin / admin123</b> · Full access',
+};
+
+let currentRole = 'customer';
+let currentUser = null;
+let prevPage = 'home';
+let currentCat = 'All';
+let slideIdx = 0;
+const totalSlides = 5;
+let slideTimer;
+
+// Submitted shops (live, from form)
+let submittedShops = [];
+let submissionIdCounter = 100;
+
 const shops = [
-  {
-    id:1,featured:true,name:'Baba Biryani House',cat:'Biryani',area:'Siliguri, WB',
-    desc:'Famous for authentic Kolkata-style biryani with tender mutton and aromatic rice. Family-run for 20+ years.',
-    phone:'9800012345',wa:'9800012345',web:'https://instagram.com',
-    rating:4.7,reviews:234,isOpen:true,
-    img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=75',
-    menu:[{n:'Mutton Biryani',p:'₹220'},{n:'Chicken Biryani',p:'₹180'},{n:'Veg Biryani',p:'₹130'},{n:'Egg Biryani',p:'₹150'}],
-    hours:'11am–11pm',since:'2004'
-  },
-  {
-    id:2,featured:true,name:'Noodle House',cat:'Chinese',area:'Kolkata, WB',
-    desc:'Best Chinese street food — momos, chow mein, hakka noodles. Loved by students and foodies alike.',
-    phone:'9800023456',wa:'9800023456',web:'',
-    rating:4.4,reviews:189,isOpen:true,
-    img:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&q=75',
-    menu:[{n:'Veg Momos (6 pcs)',p:'₹80'},{n:'Chicken Momos (6 pcs)',p:'₹110'},{n:'Hakka Noodles',p:'₹120'},{n:'Fried Rice',p:'₹110'}],
-    hours:'12pm–10pm',since:'2015'
-  },
-  {
-    id:3,featured:true,name:'Brewed Bliss Cafe',cat:'Cafe',area:'Guwahati, AS',
-    desc:'Cozy cafe with specialty coffees, sandwiches, and fresh pastries. Perfect for work and chill sessions.',
-    phone:'9800034567',wa:'9800034567',web:'https://instagram.com',
-    rating:4.8,reviews:312,isOpen:true,
-    img:'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&q=75',
-    menu:[{n:'Cold Coffee',p:'₹120'},{n:'Cappuccino',p:'₹90'},{n:'Club Sandwich',p:'₹150'},{n:'Brownie',p:'₹80'}],
-    hours:'8am–10pm',since:'2019'
-  },
-  {
-    id:4,featured:false,name:'Sharma Chaat Corner',cat:'Street Food',area:'Varanasi, UP',
-    desc:'Authentic Banarasi chaat — golgappe, papdi chaat, and aloo tikki straight from the heart of Kashi.',
-    phone:'9800045678',wa:'',web:'',
-    rating:4.5,reviews:156,isOpen:false,
-    img:'https://images.unsplash.com/photo-1606788075761-e2f57a611e8b?w=500&q=75',
-    menu:[{n:'Golgappa (6 pcs)',p:'₹30'},{n:'Papdi Chaat',p:'₹60'},{n:'Aloo Tikki',p:'₹40'},{n:'Dahi Bhalla',p:'₹55'}],
-    hours:'4pm–11pm',since:'2010'
-  },
-  {
-    id:5,featured:false,name:'Punjabi Dhaba',cat:'Veg',area:'Amritsar, PB',
-    desc:'Ghee-laden parathas, rich dal makhani, and creamy paneer — pure Punjabi comfort food.',
-    phone:'9800056789',wa:'9800056789',web:'https://instagram.com',
-    rating:4.6,reviews:278,isOpen:true,
-    img:'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&q=75',
-    menu:[{n:'Dal Makhani',p:'₹140'},{n:'Paneer Butter Masala',p:'₹180'},{n:'Butter Naan',p:'₹40'},{n:'Aloo Paratha',p:'₹70'}],
-    hours:'7am–10pm',since:'2008'
-  },
-  {
-    id:6,featured:false,name:'Burger Bros',cat:'Fast Food',area:'Bangalore, KA',
-    desc:'Juicy smashed burgers, loaded fries, and milkshakes. Crafted fresh every single order.',
-    phone:'9800067890',wa:'9800067890',web:'https://burgerbros.in',
-    rating:4.3,reviews:445,isOpen:true,
-    img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=75',
-    menu:[{n:'Classic Smash Burger',p:'₹199'},{n:'Chicken Crunch Burger',p:'₹229'},{n:'Loaded Fries',p:'₹129'},{n:'Chocolate Shake',p:'₹149'}],
-    hours:'11am–12am',since:'2021'
-  },
-  {
-    id:7,featured:false,name:'Mithai Palace',cat:'Sweets',area:'Jaipur, RJ',
-    desc:'Traditional Rajasthani sweets — ghewar, mawa kachori, and over 50 varieties of mithai made fresh daily.',
-    phone:'9800078901',wa:'',web:'',
-    rating:4.9,reviews:523,isOpen:true,
-    img:'https://images.unsplash.com/photo-1601303516534-bf4859b73503?w=500&q=75',
-    menu:[{n:'Ghewar',p:'₹350/kg'},{n:'Gulab Jamun',p:'₹200/kg'},{n:'Mawa Kachori',p:'₹30/pc'},{n:'Imarti',p:'₹180/kg'}],
-    hours:'8am–9pm',since:'1985'
-  },
-  {
-    id:8,featured:false,name:'South Spice',cat:'Veg',area:'Chennai, TN',
-    desc:'Authentic South Indian breakfast and meals — crispy dosas, fluffy idlis, and aromatic sambar.',
-    phone:'9800089012',wa:'9800089012',web:'https://southspice.in',
-    rating:4.5,reviews:389,isOpen:false,
-    img:'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&q=75',
-    menu:[{n:'Masala Dosa',p:'₹80'},{n:'Idli (2 pcs)',p:'₹50'},{n:'Vada (2 pcs)',p:'₹60'},{n:'Meals',p:'₹120'}],
-    hours:'7am–3pm',since:'2012'
-  },
+  {id:1,featured:true,name:'Baba Biryani House',cat:'Biryani',area:'Siliguri, WB',desc:'Famous for authentic Kolkata-style biryani with tender mutton and aromatic rice. Family-run for 20+ years.',phone:'9800012345',wa:'9800012345',web:'https://instagram.com',rating:4.7,reviews:234,isOpen:true,img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=75',menu:[{n:'Mutton Biryani',p:'₹220'},{n:'Chicken Biryani',p:'₹180'},{n:'Veg Biryani',p:'₹130'},{n:'Egg Biryani',p:'₹150'}],hours:'11am–11pm',since:'2004'},
+  {id:2,featured:true,name:'Noodle House',cat:'Chinese',area:'Kolkata, WB',desc:'Best Chinese street food — momos, chow mein, hakka noodles. Loved by students and foodies alike.',phone:'9800023456',wa:'9800023456',web:'',rating:4.4,reviews:189,isOpen:true,img:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&q=75',menu:[{n:'Veg Momos (6pcs)',p:'₹80'},{n:'Chicken Momos (6pcs)',p:'₹110'},{n:'Hakka Noodles',p:'₹120'},{n:'Fried Rice',p:'₹110'}],hours:'12pm–10pm',since:'2015'},
+  {id:3,featured:true,name:'Brewed Bliss Cafe',cat:'Cafe',area:'Guwahati, AS',desc:'Cozy cafe with specialty coffees, sandwiches, and fresh pastries. Perfect for work and chill sessions.',phone:'9800034567',wa:'9800034567',web:'https://instagram.com',rating:4.8,reviews:312,isOpen:true,img:'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&q=75',menu:[{n:'Cold Coffee',p:'₹120'},{n:'Cappuccino',p:'₹90'},{n:'Club Sandwich',p:'₹150'},{n:'Brownie',p:'₹80'}],hours:'8am–10pm',since:'2019'},
+  {id:4,featured:false,name:'Sharma Chaat Corner',cat:'Street Food',area:'Varanasi, UP',desc:'Authentic Banarasi chaat — golgappe, papdi chaat, and aloo tikki straight from the heart of Kashi.',phone:'9800045678',wa:'',web:'',rating:4.5,reviews:156,isOpen:false,img:'https://images.unsplash.com/photo-1606788075761-e2f57a611e8b?w=500&q=75',menu:[{n:'Golgappa (6pcs)',p:'₹30'},{n:'Papdi Chaat',p:'₹60'},{n:'Aloo Tikki',p:'₹40'},{n:'Dahi Bhalla',p:'₹55'}],hours:'4pm–11pm',since:'2010'},
+  {id:5,featured:false,name:'Punjabi Dhaba',cat:'Veg',area:'Amritsar, PB',desc:'Ghee-laden parathas, rich dal makhani, and creamy paneer — pure Punjabi comfort food.',phone:'9800056789',wa:'9800056789',web:'https://instagram.com',rating:4.6,reviews:278,isOpen:true,img:'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&q=75',menu:[{n:'Dal Makhani',p:'₹140'},{n:'Paneer Butter Masala',p:'₹180'},{n:'Butter Naan',p:'₹40'},{n:'Aloo Paratha',p:'₹70'}],hours:'7am–10pm',since:'2008'},
+  {id:6,featured:false,name:'Burger Bros',cat:'Fast Food',area:'Bangalore, KA',desc:'Juicy smashed burgers, loaded fries, and milkshakes. Crafted fresh every single order.',phone:'9800067890',wa:'9800067890',web:'https://burgerbros.in',rating:4.3,reviews:445,isOpen:true,img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=75',menu:[{n:'Classic Smash Burger',p:'₹199'},{n:'Chicken Crunch Burger',p:'₹229'},{n:'Loaded Fries',p:'₹129'},{n:'Chocolate Shake',p:'₹149'}],hours:'11am–12am',since:'2021'},
+  {id:7,featured:false,name:'Mithai Palace',cat:'Sweets',area:'Jaipur, RJ',desc:'Traditional Rajasthani sweets — ghewar, mawa kachori, and 50+ varieties of mithai made fresh daily.',phone:'9800078901',wa:'',web:'',rating:4.9,reviews:523,isOpen:true,img:'https://images.unsplash.com/photo-1601303516534-bf4859b73503?w=500&q=75',menu:[{n:'Ghewar',p:'₹350/kg'},{n:'Gulab Jamun',p:'₹200/kg'},{n:'Mawa Kachori',p:'₹30/pc'},{n:'Imarti',p:'₹180/kg'}],hours:'8am–9pm',since:'1985'},
+  {id:8,featured:false,name:'South Spice',cat:'Veg',area:'Chennai, TN',desc:'Authentic South Indian breakfast and meals — crispy dosas, fluffy idlis, and aromatic sambar.',phone:'9800089012',wa:'9800089012',web:'https://southspice.in',rating:4.5,reviews:389,isOpen:false,img:'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&q=75',menu:[{n:'Masala Dosa',p:'₹80'},{n:'Idli (2pcs)',p:'₹50'},{n:'Vada (2pcs)',p:'₹60'},{n:'Meals',p:'₹120'}],hours:'7am–3pm',since:'2012'},
 ];
 
-let currentCat = 'All';
-let currentSearch = '';
-
-function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  window.scrollTo(0,0);
-  if(page==='home') renderAll();
+// ============================================================
+// LOGIN
+// ============================================================
+function setRole(role, btn) {
+  currentRole = role;
+  document.querySelectorAll('.role-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('login-hint').innerHTML = hints[role];
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
 }
 
-function renderShopCard(shop) {
+function doLogin() {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value.trim();
+  const err = document.getElementById('login-error');
+  const cred = credentials[currentRole];
+  if (u === cred.user && p === cred.pass) {
+    currentUser = {role: currentRole, name: u};
+    err.style.display = 'none';
+    document.getElementById('main-nav').style.removeProperty('display');
+    document.getElementById('main-nav').style.display = 'flex';
+    document.getElementById('nav-avatar').textContent = u.charAt(0).toUpperCase();
+    document.getElementById('nav-pill-name').textContent = u;
+    setupBottomNav();
+    if (currentRole === 'admin') showPage('admin');
+    else if (currentRole === 'owner') showPage('owner');
+    else showPage('home');
+  } else {
+    err.textContent = 'Invalid username or password. Please check your credentials.';
+    err.style.display = 'block';
+  }
+}
+
+document.getElementById('l-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function logout() {
+  currentUser = null;
+  document.getElementById('main-nav').style.display = 'none';
+  showPage('login');
+}
+
+// ============================================================
+// BOTTOM NAV SETUP
+// ============================================================
+const navConfigs = {
+  customer: [
+    {icon:'🏠',label:'Home',page:'home'},
+    {icon:'🔍',label:'Search',page:'home',action:()=>document.getElementById('search-input').focus()},
+    {icon:'⭐',label:'Featured',page:'home',action:()=>document.querySelector('.featured-section').scrollIntoView({behavior:'smooth'})},
+  ],
+  owner: [
+    {icon:'🏠',label:'Home',page:'home'},
+    {icon:'📊',label:'Dashboard',page:'owner'},
+    {icon:'➕',label:'Add Shop',page:'add'},
+  ],
+  admin: [
+    {icon:'🏠',label:'Home',page:'home'},
+    {icon:'⚙️',label:'Admin',page:'admin'},
+    {icon:'➕',label:'Add',page:'add'},
+  ],
+};
+
+function setupBottomNav() {
+  const config = navConfigs[currentRole] || navConfigs.customer;
+  const inner = document.getElementById('bn-inner');
+  inner.innerHTML = config.map((item,i) =>
+    `<button class="bn-item ${i===0?'active':''}" id="bn-${i}" onclick="bnClick(${i},'${item.page}')">
+      <span class="bn-icon">${item.icon}</span>${item.label}
+    </button>`
+  ).join('');
+}
+
+function bnClick(idx, page) {
+  document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('bn-'+idx);
+  if(btn) btn.classList.add('active');
+  showPage(page);
+  const config = navConfigs[currentRole] || navConfigs.customer;
+  if(config[idx] && config[idx].action) setTimeout(config[idx].action, 200);
+}
+
+// ============================================================
+// PAGE ROUTING
+// ============================================================
+function showPage(name) {
+  if(name !== 'detail') prevPage = name;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-'+name);
+  if(el) el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name === 'home') renderAll();
+  if(name === 'admin') refreshAdmin();
+  if(name === 'owner') refreshOwner();
+}
+
+function goBack() { showPage(prevPage || 'home'); }
+
+// ============================================================
+// SLIDER
+// ============================================================
+function renderDots() {
+  document.getElementById('slider-dots').innerHTML = Array.from({length:totalSlides},(_,i) =>
+    `<button class="slider-dot ${i===slideIdx?'active':''}" onclick="goSlide(${i})"></button>`
+  ).join('');
+  document.getElementById('slide-num').textContent = `${slideIdx+1} / ${totalSlides}`;
+}
+
+function goSlide(idx) {
+  slideIdx = idx;
+  document.getElementById('slider-track').style.transform = `translateX(-${slideIdx*100}%)`;
+  renderDots();
+  resetSlideTimer();
+}
+
+function moveSlide(dir) { goSlide((slideIdx+dir+totalSlides)%totalSlides); }
+
+function resetSlideTimer() {
+  clearInterval(slideTimer);
+  slideTimer = setInterval(() => moveSlide(1), 5000);
+}
+
+renderDots();
+resetSlideTimer();
+
+function scrollToMenu() { document.getElementById('shops-section').scrollIntoView({behavior:'smooth'}); }
+function filterAndScroll(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  filterShops();
+  setTimeout(() => document.getElementById('shops-section').scrollIntoView({behavior:'smooth'}), 100);
+}
+
+// ============================================================
+// SHOP RENDERING
+// ============================================================
+function shopCardHTML(shop) {
   const imgContent = shop.img
-    ? `<img src="${shop.img}" alt="${shop.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="shop-card-img-placeholder" style="display:none">🍽️</div>`
-    : `<div class="shop-card-img-placeholder">🍽️</div>`;
-  return `<div class="shop-card" onclick="openDetail(${shop.id})">
-    <div class="shop-card-img">
+    ? `<img src="${shop.img}" alt="${shop.name}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>🍽️</div>'">`
+    : `<div class="card-img-placeholder">🍽️</div>`;
+  return `<div class="shop-card" onclick="openDetail(${shop.id}, ${shop._custom||false})">
+    <div class="card-img-wrap">
       ${imgContent}
-      ${shop.featured?'<div class="featured-badge">Featured</div>':''}
-      <div class="open-badge ${shop.isOpen?'open':'closed'}">${shop.isOpen?'Open Now':'Closed'}</div>
+      ${shop.featured ? '<div class="feat-badge">⭐ Featured</div>' : ''}
+      <div class="open-pill ${shop.isOpen?'open':'closed'}">${shop.isOpen?'Open':'Closed'}</div>
     </div>
-    <div class="shop-card-body">
-      <div class="shop-card-top">
-        <div class="shop-name">${shop.name}</div>
-        <div class="shop-rating"><span class="star">★</span>${shop.rating}</div>
+    <div class="card-body">
+      <div class="card-row1">
+        <div class="card-name">${shop.name}</div>
+        <div class="card-rating"><span class="star">★</span>${shop.rating||'New'}</div>
       </div>
-      <div class="shop-meta">
-        <span class="shop-cat-tag">${shop.cat}</span>
-        <span class="shop-area">📍 ${shop.area}</span>
+      <div class="card-meta">
+        <span class="card-cat">${shop.cat}</span>
+        <span class="card-area">📍 ${shop.area}</span>
       </div>
-      <p class="shop-desc">${shop.desc.slice(0,80)}...</p>
-      <div class="shop-actions" onclick="event.stopPropagation()">
-        <button class="action-btn btn-call" onclick="callShop('${shop.phone}')">📞 Call</button>
-        ${shop.wa?`<button class="action-btn btn-wa" onclick="waShop('${shop.wa}','${shop.name}')">💬 WhatsApp</button>`:''}
-        ${shop.web?`<button class="action-btn btn-web" onclick="webShop('${shop.web}')">🌐 Visit</button>`:''}
+      <p class="card-desc">${shop.desc||'No description provided.'}</p>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="act-btn act-call" onclick="callShop('${shop.phone}')">📞 Call</button>
+        ${shop.wa ? `<button class="act-btn act-wa" onclick="waShop('${shop.wa}','${shop.name}')">💬 WhatsApp</button>` : ''}
+        ${shop.web ? `<button class="act-btn act-web" onclick="webShop('${shop.web}')">🌐 Visit</button>` : ''}
       </div>
     </div>
   </div>`;
 }
 
 function renderAll() {
-  const featured = shops.filter(s=>s.featured);
-  document.getElementById('featured-grid').innerHTML = featured.map(renderShopCard).join('');
+  const featured = shops.filter(s => s.featured);
+  document.getElementById('featured-grid').innerHTML = featured.map(shopCardHTML).join('');
   filterShops();
 }
 
 function filterShops() {
-  const q = document.getElementById('search-input').value.toLowerCase();
-  let filtered = shops.filter(s => {
+  const q = (document.getElementById('search-input')||{value:''}).value.toLowerCase();
+  const allShops = [...shops, ...submittedShops.filter(s=>s.status==='approved')];
+  let filtered = allShops.filter(s => {
     const matchCat = currentCat==='All' || s.cat===currentCat;
-    const matchQ = !q || s.name.toLowerCase().includes(q) || s.cat.toLowerCase().includes(q) || s.area.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q);
+    const matchQ = !q || s.name.toLowerCase().includes(q) || s.cat.toLowerCase().includes(q) || s.area.toLowerCase().includes(q) || (s.desc||'').toLowerCase().includes(q);
     return matchCat && matchQ;
   });
   const grid = document.getElementById('shops-grid');
   const empty = document.getElementById('empty-state');
-  const count = document.getElementById('shop-count');
-  if(filtered.length===0){
-    grid.innerHTML='';empty.style.display='block';count.textContent='';
-  } else {
-    grid.innerHTML=filtered.map(renderShopCard).join('');
-    empty.style.display='none';
-    count.textContent=filtered.length+' shops';
-  }
+  const countEl = document.getElementById('shop-count');
+  if(!grid) return;
+  if(filtered.length===0){grid.innerHTML='';empty.style.display='block';if(countEl)countEl.textContent='';}
+  else{grid.innerHTML=filtered.map(shopCardHTML).join('');empty.style.display='none';if(countEl)countEl.textContent=filtered.length+' shops';}
 }
 
 function filterCat(cat, el) {
   currentCat = cat;
-  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
   if(el) el.classList.add('active');
-  document.getElementById('listing-title').innerHTML = cat==='All' ? 'All <span>Shops</span>' : `${cat} <span>Shops</span>`;
+  const title = document.getElementById('listing-title');
+  if(title) title.innerHTML = cat==='All' ? 'All <em>Shops</em>' : `${cat} <em>Shops</em>`;
   filterShops();
 }
 
-function openDetail(id) {
-  const s = shops.find(x=>x.id===id);
-  if(!s) return;
-  document.getElementById('detail-name').textContent = s.name;
-  document.getElementById('detail-imgs').innerHTML = s.img
-    ? `<img src="${s.img}" alt="${s.name}"><div class="img-placeholder" style="background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:40px;">🍽️</div>`
-    : `<div class="img-placeholder" style="background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:52px;grid-column:1/-1">🍽️</div>`;
-  document.getElementById('detail-rating-box').innerHTML = `<div class="detail-rating-num">${s.rating}</div><div class="detail-rating-stars">${'★'.repeat(Math.floor(s.rating))}${'☆'.repeat(5-Math.floor(s.rating))}</div><div class="detail-rating-count">${s.reviews} reviews</div>`;
-  document.getElementById('detail-tags').innerHTML = `<span class="detail-tag">${s.cat}</span><span class="detail-tag detail-tag-area">📍 ${s.area}</span><span class="detail-tag ${s.isOpen?'detail-tag-open':'detail-tag-closed'}">${s.isOpen?'Open Now':'Closed'}</span>${s.featured?'<span class="detail-tag" style="background:#FEF9C3;color:#854D0E;">⭐ Featured</span>':''}`;
-  document.getElementById('detail-desc').textContent = s.desc;
-  document.getElementById('detail-menu').innerHTML = s.menu.map(m=>`<div class="menu-item"><span class="menu-item-name">${m.n}</span><span class="menu-item-price">${m.p}</span></div>`).join('');
-  document.getElementById('detail-actions').innerHTML = `
-    <button class="detail-action-btn d-btn-call" onclick="callShop('${s.phone}')">📞 Call Now</button>
-    ${s.wa?`<button class="detail-action-btn d-btn-wa" onclick="waShop('${s.wa}','${s.name}')">💬 WhatsApp</button>`:''}
-    ${s.web?`<button class="detail-action-btn d-btn-web" onclick="webShop('${s.web}')">🌐 Website</button>`:''}
-  `;
-  document.getElementById('detail-info').innerHTML = `
-    <div class="info-row"><div class="info-icon">📍</div><div><div class="info-label">Location</div><div class="info-val">${s.area}</div></div></div>
-    <div class="info-row"><div class="info-icon">⏰</div><div><div class="info-label">Hours</div><div class="info-val">${s.hours}</div></div></div>
-    <div class="info-row"><div class="info-icon">📅</div><div><div class="info-label">Since</div><div class="info-val">${s.since}</div></div></div>
-    <div class="info-row"><div class="info-icon">📞</div><div><div class="info-label">Phone</div><div class="info-val">+91 ${s.phone}</div></div></div>
-  `;
+// ============================================================
+// SHOP DETAIL
+// ============================================================
+function openDetail(id, isCustom) {
+  let shop;
+  if(isCustom) shop = submittedShops.find(s => s.id===id);
+  else shop = shops.find(s => s.id===id);
+  if(!shop) return;
+  prevPage = document.querySelector('.page.active')?.id?.replace('page-','') || 'home';
+
+  document.getElementById('detail-title-bar').textContent = shop.name;
+
+  // Images
+  const imgWrap = document.getElementById('detail-imgs-wrap');
+  if(shop.img) {
+    imgWrap.innerHTML = `<div class="detail-imgs"><img src="${shop.img}" alt="${shop.name}" onerror="this.parentElement.innerHTML='<div class=detail-imgs-placeholder>🍽️</div>'"></div>`;
+  } else {
+    imgWrap.innerHTML = `<div class="detail-imgs-placeholder">🍽️</div>`;
+  }
+
+  // Name
+  document.getElementById('d-name').textContent = shop.name;
+
+  // Pills
+  document.getElementById('d-pills').innerHTML =
+    `<span class="detail-pill pill-cat">${shop.cat}</span>
+     <span class="detail-pill pill-area">📍 ${shop.area}</span>
+     <span class="detail-pill ${shop.isOpen?'pill-open':'pill-closed'}">${shop.isOpen?'Open Now':'Closed'}</span>
+     ${shop.featured ? '<span class="detail-pill pill-feat">⭐ Featured</span>' : ''}`;
+
+  // Rating
+  const r = shop.rating || 0;
+  document.getElementById('d-rating').innerHTML = r
+    ? `<div class="detail-big-num">${r}</div><div><div class="detail-stars">${'★'.repeat(Math.floor(r))}${'☆'.repeat(5-Math.floor(r))}</div><div class="detail-reviews">${shop.reviews||0} reviews</div></div>`
+    : `<div style="font-size:14px;color:var(--text2);">New listing — no reviews yet</div>`;
+
+  // Desc
+  document.getElementById('d-desc').textContent = shop.desc || 'No description provided.';
+
+  // Menu
+  const menuItems = shop.menu && shop.menu.length
+    ? shop.menu.map(m => `<div class="menu-row"><span class="menu-row-name">${m.n}</span><span class="menu-row-price">${m.p}</span></div>`).join('')
+    : '<div class="menu-row"><span class="menu-row-name" style="color:var(--text3);">Menu not listed</span></div>';
+  document.getElementById('d-menu').innerHTML = menuItems;
+
+  // Actions
+  document.getElementById('d-actions').innerHTML =
+    `<button class="d-act-btn d-call" onclick="callShop('${shop.phone}')">📞 Call Now</button>
+     ${shop.wa ? `<button class="d-act-btn d-wa" onclick="waShop('${shop.wa}','${shop.name}')">💬 WhatsApp</button>` : ''}
+     ${shop.web ? `<button class="d-act-btn d-web" onclick="webShop('${shop.web}')">🌐 Website</button>` : ''}`;
+
+  // Info
+  document.getElementById('d-info').innerHTML =
+    `<div class="info-box"><div class="info-box-label">📍 Location</div><div class="info-box-val">${shop.area}</div></div>
+     <div class="info-box"><div class="info-box-label">⏰ Hours</div><div class="info-box-val">${shop.hours||'Not specified'}</div></div>
+     <div class="info-box"><div class="info-box-label">📅 Since</div><div class="info-box-val">${shop.since||'—'}</div></div>
+     <div class="info-box"><div class="info-box-label">📞 Phone</div><div class="info-box-val">+91 ${shop.phone||'—'}</div></div>`;
+
   showPage('detail');
 }
 
-function callShop(phone){ window.location.href='tel:+91'+phone; }
-function waShop(wa,name){ window.open(`https://wa.me/91${wa}?text=${encodeURIComponent('Hi, I found your shop on FoodSpot! I want to know more about '+name)}`, '_blank'); }
+function callShop(p){ if(p) window.location.href='tel:+91'+p; }
+function waShop(wa,name){ window.open(`https://wa.me/91${wa}?text=${encodeURIComponent('Hi! I found your shop on FoodSpot. I would like to know more about '+name)}`,'_blank'); }
 function webShop(url){ window.open(url,'_blank'); }
 
-function setBN(id) {
-  document.querySelectorAll('.bottom-nav-item').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+// ============================================================
+// ADD SHOP FORM → ADMIN PANEL
+// ============================================================
+let uploadedImgData = null;
+
+function previewImg(input) {
+  if(input.files && input.files[0]) {
+    const r = new FileReader();
+    r.onload = e => {
+      uploadedImgData = e.target.result;
+      document.getElementById('img-preview').innerHTML = `<img src="${uploadedImgData}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;margin-top:10px;">`;
+    };
+    r.readAsDataURL(input.files[0]);
+  }
 }
 
 function submitShop() {
@@ -924,56 +943,158 @@ function submitShop() {
   const phone = document.getElementById('f-phone').value.trim();
   const cat = document.getElementById('f-cat').value;
   const area = document.getElementById('f-area').value.trim();
-  if(!name){alert('Shop name is required!');return;}
-  if(!phone){alert('Phone number is required!');return;}
-  if(!cat){alert('Please select a category!');return;}
-  if(!area){alert('Please enter your area!');return;}
-  showToast('✅ Shop submitted! Approval within 24 hours.');
-  document.getElementById('f-name').value='';
-  document.getElementById('f-phone').value='';
-  document.getElementById('f-cat').value='';
-  document.getElementById('f-area').value='';
-  document.getElementById('f-desc').value='';
-  document.getElementById('f-wa').value='';
-  document.getElementById('f-web').value='';
-  document.getElementById('img-preview').innerHTML='';
+  if(!name){showToast('⚠️ Shop name is required!');return;}
+  if(!phone){showToast('⚠️ Phone number is required!');return;}
+  if(!cat){showToast('⚠️ Please select a category!');return;}
+  if(!area){showToast('⚠️ Please enter your area/city!');return;}
+
+  const newShop = {
+    id: submissionIdCounter++,
+    _custom: true,
+    name, phone, cat, area,
+    wa: document.getElementById('f-wa').value.trim(),
+    web: document.getElementById('f-web').value.trim(),
+    desc: document.getElementById('f-desc').value.trim() || 'A great local shop worth visiting!',
+    hours: document.getElementById('f-hours').value.trim() || 'Contact shop for timings',
+    img: uploadedImgData || '',
+    rating: 0, reviews: 0,
+    featured: false, isOpen: true,
+    menu: [], since: new Date().getFullYear().toString(),
+    status: 'pending',
+    submittedBy: currentUser ? currentUser.name : 'anonymous',
+    submittedAt: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),
+  };
+  submittedShops.push(newShop);
+
+  // Clear form
+  ['f-name','f-phone','f-cat','f-area','f-wa','f-web','f-desc','f-hours'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  document.getElementById('img-preview').innerHTML = '';
+  uploadedImgData = null;
+
+  showToast('✅ Shop submitted! Pending admin approval.');
+  refreshAdmin();
+  if(currentRole==='owner') { refreshOwner(); setTimeout(()=>showPage('owner'),800); }
+  else setTimeout(()=>showPage('home'),800);
 }
 
-function previewImg(input) {
-  if(input.files && input.files[0]) {
-    const r = new FileReader();
-    r.onload = e => {
-      document.getElementById('img-preview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;margin-top:8px;">`;
-    };
-    r.readAsDataURL(input.files[0]);
+// ============================================================
+// ADMIN PANEL
+// ============================================================
+function refreshAdmin() {
+  const pending = submittedShops.filter(s=>s.status==='pending');
+  const approved = submittedShops.filter(s=>s.status==='approved').length;
+  const statPending = document.getElementById('stat-pending');
+  const statApproved = document.getElementById('stat-approved');
+  if(statPending) statPending.textContent = pending.length;
+  if(statApproved) statApproved.textContent = 8 + approved;
+
+  const list = document.getElementById('pending-list');
+  const noPending = document.getElementById('no-pending');
+  if(!list) return;
+
+  if(pending.length===0){
+    list.innerHTML = '';
+    if(noPending) {noPending.style.display='block';list.appendChild(noPending);}
+    return;
   }
+  if(noPending) noPending.style.display='none';
+
+  list.innerHTML = pending.map(shop => `
+    <div class="pending-card" id="pc-${shop.id}">
+      <div class="pending-avi">
+        ${shop.img ? `<img src="${shop.img}" alt="">` : catEmoji(shop.cat)}
+      </div>
+      <div class="pending-info">
+        <div class="pending-name">${shop.name}</div>
+        <div class="pending-meta">${shop.cat} · ${shop.area} · Submitted ${shop.submittedAt}</div>
+        <div style="margin-top:5px;"><span class="badge badge-pending">Pending</span></div>
+      </div>
+      <div class="pending-btns">
+        <button class="p-approve" onclick="approveShop(${shop.id})">✓ Approve</button>
+        <button class="p-reject" onclick="rejectShop(${shop.id})">✕ Reject</button>
+      </div>
+    </div>`).join('');
 }
 
+function catEmoji(cat) {
+  const map = {Biryani:'🍛',Chinese:'🍜','Fast Food':'🍔','Street Food':'🌮',Veg:'🥗',Sweets:'🍬',Cafe:'☕',Other:'🍽️'};
+  return map[cat]||'🍽️';
+}
+
+function approveShop(id) {
+  const shop = submittedShops.find(s=>s.id===id);
+  if(!shop) return;
+  shop.status = 'approved';
+  const card = document.getElementById('pc-'+id);
+  if(card){
+    card.querySelector('.badge').className='badge badge-approved';
+    card.querySelector('.badge').textContent='Approved';
+    card.querySelector('.pending-btns').innerHTML='<span style="font-size:12px;color:#16A34A;font-weight:700;">✓ Live now</span>';
+  }
+  showToast('✅ Shop approved and now live!');
+  refreshAdmin();
+}
+
+function rejectShop(id) {
+  const shop = submittedShops.find(s=>s.id===id);
+  if(!shop) return;
+  shop.status = 'rejected';
+  const card = document.getElementById('pc-'+id);
+  if(card){
+    card.querySelector('.badge').className='badge badge-rejected';
+    card.querySelector('.badge').textContent='Rejected';
+    card.querySelector('.pending-btns').innerHTML='<span style="font-size:12px;color:#DC2626;font-weight:700;">✕ Rejected</span>';
+  }
+  showToast('❌ Shop rejected.');
+  refreshAdmin();
+}
+
+// ============================================================
+// OWNER DASHBOARD
+// ============================================================
+function refreshOwner() {
+  const myShops = submittedShops.filter(s => s.submittedBy === (currentUser?currentUser.name:'owner'));
+  const pendingCount = myShops.filter(s=>s.status==='pending').length;
+  const approvedCount = myShops.filter(s=>s.status==='approved').length;
+  const ownerShops = document.getElementById('owner-stat-shops');
+  const ownerPending = document.getElementById('owner-stat-pending');
+  const ownerApproved = document.getElementById('owner-stat-approved');
+  if(ownerShops) ownerShops.textContent = myShops.length;
+  if(ownerPending) ownerPending.textContent = pendingCount;
+  if(ownerApproved) ownerApproved.textContent = approvedCount;
+
+  const listEl = document.getElementById('owner-listings');
+  if(!listEl) return;
+  if(myShops.length===0){
+    listEl.innerHTML='<div class="empty-state"><div class="empty-icon">🏪</div><div class="empty-title">No listings yet</div><div class="empty-sub">Submit your first shop to get started!</div></div>';
+    return;
+  }
+  listEl.innerHTML = myShops.map(shop => `
+    <div class="pending-card">
+      <div class="pending-avi">${shop.img ? `<img src="${shop.img}" alt="">` : catEmoji(shop.cat)}</div>
+      <div class="pending-info">
+        <div class="pending-name">${shop.name}</div>
+        <div class="pending-meta">${shop.cat} · ${shop.area}</div>
+        <div style="margin-top:5px;"><span class="badge badge-${shop.status}">${shop.status.charAt(0).toUpperCase()+shop.status.slice(1)}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// UTILS
+// ============================================================
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
+  setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-function approveShop(id) {
-  const card = document.getElementById(id);
-  card.querySelector('.status-badge').className='status-badge status-approved';
-  card.querySelector('.status-badge').textContent='Approved';
-  card.querySelector('.pending-actions').innerHTML='<span style="font-size:12px;color:#16A34A;font-weight:700;">✓ Approved</span>';
-  showToast('✅ Shop approved successfully!');
-}
-
-function rejectShop(id) {
-  const card = document.getElementById(id);
-  card.querySelector('.status-badge').className='status-badge status-rejected';
-  card.querySelector('.status-badge').textContent='Rejected';
-  card.querySelector('.pending-actions').innerHTML='<span style="font-size:12px;color:#DC2626;font-weight:700;">✕ Rejected</span>';
-  showToast('❌ Shop rejected.');
-}
-
-renderAll();
+// Initial render for home (before login, won't be called)
+// Login page auto-shows; after login renderAll is called via showPage
 </script>
 </body>
 </html>
-
