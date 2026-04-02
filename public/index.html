@@ -1690,7 +1690,6 @@ function submitShop(){
 // ==========================================================
 // ADMIN PANEL
 // ==========================================================
-let adminFilter='all';
 function setAdminFilter(f,el){ adminFilter=f; document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active')); if(el)el.classList.add('active'); renderAdminShops(); }
 
 function renderAdminShops(){
