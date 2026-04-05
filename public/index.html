@@ -743,14 +743,15 @@ input,select,textarea{font-family:inherit;}
 
   <!-- POPULAR MANAGER -->
   <div class="psec">
-    <div class="psec-title">🔥 Most Popular — Position Control</div> 
-    <p style="font-size:11px;color:var(--t2);margin-bottom:.85rem;">Set 1–50 to show in popular scroll. 0 or blank = remove from popular.</p>
+    <div class="psec-title">🔥 Most Popular — Position Control</div>
+    <p style="font-size:11px;color:var(--t2);margin-bottom:.7rem;">Set 1–50 to show in popular scroll. 0 or blank = remove.</p>
+    <div class="admin-search" style="margin-bottom:.7rem;"><span>🔍</span><input type="text" id="pop-search-input" placeholder="Search shop to set popular position..." oninput="renderPopMgr()"></div>
     <div id="pop-mgr-list"></div>
   </div>
 
   <!-- ALL SHOPS -->
   <div class="psec">
-    <div class="psec-title">🏪 All Shops</div>
+    <div class="psec-title">🏪 All Shops — Manage & Set Position</div>
     <div class="admin-search"><span>🔍</span><input type="text" id="admin-search-input" placeholder="Search by name, area, category..." oninput="renderAdminShops()"></div>
     <div class="filter-row">
       <div class="fchip fc-all active" onclick="setAdminFilter('all',this)">All</div>
@@ -761,15 +762,23 @@ input,select,textarea{font-family:inherit;}
     <div id="admin-shop-list"></div>
   </div>
 
-  <!-- RESET OWNER CREDENTIALS -->
+  <!-- RESET OWNER CREDENTIALS BY SHOP NAME SEARCH -->
   <div class="psec">
-    <div class="psec-title">🔑 Reset Shop Owner Credentials</div>
+    <div class="psec-title">🔑 Reset Shop Owner Login</div>
     <div class="brand-section" style="margin-bottom:0;">
-      <p style="font-size:11px;color:var(--t2);margin-bottom:.85rem;">If a shop owner forgot their login, create new credentials for them here.</p>
-      <div class="fgroup"><label class="flabel">Owner's Current Username</label><input class="finput" id="reset-old-un" type="text" placeholder="Their current username (if known)"></div>
-      <div class="fgroup"><label class="flabel">New Username</label><input class="finput" id="reset-new-un" type="text" placeholder="New username"></div>
-      <div class="fgroup"><label class="flabel">New Password</label><div class="pw-wrap"><input class="finput" id="reset-new-pw" type="password" placeholder="New password"><button class="pw-eye" onclick="togglePw('reset-new-pw',this)">👁️</button></div></div>
-      <button class="inline-save" onclick="adminResetCreds()">🔑 Apply Reset</button>
+      <p style="font-size:11px;color:var(--t2);margin-bottom:.85rem;">Search shop by name → set new username & password for that shop's owner.</p>
+      <div class="fgroup">
+        <label class="flabel">Search Shop Name</label>
+        <div class="admin-search" style="margin-bottom:6px;"><span>🔍</span><input type="text" id="cred-shop-search" placeholder="Type shop name to search..." oninput="searchShopForCreds()"></div>
+        <div id="cred-shop-results" style="margin-bottom:.75rem;"></div>
+      </div>
+      <div id="cred-form" style="display:none;">
+        <div style="background:var(--prl);border-radius:8px;padding:8px 12px;margin-bottom:.75rem;font-size:12px;color:var(--pr);font-weight:700;" id="cred-selected-shop">Selected shop: —</div>
+        <input type="hidden" id="cred-shop-id">
+        <div class="fgroup"><label class="flabel">New Username</label><input class="finput" id="cred-new-un" type="text" placeholder="New username for owner"></div>
+        <div class="fgroup"><label class="flabel">New Password</label><div class="pw-wrap"><input class="finput" id="cred-new-pw" type="password" placeholder="New password"><button class="pw-eye" onclick="togglePw('cred-new-pw',this)">👁️</button></div></div>
+        <button class="inline-save" onclick="adminResetCredsByShop()">🔑 Set New Login</button>
+      </div>
     </div>
   </div>
 
@@ -1371,27 +1380,85 @@ function sendPwRequest(){
 // ADMIN RESET CREDENTIALS
 // ======================================================
 function adminResetCreds(){
-  const oldUn = document.getElementById('reset-old-un').value.trim();
-  const newUn = document.getElementById('reset-new-un').value.trim();
-  const newPw = document.getElementById('reset-new-pw').value.trim();
-  if(!newUn){ showToast('⚠️ New username required'); return; }
-  if(!newPw||newPw.length<4){ showToast('⚠️ Password min 4 chars'); return; }
-  if(users[newUn] && newUn !== oldUn){ showToast('⚠️ Username already taken'); return; }
-  if(oldUn && users[oldUn]){
-    const oldData = users[oldUn];
-    if(newUn !== oldUn){ users[newUn] = {...oldData, pass:newPw}; delete users[oldUn]; }
-    else { users[oldUn].pass = newPw; }
-    // Update any shops linked to old username
-    allShops.forEach(s=>{ if(s.ownerUsername===oldUn||s.submittedBy===oldUn){ s.ownerUsername=newUn; s.submittedBy=newUn; } });
-    saveShops();
-  } else {
-    users[newUn] = {pass:newPw, role:'owner', name:newUn, phone:''};
+  // Legacy fallback (kept for compatibility)
+  showToast('ℹ️ Use the "Reset Shop Owner Login" section below to reset by shop name');
+}
+
+// Search shop by name for credential reset
+function searchShopForCreds(){
+  const q=(document.getElementById('cred-shop-search')||{}).value?.toLowerCase().trim()||'';
+  const resultsEl=document.getElementById('cred-shop-results');
+  const formEl=document.getElementById('cred-form');
+  if(!resultsEl) return;
+  if(!q){ resultsEl.innerHTML=''; if(formEl) formEl.style.display='none'; return; }
+  const matches=allShops.filter(s=>s.name.toLowerCase().includes(q)||s.cat.toLowerCase().includes(q)).slice(0,6);
+  if(!matches.length){
+    resultsEl.innerHTML='<div style="font-size:12px;color:var(--t3);padding:6px 0;">No shops found</div>';
+    if(formEl) formEl.style.display='none';
+    return;
   }
-  saveUsers();
-  document.getElementById('reset-old-un').value='';
-  document.getElementById('reset-new-un').value='';
-  document.getElementById('reset-new-pw').value='';
-  showToast(`✅ Credentials reset! New login: ${newUn} / ${newPw}`);
+  resultsEl.innerHTML=matches.map(s=>`
+    <div onclick="selectShopForCreds(${s.id})" style="display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;cursor:pointer;border:1.5px solid var(--bdr);background:#fff;margin-bottom:6px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--pr)'" onmouseout="this.style.borderColor='var(--bdr)'">
+      <div style="width:36px;height:36px;border-radius:7px;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#f3e8d8,#e8d5c0);display:flex;align-items:center;justify-content:center;font-size:15px;">
+        ${s.imgs&&s.imgs.length?`<img src="${s.imgs[0]}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">`:catEmoji(s.cat)}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;">${s.name}</div>
+        <div style="font-size:10px;color:var(--t2);">${s.cat} · ${s.area} ${s.ownerUsername?'· 👤 '+s.ownerUsername:''}</div>
+      </div>
+      <span style="font-size:11px;color:var(--pr);font-weight:700;flex-shrink:0;">Select →</span>
+    </div>`).join('');
+}
+
+function selectShopForCreds(shopId){
+  const shop=allShops.find(s=>s.id===shopId); if(!shop) return;
+  document.getElementById('cred-shop-id').value=shopId;
+  const label=document.getElementById('cred-selected-shop');
+  if(label) label.textContent=`Shop: ${shop.name} (Current owner: ${shop.ownerUsername||'none'})`;
+  const unEl=document.getElementById('cred-new-un');
+  if(unEl) unEl.value=shop.ownerUsername||'';
+  const pwEl=document.getElementById('cred-new-pw');
+  if(pwEl) pwEl.value='';
+  const formEl=document.getElementById('cred-form');
+  if(formEl) formEl.style.display='block';
+  const resultsEl=document.getElementById('cred-shop-results');
+  if(resultsEl) resultsEl.innerHTML='';
+  const searchEl=document.getElementById('cred-shop-search');
+  if(searchEl) searchEl.value=shop.name;
+}
+
+function adminResetCredsByShop(){
+  const shopId=parseInt((document.getElementById('cred-shop-id')||{}).value||0);
+  const newUn=(document.getElementById('cred-new-un')||{}).value?.trim()||'';
+  const newPw=(document.getElementById('cred-new-pw')||{}).value?.trim()||'';
+  if(!shopId){ showToast('⚠️ Please select a shop first'); return; }
+  if(!newUn){ showToast('⚠️ New username required'); return; }
+  if(!newPw||newPw.length<4){ showToast('⚠️ Password must be min 4 characters'); return; }
+  const shop=allShops.find(s=>s.id===shopId);
+  if(!shop){ showToast('⚠️ Shop not found'); return; }
+  const oldUn=shop.ownerUsername||'';
+  // Check username not taken by someone else
+  if(users[newUn]&&newUn!==oldUn){ showToast('⚠️ Username already in use'); return; }
+  // Update user record
+  if(oldUn&&users[oldUn]&&newUn!==oldUn){
+    users[newUn]={...users[oldUn],pass:newPw,name:shop.name};
+    delete users[oldUn];
+  } else if(users[newUn]){
+    users[newUn].pass=newPw;
+  } else {
+    users[newUn]={pass:newPw,role:'owner',name:shop.name,phone:''};
+  }
+  // Update all shops with old owner
+  allShops.forEach(s=>{ if(s.ownerUsername===oldUn||s.id===shopId){ s.ownerUsername=newUn; } });
+  saveUsers(); saveShops();
+  // Reset form
+  const formEl=document.getElementById('cred-form');
+  if(formEl) formEl.style.display='none';
+  const searchEl=document.getElementById('cred-shop-search');
+  if(searchEl) searchEl.value='';
+  const label=document.getElementById('cred-selected-shop');
+  if(label) label.textContent='Selected shop: —';
+  showToast(`✅ Done! ${shop.name} login: ${newUn} / ${newPw}`);
 }
 
 // ======================================================
@@ -1917,12 +1984,18 @@ function adminDelete(id){ if(!confirm('Delete this shop permanently?'))return; a
 function renderPopMgr(){
   const list=document.getElementById('pop-mgr-list');
   if(!list) return;
+  const q=(document.getElementById('pop-search-input')||{}).value?.toLowerCase().trim()||'';
   const approved=allShops.filter(s=>s.status==='approved');
-  list.innerHTML=approved.map(shop=>`
+  const filtered=q?approved.filter(s=>s.name.toLowerCase().includes(q)||s.cat.toLowerCase().includes(q)||s.area.toLowerCase().includes(q)):approved;
+  if(!filtered.length){ list.innerHTML='<div class="empty-state" style="padding:1.5rem;"><div class="empty-title">No shops found</div></div>'; return; }
+  list.innerHTML=filtered.map(shop=>`
     <div class="pop-mgr-row">
       <div class="pop-mgr-img">${shop.imgs&&shop.imgs.length?`<img src="${shop.imgs[0]}" alt="" onerror="this.remove()">`:''}${!(shop.imgs&&shop.imgs.length)?catEmoji(shop.cat):''}</div>
-      <div class="pop-mgr-info"><div class="pop-mgr-name">${shop.name}</div><div class="pop-mgr-meta">${shop.cat} · ${shop.area}</div></div>
-      <input class="pop-mgr-pos" type="number" min="0" max="50" placeholder="0" value="${shopPos[shop.id]||''}" id="pmpos-${shop.id}" title="1-50 = show in popular, 0 = remove">
+      <div class="pop-mgr-info">
+        <div class="pop-mgr-name">${shop.name}</div>
+        <div class="pop-mgr-meta">${shop.cat} · ${shop.area} ${shopPos[shop.id]?'· <b style="color:var(--pr)">Pos #'+shopPos[shop.id]+'</b>':''}</div>
+      </div>
+      <input class="pop-mgr-pos" type="number" min="0" max="50" placeholder="0" value="${shopPos[shop.id]||''}" id="pmpos-${shop.id}">
       <button class="pop-mgr-save" onclick="savePopPos(${shop.id})">Set</button>
     </div>`).join('');
 }
