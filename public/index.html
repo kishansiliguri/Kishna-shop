@@ -666,7 +666,7 @@ input,select,textarea{font-family:inherit;}
   <div class="form-wrap">
     <div class="fcard">
       <div class="fcard-title">🏪 Basic Info</div>
-      <div class="fgroup"><label class="flabel">Shop Name <span class="req">*</span></label><input class="finput" id="f-name" type="text" placeholder="e.g. Sharma Ji Ki Chai"></div>
+      <div class="fgroup"><label class="flabel">Shop Name <span class="req">*</span></label><input class="finput" id="f-name" type="text" placeholder="e.g. Sharma Ji Ki Chai" oninput="suggestShopUsername()"></div>
       <div class="frow">
         <div class="fgroup"><label class="flabel">Category <span class="req">*</span></label><select class="fselect" id="f-cat"><option value="">Select</option><option>Biryani</option><option>Fast Food</option><option>Chinese</option><option>Street Food</option><option>Veg</option><option>Sweets</option><option>Cafe</option><option>Other</option></select></div>
         <div class="fgroup"><label class="flabel">City / Area <span class="req">*</span></label><input class="finput" id="f-area" type="text" placeholder="e.g. Siliguri, WB"></div>
@@ -695,15 +695,18 @@ input,select,textarea{font-family:inherit;}
       <div id="menu-items-wrap"></div>
       <button onclick="addMenuItem()" id="add-menu-btn" style="background:var(--prl);color:var(--pr);border:none;border-radius:8px;padding:9px 18px;font-size:12px;font-weight:700;width:100%;transition:all .2s;">+ Add Menu Item</button>
     </div>
-    <div class="fcard">
-      <div class="fcard-title">🔑 Create Login Credentials</div>
-      <p style="font-size:12px;color:var(--t2);margin-bottom:.85rem;line-height:1.5;">These will be your Shop Owner login credentials. Save them carefully!</p>
-      <div class="fgroup"><label class="flabel">Username <span class="req">*</span></label><input class="finput" id="f-username" type="text" placeholder="Choose a unique username" autocomplete="off"></div>
+    <div class="fcard" id="f-creds-card">
+      <div class="fcard-title">🔑 Your Shop Login</div>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:.85rem;line-height:1.5;">Choose a username for this shop. Password same as your account. Save it!</p>
+      <div class="fgroup">
+        <label class="flabel">Shop Username <span class="req">*</span></label>
+        <input class="finput" id="f-username" type="text" placeholder="Suggested from shop name..." autocomplete="off" oninput="checkUsernameAvail(this)">
+        <div id="f-username-hint" style="font-size:11px;margin-top:3px;"></div>
+      </div>
       <div class="frow">
         <div class="fgroup"><label class="flabel">Password <span class="req">*</span></label><div class="pw-wrap"><input class="finput" id="f-pass" type="password" placeholder="Min 4 chars"><button class="pw-eye" onclick="togglePw('f-pass',this)">👁️</button></div></div>
         <div class="fgroup"><label class="flabel">Confirm <span class="req">*</span></label><div class="pw-wrap"><input class="finput" id="f-conf" type="password" placeholder="Repeat password"><button class="pw-eye" onclick="togglePw('f-conf',this)">👁️</button></div></div>
       </div>
-      <div class="fgroup"><label class="flabel">Phone (for recovery)</label><input class="finput" id="f-reg-phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
     </div>
     <button class="submit-btn" onclick="submitShop()">✅ Submit Shop for Approval</button>
     <p style="font-size:11px;color:var(--t3);text-align:center;margin-top:9px;line-height:1.5;">Shop goes live after admin approval. Save your login credentials!</p>
@@ -756,6 +759,18 @@ input,select,textarea{font-family:inherit;}
       <div class="fchip fc-rej" onclick="setAdminFilter('rejected',this)">❌ Rejected</div>
     </div>
     <div id="admin-shop-list"></div>
+  </div>
+
+  <!-- RESET OWNER CREDENTIALS -->
+  <div class="psec">
+    <div class="psec-title">🔑 Reset Shop Owner Credentials</div>
+    <div class="brand-section" style="margin-bottom:0;">
+      <p style="font-size:11px;color:var(--t2);margin-bottom:.85rem;">If a shop owner forgot their login, create new credentials for them here.</p>
+      <div class="fgroup"><label class="flabel">Owner's Current Username</label><input class="finput" id="reset-old-un" type="text" placeholder="Their current username (if known)"></div>
+      <div class="fgroup"><label class="flabel">New Username</label><input class="finput" id="reset-new-un" type="text" placeholder="New username"></div>
+      <div class="fgroup"><label class="flabel">New Password</label><div class="pw-wrap"><input class="finput" id="reset-new-pw" type="password" placeholder="New password"><button class="pw-eye" onclick="togglePw('reset-new-pw',this)">👁️</button></div></div>
+      <button class="inline-save" onclick="adminResetCreds()">🔑 Apply Reset</button>
+    </div>
   </div>
 
   <div class="pw-section">
@@ -835,7 +850,7 @@ input,select,textarea{font-family:inherit;}
     <div class="merr" id="login-err"></div>
     <div class="mgroup"><label class="mlabel">Username</label><input class="minput ni" id="l-user" type="text" placeholder="Enter your username" autocomplete="username"></div>
     <div class="mgroup"><label class="mlabel">Password</label><div class="minput-wrap"><input class="minput" id="l-pass" type="password" placeholder="Enter your password"><button class="mpw-eye" onclick="togglePw('l-pass',this)">👁️</button></div></div>
-    <div style="text-align:right;margin-bottom:.6rem;"><span style="font-size:12px;color:var(--pr);font-weight:700;cursor:pointer;" onclick="switchModal('modal-login','modal-forgot')">Forgot password?</span></div>
+    <div style="text-align:right;margin-bottom:.6rem;"><span style="font-size:12px;color:var(--pr);font-weight:700;cursor:pointer;" onclick="switchModal('modal-login','modal-pw-request')">Forgot password?</span></div>
     <button class="mbtn mbtn-pr" onclick="doLogin()">Sign In →</button>
     <div class="div-or">or</div>
     <button class="mbtn mbtn-ghost" onclick="switchModal('modal-login','modal-register')">Create new account</button>
@@ -851,36 +866,34 @@ input,select,textarea{font-family:inherit;}
     <div class="modal-sub">Join for free — takes 30 seconds</div>
     <div class="merr" id="reg-err"></div>
     <div class="mok" id="reg-ok"></div>
-    <div class="mgroup"><label class="mlabel">Full Name *</label><input class="minput ni" id="r-name" type="text" placeholder="Your full name"></div>
-    <div class="mgroup"><label class="mlabel">Username *</label><input class="minput ni" id="r-user" type="text" placeholder="Choose a username"></div>
+    <div class="mgroup"><label class="mlabel">Full Name *</label><input class="minput ni" id="r-name" type="text" placeholder="Your full name" oninput="autoSuggestUsername()"></div>
+    <div class="mgroup">
+      <label class="mlabel">Username *</label>
+      <input class="minput ni" id="r-user" type="text" placeholder="Choose a username" oninput="checkUsernameAvail(this)">
+      <div id="r-user-hint" style="font-size:11px;margin-top:3px;"></div>
+    </div>
     <div class="mgroup"><label class="mlabel">Phone *</label><input class="minput ni" id="r-phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
-    <div class="mgroup"><label class="mlabel">Account Type</label><select class="minput ni" id="r-role"><option value="customer">Customer — Browse shops</option><option value="owner">Shop Owner — List my shop</option></select></div>
+    <input type="hidden" id="r-role" value="owner">
     <div class="mgroup"><label class="mlabel">Password *</label><div class="minput-wrap"><input class="minput" id="r-pass" type="password" placeholder="Min 4 characters"><button class="mpw-eye" onclick="togglePw('r-pass',this)">👁️</button></div></div>
     <div class="mgroup"><label class="mlabel">Confirm Password *</label><div class="minput-wrap"><input class="minput" id="r-conf" type="password" placeholder="Repeat password"><button class="mpw-eye" onclick="togglePw('r-conf',this)">👁️</button></div></div>
-    <button class="mbtn mbtn-pr" onclick="doRegister()">Create Account →</button>
+    <button class="mbtn mbtn-pr" onclick="doRegister()">Create Shop Owner Account →</button>
     <div class="mlink">Already have an account? <span onclick="switchModal('modal-register','modal-login')">Sign in</span></div>
   </div>
 </div>
 
-<!-- FORGOT PASSWORD -->
-<div class="modal-ov" id="modal-forgot">
+<!-- PASSWORD RESET REQUEST MODAL -->
+<div class="modal-ov" id="modal-pw-request">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal('modal-forgot')">✕</button>
-    <div class="modal-title">Reset Password 🔑</div>
-    <div class="modal-sub">Enter your registered phone number</div>
-    <div class="merr" id="fp-err"></div>
-    <div class="mok" id="fp-ok"></div>
-    <div id="fp-s1">
-      <div class="mgroup"><label class="mlabel">Registered Phone</label><input class="minput ni" id="fp-phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
-      <button class="mbtn mbtn-pr" onclick="fpStep1()">Send OTP →</button>
-    </div>
-    <div id="fp-s2" style="display:none;">
-      <div class="mgroup"><label class="mlabel">OTP</label><input class="minput ni" id="fp-otp" type="text" placeholder="4-digit OTP" maxlength="4"></div>
-      <div class="mgroup"><label class="mlabel">New Password</label><div class="minput-wrap"><input class="minput" id="fp-new" type="password" placeholder="New password"><button class="mpw-eye" onclick="togglePw('fp-new',this)">👁️</button></div></div>
-      <div class="mgroup"><label class="mlabel">Confirm</label><div class="minput-wrap"><input class="minput" id="fp-conf" type="password" placeholder="Confirm"><button class="mpw-eye" onclick="togglePw('fp-conf',this)">👁️</button></div></div>
-      <button class="mbtn mbtn-pr" onclick="fpStep2()">Reset Password →</button>
-    </div>
-    <div class="mlink"><span onclick="switchModal('modal-forgot','modal-login')">← Back to sign in</span></div>
+    <button class="modal-close" onclick="closeModal('modal-pw-request')">✕</button>
+    <div class="modal-title">Password Reset 🔑</div>
+    <div class="modal-sub">Send a request to admin — they will create new credentials for you</div>
+    <div class="merr" id="pwr-err"></div>
+    <div class="mok" id="pwr-ok"></div>
+    <div class="mgroup"><label class="mlabel">Your Username or Shop Name *</label><input class="minput ni" id="pwr-name" type="text" placeholder="Your username or shop name"></div>
+    <div class="mgroup"><label class="mlabel">Your Phone Number *</label><input class="minput ni" id="pwr-phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
+    <div class="mgroup"><label class="mlabel">Message to Admin (optional)</label><textarea class="minput ni" id="pwr-msg" style="min-height:60px;resize:vertical;padding:10px 12px;" placeholder="e.g. I forgot my password, please reset"></textarea></div>
+    <button class="mbtn mbtn-pr" style="background:#25D366;" onclick="sendPwRequest()">💬 Send Request on WhatsApp</button>
+    <div class="mlink"><span onclick="switchModal('modal-pw-request','modal-login')">← Back to sign in</span></div>
   </div>
 </div>
 
@@ -1087,10 +1100,17 @@ function buildSlide(b, i){
 function renderSlider(){
   const track = document.getElementById('hero-track');
   if(!track) return;
-  if(!banners.length){ track.innerHTML='<div class="hero-slide"><div class="hero-slide-bg" style="background:linear-gradient(135deg,#1A1A2E,#2D1B69)"></div><div class="hero-slide-content"><h2 class="hero-title">Welcome to <em>FoodSpot</em></h2></div></div>'; }
-  else track.innerHTML = banners.map((b,i)=>buildSlide(b,i)).join('');
+  if(!banners.length){
+    track.innerHTML='<div class="hero-slide active"><div class="hero-slide-bg" style="background:linear-gradient(135deg,#1A1A2E,#2D1B69)"></div><div class="hero-slide-content"><h2 class="hero-title">Welcome to <em>FoodSpot</em></h2></div></div>';
+  } else {
+    track.innerHTML = banners.map((b,i)=>buildSlide(b,i)).join('');
+  }
+  // Ensure correct initial transform
+  if(slideIdx>=banners.length) slideIdx=0;
+  track.style.transform=`translateX(-${slideIdx*100}%)`;
+  // Activate current slide bg zoom
+  document.querySelectorAll('.hero-slide').forEach((s,i)=>s.classList.toggle('active',i===slideIdx));
   renderSliderDots();
-  track.style.transform = `translateX(-${slideIdx*100}%)`;
 }
 function renderSliderDots(){
   const dotsEl = document.getElementById('sl-dots');
@@ -1098,14 +1118,21 @@ function renderSliderDots(){
   dotsEl.innerHTML = banners.map((_,i)=>`<button class="sl-dot ${i===slideIdx?'active':''}" onclick="goSlide(${i})"></button>`).join('');
 }
 function goSlide(i){
-  slideIdx = Math.max(0, Math.min(i, banners.length-1));
+  if(!banners.length) return;
+  slideIdx = ((i%banners.length)+banners.length)%banners.length;
   const track = document.getElementById('hero-track');
-  if(track){ track.style.transform=`translateX(-${slideIdx*100}%)`; document.querySelectorAll('.hero-slide').forEach((s,idx)=>s.classList.toggle('active',idx===slideIdx)); }
+  if(track){
+    track.style.transform=`translateX(-${slideIdx*100}%)`;
+    document.querySelectorAll('.hero-slide').forEach((s,idx)=>s.classList.toggle('active',idx===slideIdx));
+  }
   renderSliderDots();
   resetSlideTimer();
 }
-function moveSlide(d){ goSlide((slideIdx+d+banners.length)%banners.length); }
-function resetSlideTimer(){ clearInterval(slideTimer); if(banners.length>1) slideTimer=setInterval(()=>moveSlide(1),5000); }
+function moveSlide(d){ goSlide(slideIdx+d); }
+function resetSlideTimer(){
+  clearInterval(slideTimer);
+  if(banners.length>1) slideTimer=setInterval(()=>goSlide(slideIdx+1), 5000);
+}
 function handleSlideClick(action){
   if(!action||action==='scroll') scrollToShops();
   else filterAndScroll(action);
@@ -1179,22 +1206,24 @@ function saveBanner(){
   if(idx<0) banners.push(b);
   else banners[idx]=b;
   saveBanners();
+  sliderBuilt=false; slideIdx=0;
   closeModal('modal-banner');
-  renderSlider();renderBannerList();
-  slideIdx=0;resetSlideTimer();
+  renderSlider(); renderBannerList();
+  slideIdx=0; resetSlideTimer();
   showToast(idx<0?'✅ Banner added!':'✅ Banner updated!');
 }
 function deleteBanner(i){
   if(!confirm('Delete this banner?')) return;
   banners.splice(i,1);
   saveBanners();
+  sliderBuilt=false;
   if(slideIdx>=banners.length) slideIdx=0;
   renderSlider();renderBannerList();
   resetSlideTimer();
   showToast('🗑️ Banner deleted');
 }
-function moveBannerUp(i){ if(i===0) return; [banners[i],banners[i-1]]=[banners[i-1],banners[i]]; saveBanners(); renderSlider(); renderBannerList(); }
-function moveBannerDown(i){ if(i>=banners.length-1) return; [banners[i],banners[i+1]]=[banners[i+1],banners[i]]; saveBanners(); renderSlider(); renderBannerList(); }
+function moveBannerUp(i){ if(i===0) return; [banners[i],banners[i-1]]=[banners[i-1],banners[i]]; saveBanners(); sliderBuilt=false; slideIdx=0; renderSlider(); renderBannerList(); resetSlideTimer(); }
+function moveBannerDown(i){ if(i>=banners.length-1) return; [banners[i],banners[i+1]]=[banners[i+1],banners[i]]; saveBanners(); sliderBuilt=false; slideIdx=0; renderSlider(); renderBannerList(); resetSlideTimer(); }
 
 // ==========================================================
 // PAGE ROUTING
@@ -1215,7 +1244,19 @@ function showPage(name){
 function goBack(){ showPage(prevPage||'home'); clearInterval(detSsTimer); }
 function scrollToShops(){ document.getElementById('shops-section')?.scrollIntoView({behavior:'smooth'}); }
 function filterAndScroll(cat){ currentCat=cat; document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active')); filterShops(); setTimeout(()=>document.getElementById('shops-section')?.scrollIntoView({behavior:'smooth'}),100); }
-function handleAddShop(){ if(!currentUser){ openModal('modal-login'); showToast('ℹ️ Please sign in or register to add a shop'); return; } showPage('add'); }
+function handleAddShop(){
+  if(!currentUser){ openModal('modal-login'); showToast('ℹ️ Please sign in or register to add a shop'); return; }
+  // Show/hide credentials card based on role
+  const credsCard = document.getElementById('f-creds-card');
+  if(credsCard){
+    if(currentUser.role === 'owner'){
+      credsCard.style.display = 'none';
+    } else {
+      credsCard.style.display = 'block';
+    }
+  }
+  showPage('add');
+}
 
 // ==========================================================
 // AUTH
@@ -1261,31 +1302,134 @@ function doRegister(){
   setTimeout(()=>switchModal('modal-register','modal-login'),1500);
 }
 
-function fpStep1(){
-  const phone=document.getElementById('fp-phone').value.trim();
-  const err=document.getElementById('fp-err'); const ok=document.getElementById('fp-ok');
-  err.style.display='none'; ok.style.display='none';
-  if(!phone){ err.textContent='Please enter your phone number.'; err.style.display='block'; return; }
-  const found=Object.values(users).find(u=>u.phone===phone||u.phone===phone.replace('+91','').trim());
-  if(!found){ err.textContent='No account found with this phone.'; err.style.display='block'; return; }
-  mockOtp=Math.floor(1000+Math.random()*9000).toString(); forgotPhone=phone;
-  ok.textContent=`OTP sent! (Demo OTP: ${mockOtp})`; ok.style.display='block';
-  document.getElementById('fp-s1').style.display='none';
-  document.getElementById('fp-s2').style.display='block';
+// ======================================================
+// USERNAME AUTO-SUGGEST & AVAILABILITY CHECK
+// ======================================================
+function autoSuggestUsername(){
+  const nameEl = document.getElementById('r-name');
+  const userEl = document.getElementById('r-user');
+  if(!nameEl||!userEl||userEl.value) return;
+  const base = nameEl.value.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  if(base.length<2) return;
+  let suggested = base;
+  let n = 1;
+  while(users[suggested]){ suggested = base + n++; }
+  userEl.value = suggested;
+  checkUsernameAvail(userEl);
 }
-function fpStep2(){
-  const otp=document.getElementById('fp-otp').value.trim();
-  const np=document.getElementById('fp-new').value;
-  const cp=document.getElementById('fp-conf').value;
-  const err=document.getElementById('fp-err'); const ok=document.getElementById('fp-ok');
-  err.style.display='none'; ok.style.display='none';
-  if(otp!==mockOtp){ err.textContent='Incorrect OTP.'; err.style.display='block'; return; }
-  if(np!==cp){ err.textContent='Passwords do not match.'; err.style.display='block'; return; }
-  if(np.length<4){ err.textContent='Min 4 characters.'; err.style.display='block'; return; }
-  const entry=Object.entries(users).find(([,u])=>u.phone===forgotPhone||u.phone===forgotPhone.replace('+91','').trim());
-  if(entry){ users[entry[0]].pass=np; saveUsers(); }
-  ok.textContent='✅ Password reset! Please sign in.'; ok.style.display='block';
-  setTimeout(()=>{ closeModal('modal-forgot'); openModal('modal-login'); document.getElementById('fp-s1').style.display='block'; document.getElementById('fp-s2').style.display='none'; },1500);
+
+function suggestShopUsername(){
+  const nameEl = document.getElementById('f-name');
+  const userEl = document.getElementById('f-username');
+  if(!nameEl||!userEl) return;
+  const base = nameEl.value.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  if(base.length<2) return;
+  let suggested = base;
+  let n = 1;
+  // Skip if current user owns this shop
+  while(users[suggested]&&suggested!==(currentUser&&currentUser.username)){ suggested = base + n++; }
+  userEl.value = suggested;
+  checkUsernameAvail(userEl);
+}
+
+function checkUsernameAvail(input){
+  const val = input.value.trim();
+  const hintId = input.id === 'r-user' ? 'r-user-hint' : 'f-username-hint';
+  const hintEl = document.getElementById(hintId);
+  if(!hintEl) return;
+  if(!val){ hintEl.textContent=''; return; }
+  if(val.length < 3){ hintEl.textContent='Min 3 characters'; hintEl.style.color='var(--t3)'; return; }
+  const taken = users[val] && val !== (currentUser&&currentUser.username);
+  if(taken){
+    hintEl.textContent = '❌ Already in use — try another';
+    hintEl.style.color = '#DC2626';
+  } else {
+    hintEl.textContent = '✅ Available!';
+    hintEl.style.color = '#16A34A';
+  }
+}
+
+// ======================================================
+// PASSWORD RESET REQUEST (sends to admin WhatsApp)
+// ======================================================
+function sendPwRequest(){
+  const name = document.getElementById('pwr-name').value.trim();
+  const phone = document.getElementById('pwr-phone').value.trim();
+  const msg = document.getElementById('pwr-msg').value.trim();
+  const err = document.getElementById('pwr-err');
+  err.style.display='none';
+  if(!name){ err.textContent='Please enter your username or shop name.'; err.style.display='block'; return; }
+  if(!phone){ err.textContent='Please enter your phone number.'; err.style.display='block'; return; }
+  const text = `🔑 *Password Reset Request — ${brand.name}*\n\n👤 Username / Shop: ${name}\n📞 Phone: ${phone}${msg?'\n💬 Message: '+msg:''}\n\nPlease create new login credentials for this user.`;
+  window.open(`https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(text)}`,'_blank');
+  closeModal('modal-pw-request');
+  ['pwr-name','pwr-phone','pwr-msg'].forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; });
+  showToast('✅ Reset request sent to admin on WhatsApp!');
+}
+
+// ======================================================
+// ADMIN RESET CREDENTIALS
+// ======================================================
+function adminResetCreds(){
+  const oldUn = document.getElementById('reset-old-un').value.trim();
+  const newUn = document.getElementById('reset-new-un').value.trim();
+  const newPw = document.getElementById('reset-new-pw').value.trim();
+  if(!newUn){ showToast('⚠️ New username required'); return; }
+  if(!newPw||newPw.length<4){ showToast('⚠️ Password min 4 chars'); return; }
+  if(users[newUn] && newUn !== oldUn){ showToast('⚠️ Username already taken'); return; }
+  if(oldUn && users[oldUn]){
+    const oldData = users[oldUn];
+    if(newUn !== oldUn){ users[newUn] = {...oldData, pass:newPw}; delete users[oldUn]; }
+    else { users[oldUn].pass = newPw; }
+    // Update any shops linked to old username
+    allShops.forEach(s=>{ if(s.ownerUsername===oldUn||s.submittedBy===oldUn){ s.ownerUsername=newUn; s.submittedBy=newUn; } });
+    saveShops();
+  } else {
+    users[newUn] = {pass:newPw, role:'owner', name:newUn, phone:''};
+  }
+  saveUsers();
+  document.getElementById('reset-old-un').value='';
+  document.getElementById('reset-new-un').value='';
+  document.getElementById('reset-new-pw').value='';
+  showToast(`✅ Credentials reset! New login: ${newUn} / ${newPw}`);
+}
+
+// ======================================================
+// PARSE HOURS & AUTO OPEN/CLOSE
+// ======================================================
+function parseTimeToMinutes(str){
+  str = str.trim().toLowerCase();
+  const m = str.match(/^(\d+)(?::(\d+))?\s*(am|pm)$/);
+  if(!m) return -1;
+  let h = parseInt(m[1]), min = parseInt(m[2]||0), period = m[3];
+  if(period==='am'&&h===12) h=0;
+  if(period==='pm'&&h!==12) h+=12;
+  return h*60+min;
+}
+
+function isCurrentlyOpen(hours){
+  if(!hours||hours.trim()==='') return null; // unknown
+  const now = new Date();
+  const nowMin = now.getHours()*60+now.getMinutes();
+  // Normalize dashes: –, —, -, to -
+  const normalized = hours.replace(/[–—]/g,'-').toLowerCase().trim();
+  const parts = normalized.split('-');
+  if(parts.length!==2) return null;
+  const openMin = parseTimeToMinutes(parts[0].trim());
+  let closeMin = parseTimeToMinutes(parts[1].trim());
+  if(openMin<0||closeMin<0) return null;
+  // Handle midnight crossing e.g. 11am-12am means 11am to midnight
+  if(closeMin===0) closeMin=24*60; // 12am = midnight = end of day
+  if(openMin>closeMin){ // crosses midnight e.g. 10pm-3am
+    return nowMin>=openMin || nowMin<closeMin;
+  }
+  return nowMin>=openMin && nowMin<closeMin;
+}
+
+function getEffectiveOpen(shop){
+  const auto = isCurrentlyOpen(shop.hours);
+  if(auto!==null) return auto;
+  return shop.isOpen; // fall back to manual setting
 }
 
 function logout(){ currentUser=null; updateNavAfterLogout(); setupBnav(); showPage('home'); showToast('👋 Signed out'); }
@@ -1405,6 +1549,7 @@ setupBnav();
 function shopCardHTML(shop){
   const imgs=shop.imgs&&shop.imgs.length?shop.imgs:[];
   const fav=isFav(shop.id);
+  const isOpen = getEffectiveOpen(shop);
   let imgHtml='';
   if(imgs.length===0){
     imgHtml=`<div class="card-img-placeholder">${catEmoji(shop.cat)}</div>`;
@@ -1421,8 +1566,8 @@ function shopCardHTML(shop){
   return `<div class="shop-card" onclick="openDetail(${shop.id})">
     <div class="card-img-wrap">
       ${imgHtml}
-      <button class="fav-btn ${fav?'active':''}" data-id="${shop.id}" onclick="toggleFav(${shop.id},event)" title="${fav?'Remove from favorites':'Add to favorites'}">${fav?'❤️':'🤍'}</button>
-      <div class="open-pill ${shop.isOpen?'open':'closed'}">${shop.isOpen?'Open':'Closed'}</div>
+      <button class="fav-btn ${fav?'active':''}" data-id="${shop.id}" onclick="toggleFav(${shop.id},event)">${fav?'❤️':'🤍'}</button>
+      <div class="open-pill ${isOpen?'open':'closed'}">${isOpen?'Open':'Closed'}</div>
     </div>
     <div class="card-body">
       <div class="card-r1"><div class="card-name">${shop.name}</div>${shop.rating?`<div class="card-rat"><span class="star">★</span>${shop.rating}</div>`:'<div class="card-rat" style="color:var(--t3);">New</div>'}</div>
@@ -1476,8 +1621,10 @@ function popCardHTML(shop){
   return `<div class="pop-card" onclick="openDetail(${shop.id})"><div class="pop-img">${imgHtml}</div><div class="pop-body"><div class="pop-name">${shop.name}</div><div class="pop-area">📍 ${shop.area}</div></div></div>`;
 }
 
+let sliderBuilt = false;
 function renderHome(){
-  renderSlider(); resetSlideTimer();
+  if(!sliderBuilt){ renderSlider(); resetSlideTimer(); sliderBuilt=true; }
+  else { renderSliderDots(); } // just update dots if already built
   const approved=allShops.filter(s=>s.status==='approved');
   const popular=approved.filter(s=>shopPos[s.id]).sort((a,b)=>(shopPos[a.id]||999)-(shopPos[b.id]||999));
   const popEl=document.getElementById('pop-scroll');
@@ -1489,7 +1636,15 @@ function renderHome(){
 function filterShops(){
   const q=(document.getElementById('search-input')||{}).value?.toLowerCase()||'';
   const approved=allShops.filter(s=>s.status==='approved');
-  const sorted=[...approved].sort((a,b)=>(shopPos[a.id]||9999)-(shopPos[b.id]||9999));
+  // Update isOpen dynamically based on hours
+  approved.forEach(s=>{ s._effectiveOpen=getEffectiveOpen(s); });
+  const sorted=[...approved].sort((a,b)=>{
+    // Open shops first
+    const openDiff = (b._effectiveOpen?1:0)-(a._effectiveOpen?1:0);
+    if(openDiff!==0) return openDiff;
+    // Then by position
+    return (shopPos[a.id]||9999)-(shopPos[b.id]||9999);
+  });
   const filtered=sorted.filter(s=>{
     const mc=currentCat==='All'||s.cat===currentCat;
     const mq=!q||s.name.toLowerCase().includes(q)||s.cat.toLowerCase().includes(q)||s.area.toLowerCase().includes(q)||(s.desc||'').toLowerCase().includes(q);
@@ -1547,7 +1702,8 @@ function openDetail(id){
   }
 
   document.getElementById('d-name').textContent=shop.name;
-  document.getElementById('d-pills').innerHTML=`<span class="dpill dp-cat">${shop.cat}</span><span class="dpill dp-area">📍 ${shop.area}</span><span class="dpill ${shop.isOpen?'dp-open':'dp-closed'}">${shop.isOpen?'Open Now':'Closed'}</span>`;
+  const isOpen = getEffectiveOpen(shop);
+  document.getElementById('d-pills').innerHTML=`<span class="dpill dp-cat">${shop.cat}</span><span class="dpill dp-area">📍 ${shop.area}</span><span class="dpill ${isOpen?'dp-open':'dp-closed'}">${isOpen?'Open Now':'Closed'}</span>`;
   const r=shop.rating||0;
   document.getElementById('d-rating').innerHTML=r?`<div class="det-rat-num">${r}</div><div><div class="det-stars">${'★'.repeat(Math.floor(r))}${'☆'.repeat(5-Math.floor(r))}</div><div style="font-size:10px;color:var(--t3);margin-top:2px;">${shop.reviews||0} reviews</div></div>`:'<span style="font-size:13px;color:var(--t2);">New listing — no reviews yet</span>';
   document.getElementById('d-desc').textContent=shop.desc||'';
@@ -1649,18 +1805,28 @@ function submitShop(){
   const phone=document.getElementById('f-phone').value.trim();
   const cat=document.getElementById('f-cat').value;
   const area=document.getElementById('f-area').value.trim();
-  const username=document.getElementById('f-username').value.trim();
-  const pass=document.getElementById('f-pass').value;
-  const conf=document.getElementById('f-conf').value;
   if(!name){showToast('⚠️ Shop name required');return;}
   if(!phone){showToast('⚠️ Phone required');return;}
   if(!cat){showToast('⚠️ Category required');return;}
   if(!area){showToast('⚠️ Area required');return;}
-  if(!username){showToast('⚠️ Username required');return;}
-  if(!pass||pass.length<4){showToast('⚠️ Password min 4 chars');return;}
-  if(pass!==conf){showToast('⚠️ Passwords do not match');return;}
-  if(users[username]){showToast('⚠️ Username already taken');return;}
-  const regPhone=document.getElementById('f-reg-phone').value.trim();
+
+  let ownerUsername, ownerPass;
+  if(currentUser && currentUser.role==='owner'){
+    // Logged in owner: link shop to their account
+    ownerUsername = currentUser.username;
+    ownerPass = null;
+  } else {
+    // Not logged in or customer: need credentials
+    const username=document.getElementById('f-username').value.trim();
+    const pass=document.getElementById('f-pass').value;
+    const conf=document.getElementById('f-conf').value;
+    if(!username){showToast('⚠️ Shop username required');return;}
+    if(!pass||pass.length<4){showToast('⚠️ Password min 4 chars');return;}
+    if(pass!==conf){showToast('⚠️ Passwords do not match');return;}
+    if(users[username]&&username!==(currentUser&&currentUser.username)){showToast('⚠️ Username already taken');return;}
+    ownerUsername=username; ownerPass=pass;
+  }
+
   const menuItems=collectMenuItems('menu-items-wrap');
   const newShop={
     id:submitIdCtr++,name,phone,cat,area,
@@ -1672,19 +1838,30 @@ function submitShop(){
     menu:menuItems,rating:0,reviews:0,
     isOpen:document.getElementById('f-open').value==='true',
     since:new Date().getFullYear().toString(),
-    status:'pending',submittedBy:currentUser?currentUser.username:'guest',
+    status:'pending',
+    submittedBy:currentUser?currentUser.username:'guest',
     submittedAt:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-    ownerUsername:username,
+    ownerUsername,
   };
   allShops.push(newShop);
-  users[username]={pass,role:'owner',name:name,phone:regPhone,shopId:newShop.id};
-  saveShops(); saveUsers();
-  ['f-name','f-phone','f-cat','f-area','f-wa','f-web','f-desc','f-hours','f-username','f-pass','f-conf','f-reg-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+
+  if(ownerPass){
+    users[ownerUsername]={pass:ownerPass,role:'owner',name:name,phone:'',shopId:newShop.id};
+    saveUsers();
+  }
+  saveShops();
+
+  ['f-name','f-phone','f-cat','f-area','f-wa','f-web','f-desc','f-hours','f-username','f-pass','f-conf'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   shopImgDatas=[]; renderShopImgsGrid();
   document.getElementById('menu-items-wrap').innerHTML=''; menuRowCtr=0;
   document.getElementById('add-menu-btn').style.display='block';
-  showToast('✅ Submitted! Login: '+username+' / '+pass);
-  setTimeout(()=>showPage('home'),1200);
+
+  if(ownerPass){
+    showToast('✅ Submitted! Login: '+ownerUsername+' / '+ownerPass+' (save this!)');
+  } else {
+    showToast('✅ Shop submitted for approval!');
+  }
+  setTimeout(()=>showPage(currentUser?.role==='owner'?'owner':'home'),1200);
 }
 
 // ==========================================================
@@ -1704,21 +1881,33 @@ function renderAdminShops(){
   const list=document.getElementById('admin-shop-list');
   if(!list) return;
   if(!shops.length){ list.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No shops found</div></div>'; return; }
-  list.innerHTML=shops.map(shop=>`
-    <div class="shop-row">
+  list.innerHTML=shops.map(shop=>{
+    const pos=shopPos[shop.id]||'';
+    return `<div class="shop-row">
       <div class="shop-row-img">${shop.imgs&&shop.imgs.length?`<img src="${shop.imgs[0]}" alt="" onerror="this.remove()">`:''}${!(shop.imgs&&shop.imgs.length)?catEmoji(shop.cat):''}</div>
       <div class="shop-row-info">
         <div class="shop-row-name">${shop.name}</div>
         <div class="shop-row-meta">${shop.cat} · 📍 ${shop.area} ${shop.ownerUsername?'· 👤 '+shop.ownerUsername:''}</div>
-        <div style="margin-top:4px;"><span class="badge ${shop.status==='approved'?'b-app':shop.status==='rejected'?'b-rej':'b-pend'}">${shop.status.charAt(0).toUpperCase()+shop.status.slice(1)}</span></div>
+        <div style="margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="badge ${shop.status==='approved'?'b-app':shop.status==='rejected'?'b-rej':'b-pend'}">${shop.status.charAt(0).toUpperCase()+shop.status.slice(1)}</span>
+          <span style="font-size:10px;color:var(--t2);">⏰ ${shop.hours||'—'}</span>
+        </div>
         <div class="shop-row-acts">
           ${shop.status==='pending'?`<button class="sra sra-ap" onclick="adminStatus(${shop.id},'approved')">✓ Approve</button><button class="sra sra-rj" onclick="adminStatus(${shop.id},'rejected')">✕ Reject</button>`:''}
           ${shop.status==='approved'?`<button class="sra sra-rj" onclick="adminStatus(${shop.id},'rejected')">Suspend</button>`:''}
           ${shop.status==='rejected'?`<button class="sra sra-ap" onclick="adminStatus(${shop.id},'approved')">Restore</button>`:''}
           <button class="sra sra-del" onclick="adminDelete(${shop.id})">🗑️ Delete</button>
         </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:7px;align-items:center;">
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="font-size:10px;color:var(--t2);font-weight:700;">🔥 Popular pos:</span>
+            <input class="pos-input" type="number" min="0" max="50" placeholder="0" value="${pos}" id="pmpos-${shop.id}" title="1-50 = show in popular scroll, 0 = remove">
+            <button class="pos-save" onclick="savePopPos(${shop.id})">Set</button>
+          </div>
+        </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function adminStatus(id,status){ const s=allShops.find(x=>x.id===id); if(!s)return; s.status=status; saveShops(); renderAdminShops(); renderHome(); showToast(status==='approved'?'✅ Shop approved!':'❌ Shop rejected/suspended'); }
@@ -1889,7 +2078,7 @@ document.querySelectorAll('.modal-ov').forEach(ov=>{ ov.addEventListener('click'
 // ==========================================================
 // INIT
 // ==========================================================
-renderSlider(); resetSlideTimer(); renderHome();
+renderHome();
 </script>
 </body>
 </html>
