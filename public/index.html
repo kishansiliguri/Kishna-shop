@@ -532,6 +532,28 @@ input,select,textarea{font-family:inherit;}
 .empty-icon{font-size:40px;margin-bottom:9px;}
 .empty-title{font-size:14px;font-weight:700;color:var(--t2);margin-bottom:4px;}
 
+/* RATING & REVIEW */
+.star-select{display:flex;gap:5px;margin-bottom:.85rem;}
+.star-btn{font-size:26px;background:none;border:none;cursor:pointer;color:#ddd;transition:color .15s;line-height:1;padding:0;}
+.star-btn.filled{color:var(--acc);}
+.review-card{background:#fff;border:1px solid var(--bdr);border-radius:11px;padding:.9rem;margin-bottom:9px;}
+.review-top{display:flex;align-items:center;gap:9px;margin-bottom:5px;flex-wrap:wrap;}
+.review-ava{width:30px;height:30px;border-radius:50%;background:var(--pr);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.review-meta{flex:1;min-width:0;}
+.review-name{font-size:12px;font-weight:700;}
+.review-date{font-size:10px;color:var(--t3);}
+.review-stars{color:var(--acc);font-size:12px;}
+.review-text{font-size:12px;color:var(--t2);line-height:1.55;margin-top:5px;}
+.review-del{background:#FEF2F2;color:#DC2626;border:none;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;flex-shrink:0;}
+.avg-rating-bar{background:var(--bg);border-radius:11px;padding:.9rem;margin-bottom:.85rem;display:flex;align-items:center;gap:1rem;}
+.avg-big{font-size:40px;font-weight:800;color:var(--text);line-height:1;}
+.avg-stars{color:var(--acc);font-size:17px;}
+.avg-count{font-size:12px;color:var(--t2);margin-top:2px;}
+.write-review-btn{width:100%;padding:11px;background:var(--prl);color:var(--pr);border:1.5px solid rgba(255,90,31,.25);border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:.85rem;}
+.write-review-btn:hover{background:var(--pr);color:#fff;}
+.write-review-form{background:var(--bg);border-radius:11px;padding:1rem;margin-bottom:.85rem;border:1.5px solid var(--bdr);}
+.write-review-title{font-size:13px;font-weight:700;margin-bottom:.75rem;}
+
 @media(max-width:768px){
   .shops-grid{grid-template-columns:1fr;}
   .pstats.g4{grid-template-columns:repeat(2,1fr);}
@@ -657,6 +679,11 @@ input,select,textarea{font-family:inherit;}
     <div class="det-acts" id="d-acts"></div>
     <div class="det-sec">Info</div>
     <div class="info-grid" id="d-info"></div>
+    <!-- RATING & REVIEWS -->
+    <div style="margin-top:1.25rem;">
+      <div class="det-sec">Ratings & Reviews</div>
+      <div id="d-reviews-section"></div>
+    </div>
   </div>
 </div>
 
@@ -813,13 +840,25 @@ input,select,textarea{font-family:inherit;}
 <!-- CUSTOMER PANEL -->
 <div id="page-customer" class="page">
   <div class="panel-hero customer"><h1>👤 My Account</h1><p id="cust-welcome">Welcome!</p></div>
-  <div class="psec" style="padding-top:1rem;">
+  <div class="pstats g3">
+    <div class="stat-box"><div class="stat-num hl" id="cust-fav-count">0</div><div class="stat-lbl">Favorites</div></div>
+    <div class="stat-box"><div class="stat-num" id="cust-review-count">0</div><div class="stat-lbl">Reviews</div></div>
+    <div class="stat-box"><div class="stat-box"><div class="stat-num">👤</div><div class="stat-lbl">Customer</div></div></div>
+  </div>
+  <div class="psec" style="padding-top:.5rem;">
     <div class="fcard">
-      <div class="fcard-title">📋 Profile</div>
+      <div class="fcard-title">📋 My Profile</div>
       <div class="fgroup"><label class="flabel">Display Name</label><input class="finput" id="cust-name-i" type="text" placeholder="Your name"></div>
       <div class="fgroup"><label class="flabel">Phone</label><input class="finput" id="cust-phone-i" type="tel" placeholder="+91 XXXXX XXXXX"></div>
-      <button class="inline-save" onclick="showToast('✅ Profile updated!')">Save Profile</button>
+      <button class="inline-save" onclick="saveCustProfile()">Save Profile</button>
     </div>
+  </div>
+  <div class="psec" style="padding-top:0;">
+    <div class="psec-title">My Reviews</div>
+    <div id="cust-reviews-list"></div>
+  </div>
+  <div class="psec" style="padding-top:0;">
+    <button class="submit-btn" onclick="showPage('favorites')" style="max-width:260px;display:block;margin:0 auto;background:var(--sec);">❤️ View My Favorites</button>
   </div>
   <div class="pw-section">
     <div class="pw-sec-title">🔑 Change Password</div>
@@ -872,7 +911,12 @@ input,select,textarea{font-family:inherit;}
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-register')">✕</button>
     <div class="modal-title">Create Account 🎉</div>
-    <div class="modal-sub">Join for free — takes 30 seconds</div>
+    <div class="modal-sub">Join FoodSpot for free</div>
+    <!-- ROLE TABS -->
+    <div style="display:flex;background:var(--bg);border-radius:10px;padding:4px;gap:3px;margin-bottom:1.1rem;">
+      <button id="reg-tab-cust" onclick="setRegTab('customer')" style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;background:#fff;color:var(--pr);box-shadow:0 1px 6px rgba(0,0,0,.1);">👤 Customer</button>
+      <button id="reg-tab-owner" onclick="setRegTab('owner')" style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:var(--t2);">🏪 Shop Owner</button>
+    </div>
     <div class="merr" id="reg-err"></div>
     <div class="mok" id="reg-ok"></div>
     <div class="mgroup"><label class="mlabel">Full Name *</label><input class="minput ni" id="r-name" type="text" placeholder="Your full name" oninput="autoSuggestUsername()"></div>
@@ -882,10 +926,10 @@ input,select,textarea{font-family:inherit;}
       <div id="r-user-hint" style="font-size:11px;margin-top:3px;"></div>
     </div>
     <div class="mgroup"><label class="mlabel">Phone *</label><input class="minput ni" id="r-phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
-    <input type="hidden" id="r-role" value="owner">
+    <input type="hidden" id="r-role" value="customer">
     <div class="mgroup"><label class="mlabel">Password *</label><div class="minput-wrap"><input class="minput" id="r-pass" type="password" placeholder="Min 4 characters"><button class="mpw-eye" onclick="togglePw('r-pass',this)">👁️</button></div></div>
     <div class="mgroup"><label class="mlabel">Confirm Password *</label><div class="minput-wrap"><input class="minput" id="r-conf" type="password" placeholder="Repeat password"><button class="mpw-eye" onclick="togglePw('r-conf',this)">👁️</button></div></div>
-    <button class="mbtn mbtn-pr" onclick="doRegister()">Create Shop Owner Account →</button>
+    <button class="mbtn mbtn-pr" id="reg-submit-btn" onclick="doRegister()">Create Customer Account →</button>
     <div class="mlink">Already have an account? <span onclick="switchModal('modal-register','modal-login')">Sign in</span></div>
   </div>
 </div>
@@ -992,6 +1036,7 @@ const LS = {
   banners:  'fs_banners',
   brand:    'fs_brand',
   favorites:'fs_favorites',
+  reviews:  'fs_reviews',
 };
 
 // ==========================================================
@@ -1031,6 +1076,8 @@ let shopPos  = lsGet(LS.positions, {});
 let banners  = lsGet(LS.banners,  DEFAULT_BANNERS);
 let brand    = lsGet(LS.brand,    {name:'FoodSpot', tagline:'Discover Local Eateries'});
 let favorites= lsGet(LS.favorites,{});
+// reviews: { shopId: [{id, username, name, rating, text, date}] }
+let allReviews = lsGet(LS.reviews, {});
 
 // Ensure all shops have required fields
 allShops = allShops.map(s=>({imgs:[],menu:[],status:'approved',ownerUsername:'',...s}));
@@ -1465,38 +1512,39 @@ function adminResetCredsByShop(){
 // PARSE HOURS & AUTO OPEN/CLOSE
 // ======================================================
 function parseTimeToMinutes(str){
-  str = str.trim().toLowerCase();
-  const m = str.match(/^(\d+)(?::(\d+))?\s*(am|pm)$/);
+  if(!str) return -1;
+  str=str.trim().toLowerCase().replace(/\s+/g,'');
+  // formats: 11am, 11pm, 11:30am, 11:30pm
+  const m=str.match(/^(\d{1,2})(?::(\d{2}))?(am|pm)$/);
   if(!m) return -1;
-  let h = parseInt(m[1]), min = parseInt(m[2]||0), period = m[3];
+  let h=parseInt(m[1]), min=parseInt(m[2]||0), period=m[3];
   if(period==='am'&&h===12) h=0;
   if(period==='pm'&&h!==12) h+=12;
   return h*60+min;
 }
 
 function isCurrentlyOpen(hours){
-  if(!hours||hours.trim()==='') return null; // unknown
-  const now = new Date();
-  const nowMin = now.getHours()*60+now.getMinutes();
-  // Normalize dashes: –, —, -, to -
-  const normalized = hours.replace(/[–—]/g,'-').toLowerCase().trim();
-  const parts = normalized.split('-');
+  if(!hours||hours.trim()==='') return null;
+  const now=new Date();
+  const nowMin=now.getHours()*60+now.getMinutes();
+  // Normalize various dash types to -
+  const normalized=hours.replace(/[–—−]/g,'-').toLowerCase().replace(/\s+/g,'').trim();
+  const parts=normalized.split('-');
   if(parts.length!==2) return null;
-  const openMin = parseTimeToMinutes(parts[0].trim());
-  let closeMin = parseTimeToMinutes(parts[1].trim());
+  const openMin=parseTimeToMinutes(parts[0].trim());
+  let closeMin=parseTimeToMinutes(parts[1].trim());
   if(openMin<0||closeMin<0) return null;
-  // Handle midnight crossing e.g. 11am-12am means 11am to midnight
-  if(closeMin===0) closeMin=24*60; // 12am = midnight = end of day
-  if(openMin>closeMin){ // crosses midnight e.g. 10pm-3am
-    return nowMin>=openMin || nowMin<closeMin;
-  }
-  return nowMin>=openMin && nowMin<closeMin;
+  // 12am = midnight = end of day
+  if(closeMin===0) closeMin=24*60;
+  // crosses midnight e.g. 10pm-3am
+  if(openMin>closeMin) return nowMin>=openMin||nowMin<closeMin;
+  return nowMin>=openMin&&nowMin<closeMin;
 }
 
 function getEffectiveOpen(shop){
-  const auto = isCurrentlyOpen(shop.hours);
+  const auto=isCurrentlyOpen(shop.hours);
   if(auto!==null) return auto;
-  return shop.isOpen; // fall back to manual setting
+  return !!shop.isOpen;
 }
 
 function logout(){ currentUser=null; updateNavAfterLogout(); setupBnav(); showPage('home'); showToast('👋 Signed out'); }
@@ -1703,14 +1751,12 @@ function renderHome(){
 function filterShops(){
   const q=(document.getElementById('search-input')||{}).value?.toLowerCase()||'';
   const approved=allShops.filter(s=>s.status==='approved');
-  // Update isOpen dynamically based on hours
   approved.forEach(s=>{ s._effectiveOpen=getEffectiveOpen(s); });
+  // Sort: open first, then by rating descending
   const sorted=[...approved].sort((a,b)=>{
-    // Open shops first
-    const openDiff = (b._effectiveOpen?1:0)-(a._effectiveOpen?1:0);
+    const openDiff=(b._effectiveOpen?1:0)-(a._effectiveOpen?1:0);
     if(openDiff!==0) return openDiff;
-    // Then by position
-    return (shopPos[a.id]||9999)-(shopPos[b.id]||9999);
+    return (b.rating||0)-(a.rating||0);
   });
   const filtered=sorted.filter(s=>{
     const mc=currentCat==='All'||s.cat===currentCat;
@@ -1778,6 +1824,7 @@ function openDetail(id){
   document.getElementById('d-acts').innerHTML=`<button class="dact dact-call" onclick="callShop('${shop.phone}')">📞 Call Now</button>${shop.wa?`<button class="dact dact-wa" onclick="waShop('${shop.wa}','${shop.name}')">💬 WhatsApp</button>`:''}${shop.web?`<button class="dact dact-web" onclick="webShop('${shop.web}')">🌐 Website</button>`:''}`;
   document.getElementById('d-info').innerHTML=`<div class="info-box"><div class="ib-lbl">📍 Location</div><div class="ib-val">${shop.area}</div></div><div class="info-box"><div class="ib-lbl">⏰ Hours</div><div class="ib-val">${shop.hours||'—'}</div></div><div class="info-box"><div class="ib-lbl">📅 Since</div><div class="ib-val">${shop.since||'—'}</div></div><div class="info-box"><div class="ib-lbl">📞 Phone</div><div class="ib-val">+91 ${shop.phone||'—'}</div></div>`;
   showPage('detail');
+  renderReviewSection(id);
 }
 
 function detGoSlide(i){
@@ -2116,7 +2163,170 @@ function refreshCustomer(){
   const w=document.getElementById('cust-welcome'); if(w) w.textContent=`Welcome, ${currentUser.name}!`;
   const ni=document.getElementById('cust-name-i'); if(ni) ni.value=currentUser.name||'';
   const pi=document.getElementById('cust-phone-i'); if(pi) pi.value=currentUser.phone||'';
+  // stats
+  const favCount=(favorites[currentUser.username]||[]).length;
+  const fc=document.getElementById('cust-fav-count'); if(fc) fc.textContent=favCount;
+  // count reviews by this user
+  let rcount=0;
+  Object.values(allReviews).forEach(arr=>{ rcount+=arr.filter(r=>r.username===currentUser.username).length; });
+  const rc=document.getElementById('cust-review-count'); if(rc) rc.textContent=rcount;
+  // render my reviews
+  renderMyReviews();
 }
+
+function saveCustProfile(){
+  if(!currentUser) return;
+  const name=(document.getElementById('cust-name-i')||{}).value?.trim();
+  const phone=(document.getElementById('cust-phone-i')||{}).value?.trim();
+  if(name){ currentUser.name=name; if(users[currentUser.username]) users[currentUser.username].name=name; }
+  if(phone){ currentUser.phone=phone; if(users[currentUser.username]) users[currentUser.username].phone=phone; }
+  saveUsers(); updateNavAfterLogin(); showToast('✅ Profile updated!');
+}
+
+function renderMyReviews(){
+  const el=document.getElementById('cust-reviews-list'); if(!el) return;
+  if(!currentUser){ el.innerHTML=''; return; }
+  let myReviews=[];
+  Object.entries(allReviews).forEach(([shopId,arr])=>{
+    arr.filter(r=>r.username===currentUser.username).forEach(r=>myReviews.push({...r,shopId:parseInt(shopId)}));
+  });
+  if(!myReviews.length){ el.innerHTML='<div class="empty-state" style="padding:1.5rem;"><div class="empty-icon">⭐</div><div class="empty-title">No reviews yet</div><p style="font-size:12px;">Rate shops you\'ve visited!</p></div>'; return; }
+  myReviews.sort((a,b)=>b.id-a.id);
+  el.innerHTML=myReviews.map(r=>{
+    const shop=allShops.find(s=>s.id===r.shopId);
+    return `<div class="review-card">
+      <div class="review-top">
+        <div class="review-ava">${r.name.charAt(0).toUpperCase()}</div>
+        <div class="review-meta">
+          <div class="review-name">${shop?shop.name:'Unknown Shop'}</div>
+          <div class="review-date">${r.date} · <span class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></div>
+        </div>
+        <button class="review-del" onclick="deleteReview(${r.shopId},${r.id},true)">Delete</button>
+      </div>
+      <div class="review-text">${r.text||''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ======================================================
+// REGISTER TAB SWITCH
+// ======================================================
+function setRegTab(role){
+  document.getElementById('r-role').value=role;
+  const custBtn=document.getElementById('reg-tab-cust');
+  const ownerBtn=document.getElementById('reg-tab-owner');
+  const submitBtn=document.getElementById('reg-submit-btn');
+  if(custBtn&&ownerBtn){
+    const activeStyle='background:#fff;color:var(--pr);box-shadow:0 1px 6px rgba(0,0,0,.1);';
+    const inactiveStyle='background:transparent;color:var(--t2);box-shadow:none;';
+    custBtn.style.cssText=(role==='customer'?activeStyle:inactiveStyle)+'flex:1;padding:8px 4px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;';
+    ownerBtn.style.cssText=(role==='owner'?activeStyle:inactiveStyle)+'flex:1;padding:8px 4px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;';
+  }
+  if(submitBtn) submitBtn.textContent=role==='owner'?'Create Shop Owner Account →':'Create Customer Account →';
+}
+
+// ======================================================
+// RATING & REVIEW SYSTEM
+// ======================================================
+function saveReviews(){ lsSet(LS.reviews, allReviews); }
+
+let currentReviewShopId=null;
+let selectedStars=0;
+
+function renderReviewSection(shopId){
+  const el=document.getElementById('d-reviews-section'); if(!el) return;
+  currentReviewShopId=shopId;
+  const reviews=(allReviews[shopId]||[]);
+  const avgRating=reviews.length?Math.round((reviews.reduce((s,r)=>s+r.rating,0)/reviews.length)*10)/10:0;
+
+  // Update shop rating in allShops
+  const shop=allShops.find(s=>s.id===shopId);
+  if(shop&&reviews.length){ shop.rating=avgRating; shop.reviews=reviews.length; saveShops(); }
+
+  const avgHtml=reviews.length?`
+    <div class="avg-rating-bar">
+      <div class="avg-big">${avgRating}</div>
+      <div>
+        <div class="avg-stars">${'★'.repeat(Math.floor(avgRating))}${'☆'.repeat(5-Math.floor(avgRating))}</div>
+        <div class="avg-count">${reviews.length} review${reviews.length!==1?'s':''}</div>
+      </div>
+    </div>`:'';
+
+  const canReview=currentUser&&(currentUser.role==='customer'||currentUser.role==='owner');
+  const alreadyReviewed=currentUser&&reviews.some(r=>r.username===currentUser.username);
+
+  const writeHtml=canReview&&!alreadyReviewed?`
+    <button class="write-review-btn" onclick="toggleReviewForm(${shopId})">✏️ Write a Review</button>
+    <div class="write-review-form" id="review-form-${shopId}" style="display:none;">
+      <div class="write-review-title">Your Rating</div>
+      <div class="star-select" id="star-select-${shopId}">
+        ${[1,2,3,4,5].map(i=>`<button class="star-btn" onclick="selectStar(${shopId},${i})" id="star-${shopId}-${i}">★</button>`).join('')}
+      </div>
+      <textarea class="finput" id="review-text-${shopId}" style="min-height:70px;resize:vertical;margin-bottom:.65rem;" placeholder="Share your experience (optional)..."></textarea>
+      <button class="inline-save" onclick="submitReview(${shopId})">Submit Review</button>
+    </div>`
+    :alreadyReviewed?'<p style="font-size:12px;color:var(--pr);font-weight:600;margin-bottom:.85rem;">✅ You have already reviewed this shop</p>'
+    :'<p style="font-size:12px;color:var(--t3);margin-bottom:.85rem;"><span onclick="openModal(\'modal-login\')" style="color:var(--pr);cursor:pointer;font-weight:700;">Sign in</span> to write a review</p>';
+
+  const reviewsHtml=reviews.length?[...reviews].sort((a,b)=>b.id-a.id).map(r=>`
+    <div class="review-card">
+      <div class="review-top">
+        <div class="review-ava">${r.name.charAt(0).toUpperCase()}</div>
+        <div class="review-meta">
+          <div class="review-name">${r.name}</div>
+          <div class="review-date">${r.date}</div>
+        </div>
+        <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+        ${(currentUser&&(currentUser.username===r.username||currentUser.role==='admin'))?`<button class="review-del" onclick="deleteReview(${shopId},${r.id},false)">✕</button>`:''}
+      </div>
+      <div class="review-text">${r.text||''}</div>
+    </div>`).join('')
+    :'<p style="font-size:12px;color:var(--t3);margin-bottom:.5rem;">No reviews yet — be the first!</p>';
+
+  el.innerHTML=avgHtml+writeHtml+reviewsHtml;
+  selectedStars=0;
+}
+
+function toggleReviewForm(shopId){
+  const f=document.getElementById('review-form-'+shopId);
+  if(f) f.style.display=f.style.display==='none'?'block':'none';
+}
+
+function selectStar(shopId,n){
+  selectedStars=n;
+  for(let i=1;i<=5;i++){
+    const btn=document.getElementById(`star-${shopId}-${i}`);
+    if(btn) btn.classList.toggle('filled',i<=n);
+  }
+}
+
+function submitReview(shopId){
+  if(!currentUser){ openModal('modal-login'); return; }
+  if(!selectedStars){ showToast('⚠️ Please select a star rating'); return; }
+  if(!allReviews[shopId]) allReviews[shopId]=[];
+  // Prevent duplicate
+  if(allReviews[shopId].some(r=>r.username===currentUser.username)){ showToast('⚠️ You already reviewed this shop'); return; }
+  const text=(document.getElementById('review-text-'+shopId)||{}).value?.trim()||'';
+  const now=new Date();
+  const date=now.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  allReviews[shopId].push({id:Date.now(),username:currentUser.username,name:currentUser.name,rating:selectedStars,text,date});
+  saveReviews();
+  showToast('✅ Review submitted! Thank you.');
+  renderReviewSection(shopId);
+  // Update card rating display
+  renderHome();
+}
+
+function deleteReview(shopId,reviewId,fromProfile){
+  if(!allReviews[shopId]) return;
+  allReviews[shopId]=allReviews[shopId].filter(r=>r.id!==reviewId);
+  saveReviews();
+  showToast('🗑️ Review deleted');
+  if(fromProfile){ refreshCustomer(); }
+  else { renderReviewSection(shopId); renderHome(); }
+}
+
+
 
 // ==========================================================
 // DELIVERY
