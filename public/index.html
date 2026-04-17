@@ -689,7 +689,7 @@ input,select,textarea{font-family:inherit;}
 
 <!-- ADD SHOP PAGE -->
 <div id="page-add" class="page">
-  <div class="form-hero"><h1>List Your Shop</h1><p>Submit your shop & get login credentials</p></div>
+  <div class="form-hero"><h1>Add Your Shop</h1><p>Fill details & create your account — all in one step</p></div>
   <div class="form-wrap">
     <div class="fcard">
       <div class="fcard-title">🏪 Basic Info</div>
@@ -699,10 +699,16 @@ input,select,textarea{font-family:inherit;}
         <div class="fgroup"><label class="flabel">City / Area <span class="req">*</span></label><input class="finput" id="f-area" type="text" placeholder="e.g. Siliguri, WB"></div>
       </div>
       <div class="fgroup"><label class="flabel">Description</label><textarea class="ftextarea" id="f-desc" placeholder="What makes your shop special?"></textarea></div>
+    </div>
+    <div class="fcard">
+      <div class="fcard-title">⏰ Shop Timing</div>
+      <p style="font-size:11px;color:var(--t2);margin-bottom:.85rem;">Select open &amp; close time — status updates automatically based on current time.</p>
       <div class="frow">
-        <div class="fgroup"><label class="flabel">Opening Hours</label><input class="finput" id="f-hours" type="text" placeholder="10am – 10pm"></div>
-        <div class="fgroup"><label class="flabel">Status</label><select class="fselect" id="f-open"><option value="true">Open</option><option value="false">Closed</option></select></div>
+        <div class="fgroup"><label class="flabel">Opens At <span class="req">*</span></label><select class="fselect" id="f-open-time" onchange="updateHoursPreview()"><option value="">Select</option></select></div>
+        <div class="fgroup"><label class="flabel">Closes At <span class="req">*</span></label><select class="fselect" id="f-close-time" onchange="updateHoursPreview()"><option value="">Select</option></select></div>
       </div>
+      <div id="f-hours-preview" style="font-size:13px;font-weight:600;color:var(--pr);padding:6px 0;min-height:28px;"></div>
+      <input type="hidden" id="f-hours">
     </div>
     <div class="fcard">
       <div class="fcard-title">📞 Contact</div>
@@ -723,20 +729,21 @@ input,select,textarea{font-family:inherit;}
       <button onclick="addMenuItem()" id="add-menu-btn" style="background:var(--prl);color:var(--pr);border:none;border-radius:8px;padding:9px 18px;font-size:12px;font-weight:700;width:100%;transition:all .2s;">+ Add Menu Item</button>
     </div>
     <div class="fcard" id="f-creds-card">
-      <div class="fcard-title">🔑 Your Shop Login</div>
-      <p style="font-size:12px;color:var(--t2);margin-bottom:.85rem;line-height:1.5;">Choose a username for this shop. Password same as your account. Save it!</p>
+      <div class="fcard-title">🔑 Create Your Login</div>
+      <div style="background:var(--prl);border-radius:8px;padding:10px 12px;margin-bottom:.85rem;font-size:12px;color:var(--pr);font-weight:600;">⚠️ Save your login — you need this to manage your shop later!</div>
       <div class="fgroup">
-        <label class="flabel">Shop Username <span class="req">*</span></label>
-        <input class="finput" id="f-username" type="text" placeholder="Suggested from shop name..." autocomplete="off" oninput="checkUsernameAvail(this)">
+        <label class="flabel">Username <span class="req">*</span></label>
+        <input class="finput" id="f-username" type="text" placeholder="Auto-suggested from shop name" autocomplete="off" oninput="checkUsernameAvail(this)">
         <div id="f-username-hint" style="font-size:11px;margin-top:3px;"></div>
       </div>
       <div class="frow">
         <div class="fgroup"><label class="flabel">Password <span class="req">*</span></label><div class="pw-wrap"><input class="finput" id="f-pass" type="password" placeholder="Min 4 chars"><button class="pw-eye" onclick="togglePw('f-pass',this)">👁️</button></div></div>
-        <div class="fgroup"><label class="flabel">Confirm <span class="req">*</span></label><div class="pw-wrap"><input class="finput" id="f-conf" type="password" placeholder="Repeat password"><button class="pw-eye" onclick="togglePw('f-conf',this)">👁️</button></div></div>
+        <div class="fgroup"><label class="flabel">Confirm <span class="req">*</span></label><div class="pw-wrap"><input class="finput" id="f-conf" type="password" placeholder="Repeat"><button class="pw-eye" onclick="togglePw('f-conf',this)">👁️</button></div></div>
       </div>
+      <div class="fgroup"><label class="flabel">Owner Name</label><input class="finput" id="f-owner-name" type="text" placeholder="Your full name"></div>
     </div>
     <button class="submit-btn" onclick="submitShop()">✅ Submit Shop for Approval</button>
-    <p style="font-size:11px;color:var(--t3);text-align:center;margin-top:9px;line-height:1.5;">Shop goes live after admin approval. Save your login credentials!</p>
+    <p style="font-size:11px;color:var(--t3);text-align:center;margin-top:9px;line-height:1.5;">Shop goes live after admin approval within 24 hours.</p>
   </div>
 </div>
 
@@ -807,6 +814,13 @@ input,select,textarea{font-family:inherit;}
         <button class="inline-save" onclick="adminResetCredsByShop()">🔑 Set New Login</button>
       </div>
     </div>
+  </div>
+
+  <!-- ADMIN: ALL REVIEWS -->
+  <div class="psec">
+    <div class="psec-title">⭐ All Customer Reviews</div>
+    <div class="admin-search" style="margin-bottom:.7rem;"><span>🔍</span><input type="text" id="admin-review-search" placeholder="Search by shop, user, or review text..." oninput="renderAdminReviews()"></div>
+    <div id="admin-reviews-list"></div>
   </div>
 
   <div class="pw-section">
@@ -1006,7 +1020,14 @@ input,select,textarea{font-family:inherit;}
       <div class="mgroup"><label class="mlabel">WhatsApp</label><input class="minput ni" id="es-wa" type="tel"></div>
     </div>
     <div class="mgroup"><label class="mlabel">Website / Instagram</label><input class="minput ni" id="es-web" type="url"></div>
-    <div class="mgroup"><label class="mlabel">Opening Hours</label><input class="minput ni" id="es-hours" type="text"></div>
+    <div class="mgroup"><label class="mlabel">Opening Hours</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:5px;">
+        <select class="minput ni" id="es-open-time" onchange="updateHoursPreview(true)"><option value="">Opens at...</option></select>
+        <select class="minput ni" id="es-close-time" onchange="updateHoursPreview(true)"><option value="">Closes at...</option></select>
+      </div>
+      <div id="es-hours-preview" style="font-size:12px;font-weight:600;color:var(--pr);min-height:20px;"></div>
+      <input type="hidden" id="es-hours">
+    </div>
     <div class="mgroup"><label class="mlabel">Status</label><select class="minput ni" id="es-open"><option value="true">Open</option><option value="false">Closed</option></select></div>
     <div style="margin-bottom:.85rem;">
       <div class="mlabel" style="margin-bottom:.4rem;">Photos (max 5)</div>
@@ -2359,8 +2380,230 @@ function showToast(msg){
 document.querySelectorAll('.modal-ov').forEach(ov=>{ ov.addEventListener('click',e=>{ if(e.target===ov) closeModal(ov.id); }); });
 
 // ==========================================================
+// ======================================================
+// SESSION PERSISTENCE (fix logout on refresh)
+// ======================================================
+function saveSession(){
+  if(currentUser) lsSet('fs_session', currentUser);
+  else { try{ localStorage.removeItem('fs_session'); }catch(e){} }
+}
+function loadSession(){
+  const s = lsGet('fs_session', null);
+  if(s && users[s.username] && users[s.username].pass){
+    currentUser = s;
+    updateNavAfterLogin();
+    setupBnav();
+  }
+}
+
+// ======================================================
+// BROWSER BACK BUTTON (fix exiting website)
+// ======================================================
+const pageHistory = [];
+function showPage(name){
+  if(name !== 'detail') prevPage = name;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById('page-'+name);
+  if(el) el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Push state so browser back stays in site
+  const state = {page: name};
+  if(!pageHistory.length || pageHistory[pageHistory.length-1] !== name){
+    pageHistory.push(name);
+    window.history.pushState(state, '', '#'+name);
+  }
+  if(name==='home') renderHome();
+  if(name==='admin'){ renderAdminShops(); renderBannerList(); renderPopMgr(); applyBrand(); }
+  if(name==='owner') refreshOwner();
+  if(name==='customer') refreshCustomer();
+  if(name==='favorites') renderFavorites();
+  updateBnav(name);
+}
+window.addEventListener('popstate', function(e){
+  if(pageHistory.length > 1){
+    pageHistory.pop(); // remove current
+    const prev = pageHistory[pageHistory.length-1] || 'home';
+    // Don't push again
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const el = document.getElementById('page-'+prev);
+    if(el) el.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(prev==='home') renderHome();
+    if(prev==='admin'){ renderAdminShops(); renderBannerList(); renderPopMgr(); applyBrand(); }
+    if(prev==='owner') refreshOwner();
+    if(prev==='customer') refreshCustomer();
+    if(prev==='favorites') renderFavorites();
+    updateBnav(prev);
+    clearInterval(detSsTimer);
+  } else {
+    // At root — go home instead of exiting
+    window.history.pushState({page:'home'},'','#home');
+    showPage('home');
+  }
+});
+
+// ======================================================
+// TIME PICKER FOR SHOP HOURS
+// ======================================================
+function buildTimePicker(){
+  const times = [];
+  for(let h=0;h<24;h++){
+    for(let m=0;m<60;m+=30){
+      const period = h<12?'am':'pm';
+      const hour = h===0?12:(h>12?h-12:h);
+      const min = m===0?'00':'30';
+      const label = `${hour}:${min} ${period}`;
+      const val = `${hour}:${min}${period}`;
+      times.push({label,val});
+    }
+  }
+  ['f-open-time','f-close-time','es-open-time','es-close-time'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    el.innerHTML='<option value="">Select time</option>'+times.map(t=>`<option value="${t.val}">${t.label}</option>`).join('');
+  });
+}
+
+function updateHoursPreview(isEdit){
+  const prefix = isEdit?'es':'f';
+  const openEl = document.getElementById(prefix+'-open-time');
+  const closeEl = document.getElementById(prefix+'-close-time');
+  const previewEl = document.getElementById(prefix+'-hours-preview');
+  const hiddenEl = document.getElementById(prefix+'-hours');
+  if(!openEl||!closeEl) return;
+  const o=openEl.value, c=closeEl.value;
+  if(o&&c){
+    const hoursStr = o+' – '+c;
+    if(previewEl) previewEl.textContent = '⏰ '+hoursStr;
+    if(hiddenEl) hiddenEl.value = hoursStr;
+  } else {
+    if(previewEl) previewEl.textContent='';
+    if(hiddenEl) hiddenEl.value='';
+  }
+}
+
+function setTimePickerValue(prefix, hoursStr){
+  if(!hoursStr) return;
+  const normalized = hoursStr.replace(/[–—−]/g,'-').replace(/\s+/g,'');
+  const parts = normalized.split('-');
+  if(parts.length!==2) return;
+  const openEl=document.getElementById(prefix+'-open-time');
+  const closeEl=document.getElementById(prefix+'-close-time');
+  if(openEl) { const opt=[...openEl.options].find(o=>o.value.replace(/\s/g,'')==parts[0].replace(/\s/g,'')); if(opt)openEl.value=opt.value; }
+  if(closeEl){ const opt=[...closeEl.options].find(o=>o.value.replace(/\s/g,'')==parts[1].replace(/\s/g,'')); if(opt)closeEl.value=opt.value; }
+  updateHoursPreview(prefix==='es');
+}
+
+// ======================================================
+// ADMIN: FULL SHOP EDIT + CREDENTIAL RESET (from admin panel)
+// ======================================================
+function adminEditShop(id){
+  // Reuse owner edit flow but called from admin
+  openEditShop(id, true);
+}
+
+// ======================================================
+// ADMIN: DELETE REVIEW
+// ======================================================
+function adminDeleteReview(shopId, reviewId){
+  if(!allReviews[shopId]) return;
+  allReviews[shopId]=allReviews[shopId].filter(r=>r.id!==reviewId);
+  saveReviews();
+  showToast('🗑️ Review deleted by admin');
+  renderAdminReviews();
+  // If detail page is open for same shop
+  if(currentReviewShopId===shopId) renderReviewSection(shopId);
+}
+
+function renderAdminReviews(){
+  const el=document.getElementById('admin-reviews-list'); if(!el) return;
+  let allR=[];
+  Object.entries(allReviews).forEach(([shopId,arr])=>{
+    const shop=allShops.find(s=>s.id===parseInt(shopId));
+    arr.forEach(r=>allR.push({...r,shopId:parseInt(shopId),shopName:shop?shop.name:'Unknown'}));
+  });
+  const q=(document.getElementById('admin-review-search')||{}).value?.toLowerCase()||'';
+  if(q) allR=allR.filter(r=>r.shopName.toLowerCase().includes(q)||r.name.toLowerCase().includes(q)||(r.text||'').toLowerCase().includes(q));
+  allR.sort((a,b)=>b.id-a.id);
+  if(!allR.length){ el.innerHTML='<div class="empty-state" style="padding:1.5rem;"><div class="empty-title">No reviews yet</div></div>'; return; }
+  el.innerHTML=allR.map(r=>`
+    <div class="review-card" style="margin-bottom:8px;">
+      <div class="review-top">
+        <div class="review-ava">${r.name.charAt(0).toUpperCase()}</div>
+        <div class="review-meta">
+          <div class="review-name">${r.name} <span style="color:var(--t3);font-weight:400;">on</span> ${r.shopName}</div>
+          <div class="review-date">${r.date} · <span class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></div>
+        </div>
+        <button class="review-del" onclick="adminDeleteReview(${r.shopId},${r.id})" style="font-size:11px;padding:5px 10px;">🗑️ Delete</button>
+      </div>
+      <div class="review-text">${r.text||'<em style="color:var(--t3)">No text</em>'}</div>
+    </div>`).join('');
+}
+
+// Override openEditShop to handle admin call & add time picker
+const _origOpenEditShop = openEditShop;
+function openEditShop(id, fromAdmin){
+  _origOpenEditShop(id);
+  // Set time picker values
+  const shop=allShops.find(s=>s.id===id); if(!shop) return;
+  setTimeout(()=>{ buildTimePicker(); setTimePickerValue('es', shop.hours); },50);
+  // If from admin, show credential reset section in modal
+  const credSec=document.getElementById('es-cred-section');
+  if(credSec) credSec.style.display=fromAdmin?'block':'block';
+  const credUn=document.getElementById('es-cred-un');
+  const credPw=document.getElementById('es-cred-pw');
+  if(credUn) credUn.value=shop.ownerUsername||'';
+  if(credPw) credPw.value='';
+}
+
+// ======================================================
+// HANDLE ADD SHOP (anyone can add, no login needed)
+// ======================================================
+function handleAddShop(){
+  const credsCard=document.getElementById('f-creds-card');
+  if(credsCard) credsCard.style.display=currentUser&&currentUser.role==='owner'?'none':'block';
+  buildTimePicker();
+  showPage('add');
+}
+
+// ======================================================
 // INIT
-// ==========================================================
+// ======================================================
+buildTimePicker();
+loadSession(); // restore session from localStorage
+
+// Override doLogin to save session
+const _origDoLogin = doLogin;
+function doLogin(){
+  const u=document.getElementById('l-user').value.trim();
+  const p=document.getElementById('l-pass').value.trim();
+  const err=document.getElementById('login-err');
+  const found=users[u];
+  if(!found||found.pass!==p){ err.textContent='Invalid username or password.'; err.style.display='block'; return; }
+  currentUser={username:u,role:found.role,name:found.name,phone:found.phone||''};
+  saveSession();
+  closeModal('modal-login');
+  updateNavAfterLogin();
+  setupBnav();
+  const map={admin:'admin',owner:'owner',customer:'customer'};
+  showPage(map[found.role]||'home');
+  showToast('✅ Welcome, '+found.name+'!');
+}
+
+// Override logout to clear session
+const _origLogout = logout;
+function logout(){
+  currentUser=null;
+  saveSession();
+  updateNavAfterLogout();
+  setupBnav();
+  showPage('home');
+  showToast('👋 Signed out');
+}
+
+// Initialize history
+window.history.replaceState({page:'home'},'','#home');
+pageHistory.push('home');
+
 renderHome();
 </script>
 </body>
