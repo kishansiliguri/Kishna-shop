@@ -1991,9 +1991,7 @@ function submitShop(){
   document.getElementById('menu-items-wrap').innerHTML=''; menuRowCtr=0;
   document.getElementById('add-menu-btn').style.display='block';
 
-  if(ownerPass){
-    showToast('✅ Submitted! Login: '+ownerUsername+' / '+ownerPass+' (save this!)');
-  } else {
+  if(ownerPass) {
     showToast('✅ Shop submitted for approval!');
   }
   setTimeout(()=>showPage(currentUser?.role==='owner'?'owner':'home'),1200);
