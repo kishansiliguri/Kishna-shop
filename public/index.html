@@ -1,4 +1,15 @@
-<!DOCTYPE html>
+<div class="fcard">
+      <div class="fcard-title">&#127991; Category</div>
+      <p style="font-size:11px;color:var(--t2);margin-bottom:.75rem;">Select <strong>1 main category</strong>, then select sub-categories.</p>
+      <div class="flabel" style="margin-bottom:6px;">Main Category <span class="req">*</span></div>
+      <div class="mcat-grid" id="f-cats-grid"></div>
+      <div id="f-cats-hint" style="font-size:11px;color:var(--t3);margin-top:6px;">Select your shop category</div>
+      <div id="f-subcats-wrap" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--bdr);">
+        <div class="flabel" style="margin-bottom:6px;">Sub-Categories <span style="font-size:10px;font-weight:400;color:var(--t2);">(Select multiple)</span></div>
+        <div class="mcat-grid" id="f-subcats-grid" style="grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:6px;"></div>
+        <div id="f-subcats-hint" style="font-size:11px;color:var(--t3);margin-top:6px;">Optional: choose specific sub-categories</div>
+      </div>
+    </div><!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -73,6 +84,9 @@ img{display:block;max-width:100%;}button{font-family:inherit;cursor:pointer;-web
 .cat-chip{display:flex;align-items:center;gap:6px;padding:8px 15px;border-radius:30px;background:#fff;border:1.5px solid var(--bdr);font-size:12px;font-weight:600;color:var(--t2);white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0;}
 .cat-chip:hover{border-color:var(--pr);color:var(--pr);}
 .cat-chip.active{background:var(--pr);border-color:var(--pr);color:#fff;}
+.sub-chip{background:rgba(79,70,229,.08);border-color:#C7D2FE;color:#4F46E5;font-size:11px;padding:6px 13px;}
+.sub-chip.active{background:#4F46E5;border-color:#4F46E5;color:#fff;}
+.sub-chip:hover{border-color:#4F46E5;background:rgba(79,70,229,.15);}
 
 /* POPULAR SCROLL */
 .pop-scroll{display:flex;gap:10px;overflow-x:auto;padding:3px 2px 10px;-webkit-overflow-scrolling:touch;}
@@ -419,28 +433,10 @@ img{display:block;max-width:100%;}button{font-family:inherit;cursor:pointer;-web
   <div class="search-wrap"><div class="search-box"><span style="font-size:16px;">&#128269;</span><input type="text" id="search-input" placeholder="Search shops, garments, medical, food..." oninput="filterShops()"><button class="sbtn" onclick="filterShops()">Search</button></div></div>
   <div class="sec" style="padding-bottom:.4rem;">
     <div class="sec-hdr"><div class="sec-title">Browse by <em>Category</em></div></div>
-    <div class="cats-row" id="cats-row">
-      <div class="cat-chip active" onclick="filterCat('All',this)">🏪 All</div>
-      <div class="cat-chip" onclick="filterCat('Food & Restaurant',this)">🍛 Food</div>
-      <div class="cat-chip" onclick="filterCat('Fast Food',this)">🍔 Fast Food</div>
-      <div class="cat-chip" onclick="filterCat('Grocery & Kirana',this)">🛒 Grocery</div>
-      <div class="cat-chip" onclick="filterCat('Garments & Clothing',this)">👗 Garments</div>
-      <div class="cat-chip" onclick="filterCat('Electronics',this)">📺 Electronics</div>
-      <div class="cat-chip" onclick="filterCat('Medical & Pharmacy',this)">💊 Medical</div>
-      <div class="cat-chip" onclick="filterCat('Mobile & Accessories',this)">📱 Mobile</div>
-      <div class="cat-chip" onclick="filterCat('Beauty & Salon',this)">💄 Beauty</div>
-      <div class="cat-chip" onclick="filterCat('Footwear',this)">👟 Footwear</div>
-      <div class="cat-chip" onclick="filterCat('Furniture & Home Decor',this)">🛋️ Furniture</div>
-      <div class="cat-chip" onclick="filterCat('Books & Stationery',this)">📚 Books</div>
-      <div class="cat-chip" onclick="filterCat('Sweets & Bakery',this)">🍬 Sweets</div>
-      <div class="cat-chip" onclick="filterCat('Cafe & Coffee',this)">☕ Cafe</div>
-      <div class="cat-chip" onclick="filterCat('Street Food',this)">🌮 Street Food</div>
-      <div class="cat-chip" onclick="filterCat('Jewellery & Watches',this)">💍 Jewellery</div>
-      <div class="cat-chip" onclick="filterCat('Education & Coaching',this)">🎓 Education</div>
-      <div class="cat-chip" onclick="filterCat('Auto Parts & Service',this)">🔩 Auto</div>
-      <div class="cat-chip" onclick="filterCat('Hotel & Lodge',this)">🏨 Hotel</div>
-      <div class="cat-chip" onclick="filterCat('Repair & Services',this)">🛠️ Repair</div>
-      <div class="cat-chip" onclick="filterCat('Other',this)">🏪 Other</div>
+    <div class="cats-row" id="cats-row"></div>
+    <!-- Sub-category row — shown when a main category is selected -->
+    <div id="subcats-row-wrap" style="display:none;margin-top:.6rem;">
+      <div class="cats-row" id="subcats-row"></div>
     </div>
   </div>
   <div class="sec" style="padding-bottom:.4rem;"><div class="sec-hdr"><div class="sec-title">&#128293; Most <em>Popular</em></div></div><div class="pop-scroll" id="pop-scroll"></div></div>
@@ -509,10 +505,11 @@ img{display:block;max-width:100%;}button{font-family:inherit;cursor:pointer;-web
     <div class="fcard">
       <div class="fcard-title">&#128247; Shop Photos (max 5)</div>
       <div class="img-upload-grid" id="shop-imgs-grid"><div class="img-add-btn" onclick="document.getElementById('shop-imgs-input').click()"><span>+</span><small>Add</small></div></div>
-      <input type="file" id="shop-imgs-input" accept="image/*" multiple style="display:none" onchange="handleShopImgs(this)">
+      <input type="file" id="shop-imgs-input" accept="image/*" style="display:none" onchange="handleShopImgs(this)">
     </div>
     <div class="fcard">
-      <div class="fcard-title">&#127859; Menu Items (max 10)</div>
+      <div class="fcard-title">&#127859; Products / Services</div>
+      <p style="font-size:11px;color:var(--t2);margin-bottom:.75rem;">Add items with prices — no image needed. Max 10.</p>
       <div id="menu-items-wrap"></div>
       <button onclick="addMenuItem()" id="add-menu-btn" style="background:var(--prl);color:var(--pr);border:none;border-radius:8px;padding:9px 18px;font-size:12px;font-weight:700;width:100%;">+ Add Menu Item</button>
     </div>
@@ -550,6 +547,19 @@ img{display:block;max-width:100%;}button{font-family:inherit;cursor:pointer;-web
       <div class="fgroup"><label class="flabel">Brand Name</label><input class="finput" id="brand-name-input" type="text" placeholder="ShopSpot"></div>
       <div class="fgroup"><label class="flabel">Tagline</label><input class="finput" id="brand-tagline-input" type="text" placeholder="Discover Local Eateries"></div>
       <button class="inline-save" onclick="saveBrand()">Save Brand</button>
+    </div>
+  </div>
+  <div class="psec">
+    <div class="psec-title">&#127991; Manage Categories & Sub-categories</div>
+    <div class="brand-sec" style="margin-bottom:0;">
+      <p style="font-size:11px;color:var(--t2);margin-bottom:.85rem;">Add or delete main categories and their sub-categories. Changes apply site-wide.</p>
+      <!-- Add Main Category -->
+      <div style="display:flex;gap:8px;margin-bottom:.85rem;">
+        <input class="finput" id="new-main-cat-input" type="text" placeholder="New main category name" style="flex:1;">
+        <button class="inline-save" style="white-space:nowrap;" onclick="addMainCat()">+ Add</button>
+      </div>
+      <!-- Main category list with sub-cat management -->
+      <div id="admin-cats-list"></div>
     </div>
   </div>
   <div class="psec">
@@ -612,7 +622,16 @@ img{display:block;max-width:100%;}button{font-family:inherit;cursor:pointer;-web
       <div class="fgroup"><label class="flabel">WhatsApp</label><input class="finput" id="adsh-wa" type="tel"></div>
     </div>
     <div class="fgroup"><label class="flabel">Website</label><input class="finput" id="adsh-web" type="url"></div>
-    <div class="fgroup"><label class="flabel">Category</label><div class="mcat-grid" id="adsh-cats-grid"></div><div id="adsh-cats-hint" style="font-size:11px;margin-top:5px;color:var(--t3);">Select category</div></div>
+    <div class="fgroup">
+      <label class="flabel">Main Category</label>
+      <div class="mcat-grid" id="adsh-cats-grid"></div>
+      <div id="adsh-cats-hint" style="font-size:11px;margin-top:6px;color:var(--t3);">Select category</div>
+      <div id="adsh-subcats-wrap" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--bdr);">
+        <div class="flabel" style="margin-bottom:6px;">Sub-Categories (multiple)</div>
+        <div class="mcat-grid" id="adsh-subcats-grid" style="grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:6px;"></div>
+        <div id="adsh-subcats-hint" style="font-size:11px;color:var(--t3);margin-top:6px;"></div>
+      </div>
+    </div>
     <div class="fgroup"><label class="flabel">Opening Hours</label>
       <div class="time-row">
         <select class="fselect" id="adsh-open-time" onchange="updateHoursPreview('adsh')"><option value="">Opens at...</option></select>
@@ -728,19 +747,15 @@ img{display:block;max-width:100%;}button{font-family:inherit;cursor:pointer;-web
     <button class="modal-close" onclick="closeModal('modal-register')">&#10005;</button>
     <div class="modal-title">Create Account &#127881;</div>
     <div class="modal-sub">Join ShopSpot for free</div>
-    <div style="display:flex;background:var(--bg);border-radius:10px;padding:4px;gap:3px;margin-bottom:1.1rem;">
-      <button id="reg-tab-cust" onclick="setRegTab('customer')" style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:var(--pr);box-shadow:0 1px 6px rgba(0,0,0,.1);">&#128100; Customer</button>
-      <button id="reg-tab-owner" onclick="setRegTab('owner')" style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--t2);">&#127978; Shop Owner</button>
-    </div>
     <div class="merr" id="reg-err"></div>
     <div class="mok" id="reg-ok"></div>
+    <input type="hidden" id="r-role" value="customer">
     <div class="mgroup"><label class="mlabel">Full Name *</label><input class="minput ni" id="r-name" type="text" placeholder="Your full name" oninput="autoSuggestUsername()"></div>
     <div class="mgroup"><label class="mlabel">Username *</label><input class="minput ni" id="r-user" type="text" placeholder="Choose a username" oninput="checkUsernameAvail(this)"><div id="r-user-hint" style="font-size:11px;margin-top:3px;"></div></div>
     <div class="mgroup"><label class="mlabel">Phone *</label><input class="minput ni" id="r-phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
-    <input type="hidden" id="r-role" value="customer">
     <div class="mgroup"><label class="mlabel">Password *</label><div class="minput-wrap"><input class="minput" id="r-pass" type="password" placeholder="Min 4 characters"><button class="mpw-eye" onclick="togglePw('r-pass',this)">&#128065;</button></div></div>
-    <div class="mgroup"><label class="mlabel">Confirm Password *</label><div class="minput-wrap"><input class="minput" id="r-conf" type="password" placeholder="Repeat password"><button class="mpw-eye" onclick="togglePw('r-conf',this)">&#128065;</button></div></div>
-    <button class="mbtn mbtn-pr" id="reg-submit-btn" onclick="doRegister()">Create Customer Account &#8594;</button>
+    <div class="mgroup"><label class="mlabel">Confirm *</label><div class="minput-wrap"><input class="minput" id="r-conf" type="password" placeholder="Repeat password"><button class="mpw-eye" onclick="togglePw('r-conf',this)">&#128065;</button></div></div>
+    <button class="mbtn mbtn-pr" onclick="doRegister()">Create Account &#8594;</button>
     <div class="mlink">Already have an account? <span onclick="switchModal('modal-register','modal-login')">Sign in</span></div>
   </div>
 </div>
@@ -832,6 +847,42 @@ const CAT_ICONS = {
   'Repair & Services':'🛠️','Other':'🏪'
 };
 function cIcon(c){ return CAT_ICONS[c]||'🏪'; }
+// Sub-categories per main category
+const SUB_CATS = {
+  'Food & Restaurant':['North Indian','South Indian','Chinese','Mughlai','Biryani','Thali','Fish & Seafood','Veg Only','Multi-Cuisine','Snacks & Starters','Sweets','Home Food','Tiffin Service'],
+  'Fast Food':['Burger & Fries','Pizza','Momos','Rolls & Wraps','Sandwich','Noodles','Pasta','Fried Chicken','Shawarma','Pav Bhaji','Hot Dog'],
+  'Street Food':['Chaat & Golgappa','Bhel Puri','Vada Pav','Samosa','Kachori','Jalebi','Pakora','Corn & Snacks','Juice & Sharbat','Ice Gola'],
+  'Sweets & Bakery':['Traditional Sweets','Mithai','Cake & Pastry','Bread & Bun','Cookies','Chocolate','Namkeen','Dry Fruits','Ice Cream','Kulfi'],
+  'Cafe & Coffee':['Coffee','Tea','Cold Drinks','Shake & Smoothie','Breakfast','Sandwich','Salads','Desserts','Snacks'],
+  'Grocery & Kirana':['Rice & Dal','Atta & Flour','Oil & Ghee','Spices & Masala','Sugar & Salt','Tea & Coffee','Biscuits','Packaged Food','Dairy Products','Frozen Food'],
+  'Fruits & Vegetables':['Fresh Fruits','Fresh Vegetables','Exotic Fruits','Organic Produce','Dry Fruits','Sprouts','Herbs & Greens'],
+  'Garments & Clothing':['Casual Wear','Formal Wear','Ethnic Wear','Party Wear','Winter Wear','Sports Wear','Nightwear','Undergarments','School Uniform','Accessories'],
+  "Men's Wear":['Shirt','T-Shirt','Trouser & Jeans','Kurta & Pyjama','Suit & Blazer','Ethnic Wear','Shorts','Winter Jacket','Sportswear','Innerwear'],
+  "Women's Wear":['Saree','Kurti','Suit & Salwar','Lehenga','Western Wear','Tops & Jeans','Dress & Gown','Night Dress','Winter Wear','Innerwear'],
+  'Kids Wear':['Boys Clothing','Girls Clothing','Baby Clothing','School Uniform','Party Dress','Sports Wear','Winter Wear','Innerwear & Socks'],
+  'Footwear':['Casual Shoes','Formal Shoes','Sports Shoes','Sandals & Slippers','Heels & Wedges','Ethnic Footwear','Boots','Kids Footwear'],
+  'Electronics':['TV & Display','Refrigerator','Washing Machine','AC & Cooler','Microwave','Home Appliances','Kitchen Appliances','Camera','Audio & Speaker'],
+  'Mobile & Accessories':['Smartphones','Feature Phones','Mobile Cover','Screen Guard','Charger & Cable','Earphones','Power Bank','Memory Card','Mobile Repair'],
+  'Computer & IT':['Laptop','Desktop','Printer & Scanner','Keyboard & Mouse','Pen Drive & HDD','Networking','Software','IT Services','CCTV & Security'],
+  'Furniture & Home Decor':['Sofa & Seating','Bed & Mattress','Dining Table','Wardrobe','Study Table','Shelf & Rack','Home Decor','Curtains','Lighting','Bathroom Fittings'],
+  'Hardware & Tools':['Paints & Putty','Cement & Sand','Pipes & Fittings','Electrical Wiring','Tools & Equipment','Locks & Hinges','Tiles & Marble','Welding'],
+  'Medical & Pharmacy':['Prescription Medicines','OTC Medicines','Vitamins & Supplements','First Aid','Surgical Items','Baby Care','Ayurvedic & Herbal','Homeopathic','Medical Equipment'],
+  'Beauty & Salon':['Hair Cut & Styling','Hair Color','Facial & Skin','Bridal Makeup','Waxing & Threading','Manicure & Pedicure','Mehendi','Massage','Men Grooming'],
+  'Gym & Fitness':['Gym Membership','Personal Training','Yoga & Meditation','Zumba & Dance','CrossFit','Martial Arts','Weight Loss Program','Sports Training'],
+  'Books & Stationery':['School Books','Novels & Fiction','Academic Books','Competitive Exam','Religious Books','Kids Books','Office Stationery','Art Supplies'],
+  'Toys & Games':['Baby Toys','Educational Toys','Board Games','Action Figures','Dolls','Outdoor Games','Video Games','Puzzle & Brain','RC Toys'],
+  'Sports & Outdoor':['Cricket','Football','Badminton','Tennis','Swimming','Cycling','Gym Equipment','Yoga Mat','Outdoor Gear','Trekking'],
+  'Auto Parts & Service':['Car Repair','Bike Repair','Tyre & Wheel','Battery & Electrical','AC & Cooling','Car Wash','Spare Parts','Body Work','Accessories'],
+  'Petrol Pump':['Petrol','Diesel','CNG','EV Charging','Engine Oil','Air Pump','Car Wash'],
+  'Education & Coaching':['School Tuition','College Coaching','JEE & NEET','Government Exam','Language Classes','Computer Classes','Music & Dance','Art & Craft','Skill Training'],
+  'Travel & Tour':['Bus Service','Taxi & Cab','Tour Package','Hotel Booking','Air Ticket','Car Rental','Travel Insurance','Visa Services'],
+  'Hotel & Lodge':['Budget Hotel','Luxury Hotel','Guest House','OYO Type','Dharamshala','Paying Guest','Hostel','Resort','Homestay','Banquet Hall'],
+  'Jewellery & Watches':['Gold Jewellery','Silver Jewellery','Diamond','Artificial Jewellery','Bangles & Earrings','Necklace & Chain','Ring & Bracelet','Watches','Watch Repair'],
+  'Gift & Flower':['Fresh Flowers','Bouquet','Gift Hamper','Birthday Gifts','Anniversary Gifts','Corporate Gifts','Customized Gifts','Plants & Pots','Chocolate Box'],
+  'Repair & Services':['Mobile Repair','Electronic Repair','AC Repair','Home Appliance Repair','Plumbing','Electrical Work','Carpentry','Painting','Pest Control','Laundry'],
+  'Other':['General Store','Multi-Purpose','Service Provider','Wholesale','Export','Miscellaneous']
+};
+
 
 const LS = {u:'fs_u',s:'fs_s',p:'fs_p',b:'fs_b',br:'fs_br',fv:'fs_fv',rv:'fs_rv',ses:'fs_ses'};
 function lg(k,d){ try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;} }
@@ -877,6 +928,7 @@ let reviews  = lg(LS.rv,{});
 let currentUser  = null;
 let prevPage     = 'home';
 let currentCat   = 'All';
+let currentSubCat = '';
 let adminFilter  = 'all';
 let slideIdx     = 0;
 let slideTimer, detSsTimer;
@@ -992,13 +1044,13 @@ function showPage(name){
   window.scrollTo({top:0,behavior:'smooth'});
   if(!pageHistory.length||pageHistory[pageHistory.length-1]!==name){ pageHistory.push(name); window.history.pushState({page:name},'','#'+name); }
   if(name==='home'){if(!sliderBuilt){renderSlider();resetSlideTimer();sliderBuilt=true;}renderHome();}
-  if(name==='admin'){buildTimePicker();renderAdminShops();renderBannerList();renderPopMgr();renderAdminReviews();applyBrand();}
+  if(name==='admin'){buildTimePicker();renderAdminShops();renderBannerList();renderPopMgr();renderAdminReviews();applyBrand();renderAdminCatsList();}
   if(name==='owner')refreshOwner();
   if(name==='customer')refreshCustomer();
   if(name==='favorites')renderFavorites();
   updateBnav(name);
 }
-function goBack(){ clearInterval(detSsTimer); if(pageHistory.length>1){ pageHistory.pop(); const p=pageHistory[pageHistory.length-1]||'home'; document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); const el=document.getElementById('page-'+p);if(el)el.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); if(p==='home'){if(!sliderBuilt){renderSlider();resetSlideTimer();sliderBuilt=true;}renderHome();} if(p==='admin'){buildTimePicker();renderAdminShops();renderBannerList();renderPopMgr();renderAdminReviews();applyBrand();} if(p==='owner')refreshOwner(); if(p==='customer')refreshCustomer(); if(p==='favorites')renderFavorites(); updateBnav(p); }else showPage('home'); }
+function goBack(){ clearInterval(detSsTimer); if(pageHistory.length>1){ pageHistory.pop(); const p=pageHistory[pageHistory.length-1]||'home'; document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); const el=document.getElementById('page-'+p);if(el)el.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); if(p==='home'){if(!sliderBuilt){renderSlider();resetSlideTimer();sliderBuilt=true;}renderHome();} if(p==='admin'){buildTimePicker();renderAdminShops();renderBannerList();renderPopMgr();renderAdminReviews();applyBrand();renderAdminCatsList();} if(p==='owner')refreshOwner(); if(p==='customer')refreshCustomer(); if(p==='favorites')renderFavorites(); updateBnav(p); }else showPage('home'); }
 window.addEventListener('popstate',function(){ goBack(); });
 function scrollToShops(){ document.getElementById('shops-section')?.scrollIntoView({behavior:'smooth'}); }
 function filterAndScroll(cat){ currentCat=cat; document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active')); filterShops(); setTimeout(()=>document.getElementById('shops-section')?.scrollIntoView({behavior:'smooth'}),100); }
@@ -1067,29 +1119,87 @@ function renderFavorites(){ const grid=document.getElementById('fav-grid'),empty
 // ============================================================
 // MULTI-CATEGORY
 // ============================================================
-function buildMcatGrid(gridId,pfx,selArr){
-  const g=document.getElementById(gridId);if(!g)return;
-  const isSingle=true; // Always single select — one category per shop
-  g.innerHTML=ALL_CATS.map(cat=>`
-    <div class="mcat-opt ${selArr.includes(cat)?'sel':''}" onclick="toggleMcat('${gridId}','${pfx}','${cat}')">
+function buildMcatGrid(gridId, pfx, selArr) {
+  const g = document.getElementById(gridId); if (!g) return;
+  g.innerHTML = ALL_CATS.map(cat => `
+    <div class="mcat-opt ${selArr.includes(cat)?'sel':''}" onclick="selectMainCat('${gridId}','${pfx}','${cat}')">
       <div class="mcat-chk">${selArr.includes(cat)?'✓':''}</div>
       <span style="font-size:12px;font-weight:600;">${cIcon(cat)} ${cat}</span>
     </div>`).join('');
-  updateMcatHint(gridId,pfx,selArr);
+  updateMcatHint(gridId, pfx, selArr);
+  if (selArr.length > 0) buildSubCatGrid(pfx, selArr[0], []);
 }
-function toggleMcat(gridId,pfx,cat){
-  const cur=getSelCats(gridId);
-  const idx=cur.indexOf(cat);
-  // Single select: click same = deselect, click different = replace
-  buildMcatGrid(gridId,pfx,idx>=0?[]:[cat]);
+function selectMainCat(gridId, pfx, cat) {
+  const cur = getSelCats(gridId);
+  const newSel = cur.includes(cat) ? [] : [cat];
+  buildMcatGrid(gridId, pfx, newSel);
+  if (newSel.length > 0) buildSubCatGrid(pfx, newSel[0], []);
+  else hideSubCats(pfx);
 }
-function updateMcatHint(gridId,pfx,arr){
-  const h=document.getElementById(pfx+'-cats-hint');
-  if(!h)return;
-  h.textContent=arr.length?'✅ Selected: '+arr[0]:'Select your shop category';
-  h.style.color=arr.length?'#16A34A':'var(--t3)';
+function buildSubCatGrid(pfx, mainCat, selSubs) {
+  const subs = SUB_CATS[mainCat] || [];
+  const wrap = document.getElementById(pfx + '-subcats-wrap');
+  const grid = document.getElementById(pfx + '-subcats-grid');
+  const hint = document.getElementById(pfx + '-subcats-hint');
+  if (!wrap || !grid) return;
+  if (!subs.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  grid.innerHTML = subs.map(s => `
+    <div class="mcat-opt ${selSubs.includes(s)?'sel':''}" style="padding:7px 10px;" onclick="toggleSubCat('${pfx}','${s}')">
+      <div class="mcat-chk">${selSubs.includes(s)?'✓':''}</div>
+      <span style="font-size:11px;font-weight:600;">${s}</span>
+    </div>`).join('');
+  updateSubCatHint(pfx, selSubs);
 }
-function getSelCats(gridId){ const sel=[]; document.querySelectorAll('#'+gridId+' .mcat-opt.sel').forEach(el=>{const txt=el.querySelector('span').textContent.trim().replace(/^\S+\s/,'');sel.push(txt);}); return sel; }
+function toggleSubCat(pfx, sub) {
+  const gridId = pfx + '-subcats-grid';
+  const grid = document.getElementById(gridId); if (!grid) return;
+  const opts = grid.querySelectorAll('.mcat-opt');
+  const cur = [];
+  opts.forEach(el => { if (el.classList.contains('sel')) cur.push(el.querySelector('span').textContent.trim()); });
+  const idx = cur.indexOf(sub);
+  if (idx >= 0) cur.splice(idx, 1); else cur.push(sub);
+  grid.querySelectorAll('.mcat-opt').forEach(el => {
+    const txt = el.querySelector('span').textContent.trim();
+    const sel = cur.includes(txt);
+    el.classList.toggle('sel', sel);
+    el.querySelector('.mcat-chk').textContent = sel ? '✓' : '';
+  });
+  updateSubCatHint(pfx, cur);
+}
+function updateSubCatHint(pfx, arr) {
+  const h = document.getElementById(pfx + '-subcats-hint'); if (!h) return;
+  h.textContent = arr.length ? arr.length + ' sub-categories selected' : 'Optional: choose sub-categories';
+  h.style.color = arr.length ? '#16A34A' : 'var(--t3)';
+}
+function hideSubCats(pfx) {
+  const w = document.getElementById(pfx + '-subcats-wrap'); if (w) w.style.display = 'none';
+}
+function updateMcatHint(gridId, pfx, arr) {
+  const h = document.getElementById(pfx + '-cats-hint'); if (!h) return;
+  h.textContent = arr.length ? '✅ ' + arr[0] : 'Select your shop category';
+  h.style.color = arr.length ? '#16A34A' : 'var(--t3)';
+}
+function toggleMcat(gridId, pfx, cat) { selectMainCat(gridId, pfx, cat); }
+function getSelCats(gridId) {
+  const sel = [];
+  document.querySelectorAll('#' + gridId + ' .mcat-opt.sel').forEach(el => {
+    const span = el.querySelector('span');
+    if (!span) return;
+    // Remove leading emoji: keep everything after first space
+    const txt = span.textContent.trim().replace(/^[^\s]+\s+/, '');
+    if (txt) sel.push(txt);
+  });
+  return sel;
+}
+function getSubSelCats(pfx) {
+  const sel = [];
+  document.querySelectorAll('#' + pfx + '-subcats-grid .mcat-opt.sel').forEach(el => {
+    const span = el.querySelector('span');
+    if (span) sel.push(span.textContent.trim());
+  });
+  return sel;
+}
 
 // ============================================================
 // SHOP CARDS
@@ -1100,14 +1210,70 @@ function startCardTimers(){ clearCardTimers(); document.querySelectorAll('.shop-
 function clearCardTimers(){ Object.values(cardTimers).forEach(t=>clearInterval(t)); cardTimers={}; }
 function popCardHTML(shop){ const imgs=shop.imgs&&shop.imgs.length?shop.imgs:[],cats=shop.cats||['Other']; return `<div class="pop-card" onclick="openDetail(${shop.id})"><div class="pop-img">${imgs.length?`<img src="${imgs[0]}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">`:cIcon(cats[0])}</div><div class="pop-body"><div class="pop-name">${shop.name}</div><div class="pop-area">📍 ${shop.area}</div></div></div>`; }
 
-function renderHome(){ if(!sliderBuilt){renderSlider();resetSlideTimer();sliderBuilt=true;} const approved=allShops.filter(s=>s.status==='approved'), popular=approved.filter(s=>shopPos[s.id]).sort((a,b)=>(shopPos[a.id]||999)-(shopPos[b.id]||999)); const pe=document.getElementById('pop-scroll'); if(pe)pe.innerHTML=popular.length?popular.map(popCardHTML).join(''):'<p style="font-size:12px;color:var(--t3);padding:.5rem 0;">No popular shops set yet</p>'; filterShops(); setTimeout(startCardTimers,300); }
-function filterShops(){ const q=(document.getElementById('search-input')||{}).value?.toLowerCase()||''; const approved=allShops.filter(s=>s.status==='approved'); approved.forEach(s=>s._open=getOpen(s)); const sorted=[...approved].sort((a,b)=>{ const od=(b._open?1:0)-(a._open?1:0); return od!==0?od:(b.rating||0)-(a.rating||0); }); const filtered=sorted.filter(s=>{ const cats=s.cats||['Other']; const mc=currentCat==='All'||cats.includes(currentCat); const mq=!q||s.name.toLowerCase().includes(q)||cats.join(' ').toLowerCase().includes(q)||s.area.toLowerCase().includes(q)||(s.desc||'').toLowerCase().includes(q); return mc&&mq; }); const grid=document.getElementById('shops-grid'),empty=document.getElementById('empty-state'),cnt=document.getElementById('shop-count'); if(!grid)return; if(!filtered.length){grid.innerHTML='';if(empty)empty.style.display='block';if(cnt)cnt.textContent='';}else{grid.innerHTML=filtered.map(shopCardHTML).join('');if(empty)empty.style.display='none';if(cnt)cnt.textContent=filtered.length+' shops';} setTimeout(startCardTimers,300); }
-function filterCat(cat,el){ currentCat=cat; document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active')); if(el)el.classList.add('active'); const t=document.getElementById('listing-title');if(t)t.innerHTML=cat==='All'?'All <em>Shops</em>':`${cat} <em>Shops</em>`; filterShops(); }
+function renderHome(){ if(!sliderBuilt){renderSlider();resetSlideTimer();sliderBuilt=true;} buildHomeCatChips(); const approved=allShops.filter(s=>s.status==='approved'), popular=approved.filter(s=>shopPos[s.id]).sort((a,b)=>(shopPos[a.id]||999)-(shopPos[b.id]||999)); const pe=document.getElementById('pop-scroll'); if(pe)pe.innerHTML=popular.length?popular.map(popCardHTML).join(''):'<p style="font-size:12px;color:var(--t3);padding:.5rem 0;">No popular shops set yet</p>'; filterShops(); setTimeout(startCardTimers,300); }
+function filterShops(){
+  const q=(document.getElementById('search-input')||{}).value?.toLowerCase()||'';
+  const approved=allShops.filter(s=>s.status==='approved');
+  approved.forEach(s=>s._open=getOpen(s));
+  const sorted=[...approved].sort((a,b)=>{
+    const od=(b._open?1:0)-(a._open?1:0);
+    return od!==0?od:(b.rating||0)-(a.rating||0);
+  });
+  const filtered=sorted.filter(s=>{
+    const cats=s.cats||['Other'];
+    const subs=s.subCats||[];
+    const mc=currentCat==='All'||cats.includes(currentCat);
+    const ms=!currentSubCat||subs.includes(currentSubCat);
+    const mq=!q||s.name.toLowerCase().includes(q)||cats.join(' ').toLowerCase().includes(q)||subs.join(' ').toLowerCase().includes(q)||s.area.toLowerCase().includes(q)||(s.desc||'').toLowerCase().includes(q);
+    return mc&&ms&&mq;
+  });
+  const grid=document.getElementById('shops-grid'),empty=document.getElementById('empty-state'),cnt=document.getElementById('shop-count');
+  if(!grid)return;
+  if(!filtered.length){grid.innerHTML='';if(empty)empty.style.display='block';if(cnt)cnt.textContent='';}
+  else{grid.innerHTML=filtered.map(shopCardHTML).join('');if(empty)empty.style.display='none';if(cnt)cnt.textContent=filtered.length+' shops';}
+  setTimeout(startCardTimers,300);
+}
+function buildHomeCatChips() {
+  const row = document.getElementById('cats-row'); if (!row) return;
+  const cats = ALL_CATS; // dynamic from state
+  row.innerHTML = '<div class="cat-chip active" onclick="filterCat(\'All\',this)">🏪 All</div>' +
+    cats.map(cat => `<div class="cat-chip" onclick="filterCat('${cat.replace(/'/g,"\\'")}',this)">${cIcon(cat)} ${cat}</div>`).join('');
+}
+
+function filterCat(cat, el) {
+  currentCat = cat;
+  currentSubCat = '';
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const t = document.getElementById('listing-title');
+  if (t) t.innerHTML = cat === 'All' ? 'All <em>Shops</em>' : `${cIcon(cat)} <em>${cat}</em>`;
+  // Show sub-cats if this main cat has subs
+  const wrap = document.getElementById('subcats-row-wrap');
+  const subRow = document.getElementById('subcats-row');
+  if (cat !== 'All' && SUB_CATS[cat] && SUB_CATS[cat].length) {
+    subRow.innerHTML = `<div class="cat-chip sub-chip active" onclick="filterSubCat('',this)">All ${cat}</div>` +
+      SUB_CATS[cat].map(s => `<div class="cat-chip sub-chip" onclick="filterSubCat('${s.replace(/'/g,"\\'")}',this)">${s}</div>`).join('');
+    if (wrap) wrap.style.display = 'block';
+  } else {
+    if (wrap) wrap.style.display = 'none';
+    if (subRow) subRow.innerHTML = '';
+  }
+  filterShops();
+}
+
+function filterSubCat(sub, el) {
+  currentSubCat = sub;
+  document.querySelectorAll('.sub-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const t = document.getElementById('listing-title');
+  if (t) t.innerHTML = sub ? `${cIcon(currentCat)} <em>${sub}</em>` : `${cIcon(currentCat)} <em>${currentCat}</em>`;
+  filterShops();
+}
 
 // ============================================================
 // DETAIL PAGE
 // ============================================================
-function openDetail(id){ clearInterval(detSsTimer); const shop=allShops.find(s=>s.id===id);if(!shop)return; const prev=document.querySelector('.page.active')?.id?.replace('page-','')||'home'; if(prev!=='detail'&&prev!=='admin-shop')prevPage=prev; document.getElementById('det-title-bar').textContent=shop.name; const imgs=shop.imgs&&shop.imgs.length?shop.imgs:[],track=document.getElementById('det-ss-track'),dots=document.getElementById('det-ss-dots'),cnt=document.getElementById('det-ss-count'),pa=document.getElementById('det-arr-prev'),na=document.getElementById('det-arr-next'); detSsIdx=0; const ss=document.getElementById('det-slideshow');ss.style.fontSize=imgs.length?'':'52px'; const cats=shop.cats||['Other']; if(!imgs.length){track.innerHTML=`<div class="det-ss-slide">${cIcon(cats[0])}</div>`;dots.innerHTML='';cnt.style.display='none';pa.style.display='none';na.style.display='none';}else{track.innerHTML=imgs.map(img=>`<div class="det-ss-slide"><img src="${img}" alt="" onerror="this.remove()"></div>`).join('');dots.innerHTML=imgs.length>1?imgs.map((_,i)=>`<button class="det-ss-dot ${i===0?'active':''}" onclick="detGoSlide(${i})"></button>`).join(''):'';cnt.textContent=`1 / ${imgs.length}`;cnt.style.display=imgs.length>1?'block':'none';pa.style.display=imgs.length>1?'flex':'none';na.style.display=imgs.length>1?'flex':'none';if(imgs.length>1)detSsTimer=setInterval(()=>detSlide(1),3500);} const isOpen=getOpen(shop); document.getElementById('d-name').textContent=shop.name; document.getElementById('d-pills').innerHTML=cats.map(c=>`<span class="dpill dp-cat">${c}</span>`).join('')+`<span class="dpill dp-area">📍 ${shop.area}</span><span class="dpill ${isOpen?'dp-open':'dp-closed'}">${isOpen?'Open Now':'Closed'}</span>`; const r=shop.rating||0; document.getElementById('d-rating').innerHTML=r?`<div class="det-rat-num">${r}</div><div><div class="det-stars">${'★'.repeat(Math.floor(r))}${'☆'.repeat(5-Math.floor(r))}</div><div style="font-size:10px;color:var(--t3);margin-top:2px;">${shop.reviews||0} reviews</div></div>`:'<span style="font-size:13px;color:var(--t2);">New listing</span>'; document.getElementById('d-desc').textContent=shop.desc||''; document.getElementById('d-menu').innerHTML=(shop.menu&&shop.menu.length)?shop.menu.map(m=>`<div class="menu-item-card"><div class="menu-item-img">${m.img?`<img src="${m.img}" alt="" onerror="this.remove()">`:cIcon(cats[0])}</div><div class="menu-item-body"><div class="menu-item-name">${m.name}</div><div class="menu-item-price">${m.price}</div></div></div>`).join(''):'<p style="font-size:12px;color:var(--t3);">Menu not listed</p>'; document.getElementById('d-acts').innerHTML=`<button class="dact dact-call" onclick="callShop('${shop.phone}')">📞 Call Now</button>${shop.wa?`<button class="dact dact-wa" onclick="waShop('${shop.wa}','${shop.name}')">💬 WhatsApp</button>`:''} ${shop.web?`<button class="dact dact-web" onclick="webShop('${shop.web}')">🌐 Website</button>`:''}`; document.getElementById('d-info').innerHTML=`<div class="info-box"><div class="ib-lbl">📍 Location</div><div class="ib-val">${shop.area}</div></div><div class="info-box"><div class="ib-lbl">⏰ Hours</div><div class="ib-val">${shop.hours||'—'}</div></div><div class="info-box"><div class="ib-lbl">📅 Since</div><div class="ib-val">${shop.since||'—'}</div></div><div class="info-box"><div class="ib-lbl">📞 Phone</div><div class="ib-val">+91 ${shop.phone||'—'}</div></div>`; showPage('detail'); renderReviewSection(id); }
+function openDetail(id){ clearInterval(detSsTimer); const shop=allShops.find(s=>s.id===id);if(!shop)return; const prev=document.querySelector('.page.active')?.id?.replace('page-','')||'home'; if(prev!=='detail'&&prev!=='admin-shop')prevPage=prev; document.getElementById('det-title-bar').textContent=shop.name; const imgs=shop.imgs&&shop.imgs.length?shop.imgs:[],track=document.getElementById('det-ss-track'),dots=document.getElementById('det-ss-dots'),cnt=document.getElementById('det-ss-count'),pa=document.getElementById('det-arr-prev'),na=document.getElementById('det-arr-next'); detSsIdx=0; const ss=document.getElementById('det-slideshow');ss.style.fontSize=imgs.length?'':'52px'; const cats=shop.cats||['Other']; if(!imgs.length){track.innerHTML=`<div class="det-ss-slide">${cIcon(cats[0])}</div>`;dots.innerHTML='';cnt.style.display='none';pa.style.display='none';na.style.display='none';}else{track.innerHTML=imgs.map(img=>`<div class="det-ss-slide"><img src="${img}" alt="" onerror="this.remove()"></div>`).join('');dots.innerHTML=imgs.length>1?imgs.map((_,i)=>`<button class="det-ss-dot ${i===0?'active':''}" onclick="detGoSlide(${i})"></button>`).join(''):'';cnt.textContent=`1 / ${imgs.length}`;cnt.style.display=imgs.length>1?'block':'none';pa.style.display=imgs.length>1?'flex':'none';na.style.display=imgs.length>1?'flex':'none';if(imgs.length>1)detSsTimer=setInterval(()=>detSlide(1),3500);} const isOpen=getOpen(shop); document.getElementById('d-name').textContent=shop.name; document.getElementById('d-pills').innerHTML=cats.map(c=>`<span class="dpill dp-cat">${c}</span>`).join('')+(shop.subCats&&shop.subCats.length?shop.subCats.slice(0,4).map(s=>`<span class="dpill" style="background:#EEF2FF;color:#4F46E5;font-size:10px;">${s}</span>`).join(''):'')+`<span class="dpill dp-area">📍 ${shop.area}</span><span class="dpill ${isOpen?'dp-open':'dp-closed'}">${isOpen?'Open Now':'Closed'}</span>`; const r=shop.rating||0; document.getElementById('d-rating').innerHTML=r?`<div class="det-rat-num">${r}</div><div><div class="det-stars">${'★'.repeat(Math.floor(r))}${'☆'.repeat(5-Math.floor(r))}</div><div style="font-size:10px;color:var(--t3);margin-top:2px;">${shop.reviews||0} reviews</div></div>`:'<span style="font-size:13px;color:var(--t2);">New listing</span>'; document.getElementById('d-desc').textContent=shop.desc||''; document.getElementById('d-menu').innerHTML=(shop.menu&&shop.menu.length)?shop.menu.map(m=>`<div class="menu-item-card"><div class="menu-item-img">${m.img?`<img src="${m.img}" alt="" onerror="this.remove()">`:cIcon(cats[0])}</div><div class="menu-item-body"><div class="menu-item-name">${m.name}</div><div class="menu-item-price">${m.price}</div></div></div>`).join(''):'<p style="font-size:12px;color:var(--t3);">Menu not listed</p>'; document.getElementById('d-acts').innerHTML=`<button class="dact dact-call" onclick="callShop('${shop.phone}')">📞 Call Now</button>${shop.wa?`<button class="dact dact-wa" onclick="waShop('${shop.wa}','${shop.name}')">💬 WhatsApp</button>`:''} ${shop.web?`<button class="dact dact-web" onclick="webShop('${shop.web}')">🌐 Website</button>`:''}`; document.getElementById('d-info').innerHTML=`<div class="info-box"><div class="ib-lbl">📍 Location</div><div class="ib-val">${shop.area}</div></div><div class="info-box"><div class="ib-lbl">⏰ Hours</div><div class="ib-val">${shop.hours||'—'}</div></div><div class="info-box"><div class="ib-lbl">📅 Since</div><div class="ib-val">${shop.since||'—'}</div></div><div class="info-box"><div class="ib-lbl">📞 Phone</div><div class="ib-val">+91 ${shop.phone||'—'}</div></div>`; showPage('detail'); renderReviewSection(id); }
 function detGoSlide(i){ const slides=document.getElementById('det-ss-track').children;if(!slides.length)return; detSsIdx=i; document.getElementById('det-ss-track').style.transform=`translateX(-${i*100}%)`; document.querySelectorAll('#det-ss-dots .det-ss-dot').forEach((d,idx)=>d.classList.toggle('active',idx===i)); document.getElementById('det-ss-count').textContent=`${i+1} / ${slides.length}`; }
 function detSlide(d){ const t=document.getElementById('det-ss-track').children.length;if(!t)return; detGoSlide((detSsIdx+d+t)%t); }
 function callShop(p){ if(p)window.location.href='tel:+91'+p; }
@@ -1126,10 +1292,31 @@ function deleteReview(sid,rid,fromProfile){ if(!reviews[sid])return; reviews[sid
 // ============================================================
 // ADD SHOP FORM
 // ============================================================
-function handleShopImgs(input){ const files=Array.from(input.files),rem=5-shopImgDatas.length; files.slice(0,rem).forEach(f=>{const r=new FileReader();r.onload=e=>{shopImgDatas.push(e.target.result);renderShopImgsGrid();};r.readAsDataURL(f);}); input.value=''; }
-function renderShopImgsGrid(){ const g=document.getElementById('shop-imgs-grid');if(!g)return; g.innerHTML=shopImgDatas.map((d,i)=>`<div class="img-thumb"><img src="${d}" alt=""><button class="img-thumb-del" onclick="removeShopImg(${i})">✕</button></div>`).join(''); if(shopImgDatas.length<5)g.innerHTML+=`<div class="img-add-btn" onclick="document.getElementById('shop-imgs-input').click()"><span>+</span><small>Add</small></div>`; }
+function handleShopImgs(input){
+  if(!input.files||!input.files[0])return;
+  if(shopImgDatas.length>=1){toast('Only 1 banner image allowed');return;}
+  const r=new FileReader();
+  r.onload=e=>{ shopImgDatas=[e.target.result]; renderShopImgsGrid(); };
+  r.readAsDataURL(input.files[0]);
+  input.value='';
+}
+function renderShopImgsGrid(){
+  const g=document.getElementById('shop-imgs-grid');if(!g)return;
+  g.innerHTML=shopImgDatas.map((d,i)=>`<div class="img-thumb"><img src="${d}" alt=""><button class="img-thumb-del" onclick="removeShopImg(${i})">✕</button></div>`).join('');
+  if(!shopImgDatas.length)g.innerHTML+=`<div class="img-add-btn" onclick="document.getElementById('shop-imgs-input').click()"><span>+</span><small>Upload</small></div>`;
+}
 function removeShopImg(i){ shopImgDatas.splice(i,1); renderShopImgsGrid(); }
-function addMenuItem(){ if(menuRowCtr>=10){toast('Max 10 items');return;} const id=menuIdCtr++;menuRowCtr++; const wrap=document.getElementById('menu-items-wrap'); const row=document.createElement('div');row.className='menu-item-row';row.id='mi-'+id; row.innerHTML=`<div class="mi-img-up" onclick="document.getElementById('mi-img-i-${id}').click()"><span id="mi-p-${id}">🍽️</span><input type="file" id="mi-img-i-${id}" accept="image/*" style="display:none" onchange="handleMenuImg(this,'mi-p-${id}')"></div><div class="mi-fields"><input class="finput" id="mi-n-${id}" type="text" placeholder="Item name" style="font-size:12px;padding:8px 10px;"><input class="finput" id="mi-pr-${id}" type="text" placeholder="Price e.g. Rs.120" style="font-size:12px;padding:8px 10px;"></div><button class="mi-del" onclick="document.getElementById('mi-${id}').remove();menuRowCtr--;document.getElementById('add-menu-btn').style.display='block';">✕</button>`; wrap.appendChild(row); if(menuRowCtr>=10)document.getElementById('add-menu-btn').style.display='none'; }
+function addMenuItem(){
+  if(menuRowCtr>=10){toast('Max 10 items');return;}
+  const id=menuIdCtr++;menuRowCtr++;
+  const wrap=document.getElementById('menu-items-wrap');
+  const row=document.createElement('div');
+  row.className='menu-item-row';row.id='mi-'+id;
+  row.style.cssText='background:var(--bg);border-radius:10px;padding:.65rem;margin-bottom:.55rem;display:flex;gap:.65rem;align-items:center;';
+  row.innerHTML=`<div style="flex:1;display:flex;gap:8px;"><input class="finput" id="mi-n-${id}" type="text" placeholder="Item/service name" style="flex:2;font-size:12px;padding:8px 10px;"><input class="finput" id="mi-pr-${id}" type="text" placeholder="Price e.g. Rs.120" style="flex:1;font-size:12px;padding:8px 10px;"></div><button class="mi-del" onclick="document.getElementById('mi-${id}').remove();menuRowCtr--;document.getElementById('add-menu-btn').style.display='block';">✕</button>`;
+  wrap.appendChild(row);
+  if(menuRowCtr>=10)document.getElementById('add-menu-btn').style.display='none';
+}
 function handleMenuImg(input,previewId){ if(!input.files||!input.files[0])return; const r=new FileReader();r.onload=e=>{input._imgData=e.target.result;const p=document.getElementById(previewId);if(p)p.outerHTML=`<img src="${e.target.result}" id="${previewId}" style="width:100%;height:100%;object-fit:cover;border-radius:7px;">`;};r.readAsDataURL(input.files[0]); }
 function collectMenuItems(wrapId){ const rows=document.querySelectorAll('#'+(wrapId||'menu-items-wrap')+' .menu-item-row'),items=[]; rows.forEach(row=>{ const id=row.id.replace(/^(mi-|adsh-mi-)/,''); const nEl=row.querySelector('[id*="-n-"]'),prEl=row.querySelector('[id*="-pr-"]'),imgEl=row.querySelector('input[type="file"]'); const name=nEl?.value?.trim()||'',price=prEl?.value?.trim()||'',img=imgEl?imgEl._imgData||'':''; if(name)items.push({name,price,img}); }); return items; }
 
@@ -1138,6 +1325,7 @@ function submitShop(){
   const phone=document.getElementById('f-phone').value.trim();
   const area=document.getElementById('f-area').value.trim();
   const cats=getSelCats('f-cats-grid');
+  const subCats=getSubSelCats('f');
   const hours=document.getElementById('f-hours').value.trim();
   if(!name){toast('⚠️ Shop name required');return;}
   if(!phone){toast('⚠️ Phone required');return;}
@@ -1162,7 +1350,7 @@ function submitShop(){
   const ownerName=document.getElementById('f-owner-name')?.value?.trim()||name+' Owner';
   const menuItems=collectMenuItems('menu-items-wrap');
   const newShop={
-    id:submitIdCtr++,name,phone,cats,area,
+    id:submitIdCtr++,name,phone,cats,subCats,area,
     wa:document.getElementById('f-wa').value.trim(),
     web:document.getElementById('f-web').value.trim(),
     desc:document.getElementById('f-desc').value.trim()||'A great local shop!',
@@ -1303,6 +1491,7 @@ function openAdminShopDetail(id){
   document.getElementById('adsh-wa').value=shop.wa||'';
   document.getElementById('adsh-web').value=shop.web||'';
   buildMcatGrid('adsh-cats-grid','adsh',shop.cats||['Other']);
+  if(shop.cats&&shop.cats.length) { buildSubCatGrid('adsh',shop.cats[0],shop.subCats||[]); } else { hideSubCats('adsh'); }
   setTimePicker('adsh',shop.hours||'');
   // Photos
   adshImgs=[...(shop.imgs||[])]; renderAdshImgsGrid();
@@ -1343,6 +1532,7 @@ function adminSaveShopInfo(){
   shop.wa=document.getElementById('adsh-wa').value.trim();
   shop.web=document.getElementById('adsh-web').value.trim();
   const cats=getSelCats('adsh-cats-grid'); if(cats.length)shop.cats=cats;
+  shop.subCats=getSubSelCats('adsh');
   const h=document.getElementById('adsh-hours').value.trim(); if(h)shop.hours=h;
   ls(LS.s,allShops); document.getElementById('adsh-title').textContent=shop.name;
   toast('✅ Shop info saved!'); renderAdminShops(); renderHome();
@@ -1377,9 +1567,99 @@ function renderMyReviews(){ const el=document.getElementById('cust-reviews-list'
 function toast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000); }
 document.querySelectorAll('.modal-ov').forEach(ov=>{ ov.addEventListener('click',e=>{if(e.target===ov)closeModal(ov.id);}); });
 
+
+// ============================================================
+// ADMIN CATEGORY MANAGER
+// ============================================================
+function renderAdminCatsList() {
+  const el = document.getElementById('admin-cats-list'); if (!el) return;
+  el.innerHTML = ALL_CATS.map((cat, ci) => `
+    <div style="background:var(--bg);border-radius:10px;padding:.85rem;margin-bottom:.75rem;border:1.5px solid var(--bdr);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:.6rem;">
+        <span style="font-size:16px;">${cIcon(cat)}</span>
+        <span style="font-weight:700;font-size:13px;flex:1;">${cat}</span>
+        <button onclick="deleteMainCat('${cat.replace(/'/g,"\\'")}')" style="background:#FEF2F2;color:#DC2626;border:none;border-radius:6px;padding:4px 9px;font-size:11px;font-weight:700;cursor:pointer;">Delete</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px;">
+        ${(SUB_CATS[cat]||[]).map(s => `<span style="background:#EEF2FF;color:#4F46E5;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;">${s}<button onclick="deleteSubCat('${cat.replace(/'/g,"\\'")}','${s.replace(/'/g,"\\'")}' )" style="background:none;border:none;color:#DC2626;cursor:pointer;font-size:12px;line-height:1;padding:0 2px;">✕</button></span>`).join('')}
+      </div>
+      <div style="display:flex;gap:7px;">
+        <input class="finput" id="new-sub-${ci}" type="text" placeholder="Add sub-category..." style="flex:1;font-size:12px;padding:7px 10px;" onkeydown="if(event.key==='Enter')addSubCat('${cat.replace(/'/g,"\\'")}',${ci})">
+        <button onclick="addSubCat('${cat.replace(/'/g,"\\'")}',${ci})" style="background:var(--prl);color:var(--pr);border:none;border-radius:7px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Sub</button>
+      </div>
+    </div>`).join('');
+}
+
+function addMainCat() {
+  const input = document.getElementById('new-main-cat-input');
+  const name = (input?.value||'').trim();
+  if (!name) { toast('⚠️ Enter category name'); return; }
+  if (ALL_CATS.includes(name)) { toast('⚠️ Category already exists'); return; }
+  ALL_CATS.push(name);
+  if (!SUB_CATS[name]) SUB_CATS[name] = [];
+  CAT_ICONS[name] = '🏪';
+  saveCatData();
+  if (input) input.value = '';
+  renderAdminCatsList();
+  buildHomeCatChips();
+  toast('✅ Category added: ' + name);
+}
+
+function deleteMainCat(cat) {
+  if (!confirm('Delete category "' + cat + '"? This will affect all shops in this category.')) return;
+  const idx = ALL_CATS.indexOf(cat);
+  if (idx >= 0) ALL_CATS.splice(idx, 1);
+  delete SUB_CATS[cat];
+  delete CAT_ICONS[cat];
+  saveCatData();
+  renderAdminCatsList();
+  buildHomeCatChips();
+  toast('🗑️ Category deleted: ' + cat);
+}
+
+function addSubCat(cat, ci) {
+  const input = document.getElementById('new-sub-' + ci);
+  const name = (input?.value||'').trim();
+  if (!name) { toast('⚠️ Enter sub-category name'); return; }
+  if (!SUB_CATS[cat]) SUB_CATS[cat] = [];
+  if (SUB_CATS[cat].includes(name)) { toast('⚠️ Sub-category already exists'); return; }
+  SUB_CATS[cat].push(name);
+  saveCatData();
+  if (input) input.value = '';
+  renderAdminCatsList();
+  toast('✅ Sub-category added: ' + name);
+}
+
+function deleteSubCat(cat, sub) {
+  if (!SUB_CATS[cat]) return;
+  SUB_CATS[cat] = SUB_CATS[cat].filter(s => s !== sub);
+  saveCatData();
+  renderAdminCatsList();
+  toast('🗑️ Sub-category deleted');
+}
+
+function saveCatData() {
+  try { localStorage.setItem('fs_cats', JSON.stringify({cats: ALL_CATS, subs: SUB_CATS, icons: CAT_ICONS})); } catch(e) {}
+}
+
+function loadCatData() {
+  try {
+    const saved = localStorage.getItem('fs_cats');
+    if (saved) {
+      const d = JSON.parse(saved);
+      if (d.cats && Array.isArray(d.cats)) {
+        ALL_CATS.length = 0; d.cats.forEach(c => ALL_CATS.push(c));
+      }
+      if (d.subs) Object.assign(SUB_CATS, d.subs);
+      if (d.icons) Object.assign(CAT_ICONS, d.icons);
+    }
+  } catch(e) {}
+}
+
 // ============================================================
 // INIT
 // ============================================================
+loadCatData();
 buildTimePicker();
 loadSession();
 window.history.replaceState({page:'home'},'','#home');
